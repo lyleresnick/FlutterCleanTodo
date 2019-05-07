@@ -1,10 +1,10 @@
 //  Copyright © 2019 Lyle Resnick. All rights reserved.
 
-import '../../../EntityGateway/EntityGateway.dart';
-import '../../../EntityGateway/TestEntityGateway.dart';
 import '../View/TodoListScene.dart';
 import '../Presenter/TodoListPresenter.dart';
 import '../UseCase/TodoListUseCase.dart';
+import '../Router/TodoListRouter.dart';
+
 
 class TodoListAssembly {
 
@@ -14,10 +14,10 @@ class TodoListAssembly {
 
     TodoListAssembly._({this.scene, this.useCase, this.presenter});
 
-    factory TodoListAssembly() {
+    factory TodoListAssembly(TodoListRouter router) {
 
         final useCase = TodoListUseCase();
-        final presenter = TodoListPresenter(useCase: useCase);
+        final presenter = TodoListPresenter(useCase: useCase, router: router);
         final scene = TodoListScene(presenter: presenter);
         useCase.output = presenter;
 

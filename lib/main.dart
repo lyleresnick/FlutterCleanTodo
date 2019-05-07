@@ -1,7 +1,10 @@
 //  Copyright © 2019 Lyle Resnick. All rights reserved.
 
 import 'package:flutter/material.dart';
-import 'Scenes/TodoList/View/TodoListScene.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'Scenes/TodoRootRouter/View/TodoRootRouterScene.dart';
+import 'Scenes/Common/Localization/TodoLocalizationsDelegate.dart';
+import 'Scenes/Common/Localization/FrenchCupertinoLocalizations.dart';
 
 void main() => runApp(MyApp());
 
@@ -14,10 +17,17 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/',
-      routes: {
-        '/': (BuildContext context) => TodoListScene.assembled(),
-      },
+      home: TodoRootRouterScene.assembled(),
+      localizationsDelegates: [
+        const TodoLocalizationsDelegate(),
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        FrenchCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale('en'), // English
+        const Locale('fr'), // French
+      ],
     );
   }
 }

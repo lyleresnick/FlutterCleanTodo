@@ -1,5 +1,7 @@
 //  Copyright (c) 2019 Lyle Resnick. All rights reserved.
 
+import 'package:flutter_todo/Scenes/Common/Localize.dart';
+
 import '../UseCase/TodoListUseCase.dart';
 import '../Router/TodoListRouter.dart';
 import '../UseCase/TodoListPresentationModel.dart';
@@ -10,13 +12,12 @@ import 'TodoListPresenterOutput.dart';
 class TodoListPresenter implements TodoListUseCaseOutput {
 
     final TodoListUseCase _useCase;
-    TodoListRouter router;
+    TodoListRouter _router;
     TodoListPresenterOutput output;
 
     List<TodoListRowViewModel> _viewModelList = [];
 
-    TodoListPresenter({TodoListUseCase useCase}) :_useCase = useCase;
-
+    TodoListPresenter({TodoListUseCase useCase, TodoListRouter router}) :_useCase = useCase, _router = router;
 
     void eventViewReady() {
         _useCase.eventViewReady();
@@ -36,7 +37,7 @@ class TodoListPresenter implements TodoListUseCaseOutput {
 
     void eventCreate() {
 
-        router.routeCreateItem((model) {
+        _router.routeCreateItem((model) {
 
             final index = _viewModelList.length;
             _viewModelList.add(TodoListRowViewModel(model));
@@ -46,7 +47,7 @@ class TodoListPresenter implements TodoListUseCaseOutput {
 
     void eventItemSelected(int index) {
 
-        router.routeDisplayItem(_viewModelList[index].id, (model) {
+        _router.routeDisplayItem(_viewModelList[index].id, (model) {
 
             _viewModelList[index] = TodoListRowViewModel(model);
             output.showChanged(index);
@@ -74,6 +75,9 @@ class TodoListPresenter implements TodoListUseCaseOutput {
     void presentTodoListEnd() {
         output.showTodoList();
     }
+
+    String get titleLabel => localizeString("todoList");
+
 
 // TodoListCompleteUseCaseOutput
 

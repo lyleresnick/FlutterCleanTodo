@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 typedef void CheckBoxOnPressed(bool checked);
 class CheckBox extends StatefulWidget {
 
-    final checked;
-    final CheckBoxOnPressed onPressed;
+    final bool _checked;
+    final CheckBoxOnPressed _onPressed;
 
-    CheckBox({this.checked = false, this.onPressed}) ;
+    CheckBox({bool checked = false, CheckBoxOnPressed onPressed})
+        : _checked = checked, _onPressed = onPressed;
 
   @override
   State<StatefulWidget> createState() => CheckBoxState();
@@ -20,7 +21,7 @@ class CheckBoxState extends State<CheckBox> {
 
   @override
   void initState() {
-    _checked = widget.checked;
+    _checked = widget._checked;
     super.initState();
   }
 
@@ -49,7 +50,7 @@ class CheckBoxState extends State<CheckBox> {
       setState(() {
         _checked = !_checked;
       });
-      widget.onPressed(_checked);
+      widget._onPressed(_checked);
   }
 }
 

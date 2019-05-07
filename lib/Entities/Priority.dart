@@ -39,6 +39,23 @@ Priority priorityFromBangs(int bangs) {
     return Priority.none;
 }
 
+int bangsFromPriority(Priority priority) {
+
+    switch(priority) {
+    case Priority.high:
+        return 3;
+    case Priority.medium:
+        return 2;
+    case Priority.low:
+        return 1;
+    case Priority.none:
+        return 0;
+    default:
+        return null;
+    }
+}
+
+
 Priority priorityFromString(String rawValue) {
 
     switch(rawValue) {
@@ -55,3 +72,9 @@ Priority priorityFromString(String rawValue) {
     }
     return Priority.none;
 }
+
+String priorityToString(Priority rawValue) {
+    final nameWithPrefix = rawValue.toString();
+    return nameWithPrefix.split('.').last;
+}
+

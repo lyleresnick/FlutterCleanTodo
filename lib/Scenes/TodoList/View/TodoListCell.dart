@@ -19,43 +19,47 @@ class TodoListCell extends StatelessWidget {
 
         return Dismissible(
             key: Key(Uuid().v1()),
-            child: Container(
-              height: 56,
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border(bottom: BorderSide(color: Colors.grey[300]))
-              ),
+            child: GestureDetector(
+                onTap: () {
+                    presenter.eventItemSelected(index);
+                },
               child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 6),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                        _pictureBox(context),
-                        Container(
-                            padding: EdgeInsets.only(right: 4),
-                            width: 30,
-                            child: Text(viewModel.priority,
-                                    style: textStylePriority(),
-                                    textAlign: TextAlign.end,
-                            )
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                              Text(viewModel.title, style: textStyleTitle()),
-                              Text(viewModel.completeBy, style: textStyleDetail()),
-                          ],
-                        ),
-                    ]
+                height: 56,
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border(bottom: BorderSide(color: Colors.grey[300]))
                 ),
-              )
-          ),
+                child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 6),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                          _pictureBox(context),
+                          Container(
+                              padding: EdgeInsets.only(right: 4),
+                              width: 30,
+                              child: Text(viewModel.priority,
+                                  style: _textStylePriority(),
+                                  textAlign: TextAlign.end,
+                              )
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                                Text(viewModel.title, style: _textStyleTitle()),
+                                Text(viewModel.completeBy, style: _textStyleDetail()),
+                            ],
+                          ),
+                      ]
+                  ),
+                )
+            ),
+            ),
           onDismissed: (direction) {
               presenter.eventDelete(index);
           },
-            background: dismissReveal(context),
-
+          background: _dismissReveal(context),
       );
     }
 
@@ -71,34 +75,33 @@ class TodoListCell extends StatelessWidget {
                         presenter.eventCompleted(index);
                     else
                         presenter.eventNotCompleted(index);
-                    print("clicked $checked");
                 },
             ),
         );
     }
 
-    TextStyle textStylePriority() {
+    TextStyle _textStylePriority() {
         return TextStyle(
             color: Colors.redAccent,
             fontSize: 17,
         );
     }
 
-    TextStyle textStyleTitle() {
+    TextStyle _textStyleTitle() {
         return TextStyle(
             color: Colors.black,
             fontSize: 17,
         );
     }
 
-    TextStyle textStyleDetail() {
+    TextStyle _textStyleDetail() {
         return TextStyle(
             color: Colors.black,
             fontSize: 15,
         );
     }
 
-    Widget dismissReveal(BuildContext context) {
+    Widget _dismissReveal(BuildContext context) {
         return Container(
             alignment: Alignment.centerRight,
             padding: EdgeInsets.only(right: 16.0),

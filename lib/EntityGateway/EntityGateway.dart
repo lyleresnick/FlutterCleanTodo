@@ -1,9 +1,11 @@
+import 'package:flutter_todo/EntityGateway/SqlLiteEntityGateway.dart';
+
 import 'TestEntityGateway.dart';
 import '../Managers/TodoManager.dart';
 
 enum _Implementation {
     test,
-    coreData
+    db
 }
 
 abstract class EntityGateway {
@@ -15,8 +17,8 @@ abstract class EntityGateway {
         switch(gatewayImplementation) {
         case _Implementation.test:
             return TestEntityGateway();
-        case _Implementation.coreData:
-            return null;
+        case _Implementation.db:
+            return SqlLiteEntityGateway();
         }
         return null;
     }

@@ -7,78 +7,79 @@ import 'Result.dart';
 
 class TestTodoManager extends TodoManager {
 
-    void all({CompletionCallback completion}) {
-        completion(ResultSuccess(data: TodoTestData.shared.data));
-    }
-    void completed({String id, bool completed, CompletionCallback completion}) {
-        final todo = _findTodo(id: id);
-        if(todo != null) {
+    Future<Result> all() => Future.value(SuccessResult(data: TodoTestData().data));
+
+    Future<Result> completed({String id, bool completed}) {
+        try {
+            final todo = _findTodo(id: id);
             todo.completed = completed;
-            completion(ResultSuccess(data: todo));
+            return Future.value(SuccessResult(data: todo));
         }
-        else {
-            completion(ResultSemanticError(reason: TodoErrorReason.notFound));
+        on TodoErrorReason catch (reason) {
+            return Future.value(SemanticErrorResult(reason: reason));
         }
     }
 
-    void create({TodoValues values, CompletionCallback completion}) {
+    Future<Result> create({TodoValues values}) {
         final todo = values.toTodo( id: Uuid().v1());
-        TodoTestData.shared.data.add(todo);
-        completion(ResultSuccess(data: todo));
-
+        TodoTestData().data.add(todo);
+        return Future.value(SuccessResult(data: todo));
     }
-    void update({String id, TodoValues values, CompletionCallback completion}) {
-        final todo = _findTodo(id: id);
-        if(todo != null) {
+
+    Future<Result> update({String id, TodoValues values}) {
+
+        try {
+            final todo = _findTodo(id: id);
             values.setOn(todo: todo);
-            completion(ResultSuccess(data: todo));
+            return Future.value(SuccessResult(data: todo));
         }
-        else {
-            completion(ResultSemanticError(reason: TodoErrorReason.notFound));
-        }
-    }
-
-    void fetch({String id, CompletionCallback completion}) {
-        for (final entity in TodoTestData.shared.data) {
-            if (entity.id == id) {
-                completion(ResultSuccess(data: entity));
-                return;
-            }
+        on TodoErrorReason catch (reason) {
+            return Future.value(SemanticErrorResult(reason: reason));
         }
     }
 
-    void delete({String id, CompletionCallback completion}) {
-
-        final index = _findTodoIndex(id: id);
-        if(index != null) {
-            final todo = TodoTestData.shared.data[index];
-            TodoTestData.shared.data.remove(index);
-            completion(ResultSuccess(data: todo));
+    Future<Result> fetch({String id}) {
+        try {
+            final todo = _findTodo(id: id);
+            return Future.value(SuccessResult(data: todo));
         }
-        else {
-            completion(ResultSemanticError(reason: TodoErrorReason.notFound));
+        on TodoErrorReason catch (reason) {
+            return Future.value(SemanticErrorResult(reason: reason));
+        }
+    }
+
+    Future<Result> delete({String id}) {
+
+        try {
+            final index = _findTodoIndex(id: id);
+            final todo = TodoTestData().data[index];
+            TodoTestData().data.remove(index);
+            return Future.value(SuccessResult(data: todo));
+        }
+        on TodoErrorReason catch (reason) {
+            return Future.value(SemanticErrorResult(reason: reason));
         }
     }
 
 
     Todo _findTodo({String id}) {
-        for(final entity in TodoTestData.shared.data) {
+        for(final entity in TodoTestData().data) {
             if(entity.id == id) {
                 return entity;
             }
         }
-        return null;
+        throw TodoErrorReason.notFound;
     }
 
     int _findTodoIndex({String id}) {
         int index = 0;
-        for (final entity in TodoTestData.shared.data) {
+        for (final entity in TodoTestData().data) {
             if(entity.id == id) {
                 return index;
             }
             index++;
         }
-        return null;
+        throw TodoErrorReason.notFound;
     }
 }
 

@@ -18,7 +18,7 @@ class Todo {
 
     static final _inboundDateFormatter = DateFormat("yyyy'-'MM'-'dd");
 
-     factory Todo.fromDictionary(Map<String, String> dictionary) {
+     factory Todo.fromStringValueDictionary(Map<String, String> dictionary) {
 
         final id = dictionary["id"];
         assert(id != null, "Missing id");
@@ -38,6 +38,40 @@ class Todo {
         );
     }
 
+    factory Todo.fromDynamicValueDictionary(Map<String, dynamic> dictionary) {
+
+        final id = dictionary["id"];
+        assert(id != null, "Missing id");
+        final title = dictionary["title"];
+        final note = dictionary["note"];
+        final completeBy = dictionary["completeBy"] as int;
+        final priority = dictionary["priority"] ?? "none";
+        final completed = dictionary["completed"] as int;
+
+        return Todo(
+                id: id,
+                title: title,
+                note: note,
+                completeBy: (completeBy != null) ? _convertSinceEpoch(date: completeBy) : null,
+                priority: priorityFromString(priority),
+                completed: (completed == 1)
+        );
+    }
+
+    Map<String, dynamic> toDynamicValueMap() {
+        return {
+            'id': id,
+            'title': title,
+            'note': note,
+            'completeBy': completeBy?.millisecondsSinceEpoch,
+            'priority': (priority == Priority.none) ? null : priorityToString(priority),
+            'completed': completed ? 1 : 0,
+
+        };
+    }
+
+
+
     static DateTime _convert({dateString: String}) {
         try {
             return _inboundDateFormatter.parse(dateString);
@@ -47,4 +81,9 @@ class Todo {
         }
         return null;
     }
+
+    static DateTime _convertSinceEpoch({date: int}) {
+        return DateTime.fromMillisecondsSinceEpoch(date);
+    }
+
 }

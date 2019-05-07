@@ -29,5 +29,6 @@ class TodoValues {
         todo.priority = this.priority;
         todo.completed = this.completed;
     }
+
 }
 

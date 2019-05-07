@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../Presenter/TodoListPresenter.dart';
 
-
 class TodoListSceneInherited extends InheritedWidget {
     final TodoListPresenter presenter;
 
@@ -18,8 +17,5 @@ class TodoListSceneInherited extends InheritedWidget {
 
     static TodoListSceneInherited of(context) {
         return context.inheritFromWidgetOfExactType(TodoListSceneInherited) as TodoListSceneInherited;
-
     }
-
-
 }

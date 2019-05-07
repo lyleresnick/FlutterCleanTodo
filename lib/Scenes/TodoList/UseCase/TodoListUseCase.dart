@@ -1,6 +1,9 @@
 //  Copyright (c) 2019 Lyle Resnick. All rights reserved.
 
-import 'TodoListUseCaseIncludes.dart';
+import 'TodoListViewReadyUseCaseTransformer.dart';
+import 'TodoListCompletedUseCaseTransformer.dart';
+import 'TodoListDeleteUseCaseTransformer.dart';
+import 'TodoListUseCaseOutput.dart';
 import '../../../EntityGateway/EntityGateway.dart';
 
 class TodoListUseCase {

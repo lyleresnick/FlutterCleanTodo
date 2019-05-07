@@ -4,20 +4,20 @@ abstract class Result {
 }
 
 
-class ResultSuccess<Entity> extends Result {
+class SuccessResult<Entity> extends Result {
     Entity data;
-    ResultSuccess({this.data});
+    SuccessResult({this.data});
 }
 
-class ResultFailure<FailureSource> extends Result {
+class FailureResult<FailureSource> extends Result {
     FailureSource source;
     int code;
     String description;
 
-    ResultFailure({this.source, this.code, this.description});
+    FailureResult({this.source, this.code, this.description});
 }
 
-class ResultSemanticError<Reason> extends Result {
+class SemanticErrorResult<Reason> extends Result {
     Reason reason;
-    ResultSemanticError({this.reason});
+    SemanticErrorResult({this.reason});
 }

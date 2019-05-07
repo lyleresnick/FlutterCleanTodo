@@ -3,34 +3,27 @@
 import '../../../Managers/TodoManager.dart';
 import '../../../Managers/Result.dart';
 
-import 'TodoListUseCaseIncludes.dart';
+import 'TodoListUseCaseTransformer.dart';
+import 'TodoListUseCaseOutput.dart';
+import 'TodoListPresentationModel.dart';
 
 class TodoListViewReadyUseCaseTransformer extends TodoListUseCaseTransformer {
 
     TodoListViewReadyUseCaseTransformer(TodoManager todoManager) : super(todoManager);
 
-    void transform({TodoListViewReadyUseCaseOutput output}) {
+    void transform({TodoListViewReadyUseCaseOutput output}) async {
 
-        todoManager.all(completion: (result) {
-
-            switch(result.runtimeType) {
-            case ResultSuccess:
-                ResultSuccess entity = result;
-                output.presentTodoListBegin();
-                for(final entity in entity.data) {
-                    output.present(TodoListPresentationModel(entity));
-                }
-                output.presentTodoListEnd();
-                break;
-            case ResultFailure:
-                ResultFailure failure = result;
-                assert(false, "Unresolved error: ${failure.description}");
-                break;
-            case ResultSemanticError:
-                ResultSemanticError semanticError = result;
-                assert(false, "semanticError ${semanticError.reason} has not been processed!");
-                break;
+        final result = await todoManager.all();
+        if(result is SuccessResult) {
+            output.presentTodoListBegin();
+            for(final entity in result.data) {
+                output.present(TodoListPresentationModel(entity));
             }
-        });
+            output.presentTodoListEnd();
+        }
+        else if(result is FailureResult)
+            assert(false, "Unresolved error: ${result.description}");
+        else if(result is SemanticErrorResult)
+            assert(false, "Unexpected Semantic error: reason ${result.reason}");
     }
 }

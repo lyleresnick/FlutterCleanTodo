@@ -5,11 +5,15 @@ import 'Entities/Todo.dart';
 class TodoTestData {
     List<Todo> data;
 
-    static get shared =>TodoTestData._private();
+    factory TodoTestData() {
+        return _shared;
+    }
+
+    static final TodoTestData _shared = TodoTestData._private();
 
     TodoTestData._private() {
         data = _todoDictionary.map( (dictionary) =>
-                Todo.fromDictionary(dictionary) ).toList();
+                Todo.fromStringValueDictionary(dictionary) ).toList();
     }
 
     static final List<Map<String, String>> _todoDictionary = [
