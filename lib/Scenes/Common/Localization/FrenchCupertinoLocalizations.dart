@@ -150,4 +150,12 @@ class FrenchCupertinoLocalizations implements CupertinoLocalizations {
 
   @override
   String get todayLabel => "Aujourd'hui";
+
+  @override
+  String get modalBarrierDismissLabel => "Ignorer";
+
+  @override
+  String tabSemanticsLabel({int tabIndex, int tabCount}) {
+    return "Onglet $tabIndex sur $tabCount";
+  }
 }

@@ -19,7 +19,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  intl: ^0.15.8
+ # intl: ^0.15.8
   uuid: ^2.0.1
   sqflite: ^1.1.7
   path: ^1.6.4
