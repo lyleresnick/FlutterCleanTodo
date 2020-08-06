@@ -41,7 +41,7 @@ class TodoListPresenter implements TodoListUseCaseOutput {
 
             final index = _viewModelList.length;
             _viewModelList.add(TodoListRowViewModel(model));
-            output.showAdded(index);
+            output.showAdded(_viewModelList, index);
         });
     }
 
@@ -50,16 +50,8 @@ class TodoListPresenter implements TodoListUseCaseOutput {
         _router.routeDisplayItem(_viewModelList[index].id, (model) {
 
             _viewModelList[index] = TodoListRowViewModel(model);
-            output.showChanged(index);
+            output.showChanged(_viewModelList, index);
         });
-    }
-
-    TodoListRowViewModel row(int index) {
-        return _viewModelList[index];
-    }
-
-    int get rowCount {
-        return _viewModelList.length;
     }
 
 // TodoListViewReadyUseCaseOutput
@@ -73,7 +65,7 @@ class TodoListPresenter implements TodoListUseCaseOutput {
     }
 
     void presentTodoListEnd() {
-        output.showTodoList();
+        output.showTodoList(_viewModelList);
     }
 
     String get titleLabel => localizeString("todoList");
@@ -83,20 +75,18 @@ class TodoListPresenter implements TodoListUseCaseOutput {
 
     void presentCompleted(TodoListPresentationModel model, int index) {
         _viewModelList[index] = TodoListRowViewModel(model);
-
-        // the output was previously updated due to the immediate toggle state change
-        // if this were not the case, an async call would delay the update of the screen
-        // if a network error occurs or it turns out the item was deleted by another user, the app should present a message about the situation and, in the former case, reset the button to the previous state; in the latter case the item should be deleted
+       output.showCompleted(_viewModelList, index);
     }
 
 // TodoListDeleteUseCaseOutput
 
     void presentDeleted(int index) {
         _viewModelList.removeAt(index);
+        output.showDeleted(_viewModelList, index);
     }
 
   @override
   void presentUndoDeleted(int index) {
-      output.showUndoDeleted(index);
+      output.showUndoDeleted(_viewModelList, index);
   }
 }

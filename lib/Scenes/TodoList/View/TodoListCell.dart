@@ -7,10 +7,10 @@ import 'package:uuid/uuid.dart';
 
 class TodoListCell extends StatelessWidget {
 
-    final TodoListRowViewModel viewModel;
+    final TodoListRowViewModel row;
     final int index;
 
-    TodoListCell({@required this.viewModel, @required this.index});
+    TodoListCell({@required this.row, @required this.index});
 
     @override
     Widget build(BuildContext context) {
@@ -18,7 +18,7 @@ class TodoListCell extends StatelessWidget {
         final presenter = TodoListSceneInherited.of(context)?.presenter;
 
         return Dismissible(
-            key: Key(Uuid().v1()),
+            key: UniqueKey(),
             child: GestureDetector(
                 onTap: () {
                     presenter.eventItemSelected(index);
@@ -38,7 +38,7 @@ class TodoListCell extends StatelessWidget {
                           Container(
                               padding: EdgeInsets.only(right: 4),
                               width: 30,
-                              child: Text(viewModel.priority,
+                              child: Text(row.priority,
                                   style: _textStylePriority(),
                                   textAlign: TextAlign.end,
                               )
@@ -47,8 +47,8 @@ class TodoListCell extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                                Text(viewModel.title, style: _textStyleTitle()),
-                                Text(viewModel.completeBy, style: _textStyleDetail()),
+                                Text(row.title, style: _textStyleTitle()),
+                                Text(row.completeBy, style: _textStyleDetail()),
                             ],
                           ),
                       ]
@@ -68,7 +68,7 @@ class TodoListCell extends StatelessWidget {
         return Container(
             padding: EdgeInsets.all(4),
             child: CheckBox(
-                checked: viewModel.completed,
+                checked: row.completed,
                 onPressed: (checked) {
                     final presenter = TodoListSceneInherited.of(context).presenter;
                     if(checked)

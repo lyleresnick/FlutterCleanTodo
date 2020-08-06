@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import '../Presenter/TodoListPresenter.dart';
+import '../Presenter/TodoListRowViewModel.dart';
 import '../Presenter/TodoListPresenterOutput.dart';
 import '../Assembly/TodoListAssembly.dart';
 import 'TodoListCell.dart';
@@ -25,6 +26,7 @@ class TodoListScene extends StatefulWidget {
 class TodoListSceneState extends State<TodoListScene> implements TodoListPresenterOutput {
 
     TodoListPresenter presenter;
+    List<TodoListRowViewModel> _rows = [];
 
     @override
     void initState() {
@@ -48,9 +50,9 @@ class TodoListSceneState extends State<TodoListScene> implements TodoListPresent
                     actions: _actions(platform),
                 ),
                 body: ListView.builder(
-                        itemCount: presenter.rowCount,
+                        itemCount: _rows.length,
                         itemBuilder: (context, index) {
-                            return TodoListCell(viewModel: presenter.row(index), index: index, );
+                            return TodoListCell(row: _rows[index], index: index, );
                         }),
             ),
         );
@@ -76,25 +78,52 @@ class TodoListSceneState extends State<TodoListScene> implements TodoListPresent
 
 // TodoListViewReadyPresenterOutput
     @override
-    void showTodoList() {
-        setState(() {});
+    void showTodoList(List<TodoListRowViewModel> rows) {
+        setState(() {
+            _rows = rows;
+        });
     }
 
 // TodoListDeletePresenterOutput
     @override
-    void showUndoDeleted(int index) {
-        setState(() {});
+    void showUndoDeleted(List<TodoListRowViewModel> rows, int index) {
+        setState(() {
+            _rows = rows;
+        });
+    }
+
+    @override
+    void showDeleted(List<TodoListRowViewModel> rows, int index) {
+        setState(() {
+            _rows = rows; // remove dismissible from tree
+        });
     }
 
     // TodoListChangedPresenterOutput
     @override
-    void showChanged(int index) {
-        setState(() {});
+    void showChanged(List<TodoListRowViewModel> rows, int index) {
+        setState(() {
+            _rows = rows;
+        });
     }
 
 // TodoListCreatePresenterOutput
   @override
-  void showAdded(int index) {
-      setState(() {});
+  void showAdded(List<TodoListRowViewModel> rows, int index) {
+      setState(() {
+          _rows = rows;
+      });
   }
+
+// TodoListCompletePresenterOutput
+    @override
+  void showCompleted(List<TodoListRowViewModel> rows, int index) {
+        _rows = rows;
+
+        // the output was previously updated due to the immediate toggle state change
+        // if this were not the case, an async call would delay the update of the screen
+        // if a network error occurs or it turns out the item was deleted by another user,
+        // the app should present a message about the situation and, in the former case,
+        // reset the button to the previous state; in the latter case the item should be deleted
+    }
 }
