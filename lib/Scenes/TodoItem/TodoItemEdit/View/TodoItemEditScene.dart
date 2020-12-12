@@ -100,58 +100,60 @@ class TodoItemEditSceneState extends State<TodoItemEditScene> implements TodoIte
     @override
   Widget build(BuildContext context) {
 
-    return Padding(
-      padding: const EdgeInsets.all(12.0),
-      child: Column(
-          children: <Widget>[
-              _expandedRow(presenter.titleLabel,
-                  TodoTextField(
-                      value: _title,
-                      placeholder: _titlePlaceholder,
-                      onChanged: presenter.eventEditedTitle,
-                  ),
-              ),
-              _expandedRow(presenter.noteLabel,
-                  TodoTextField(
-                      value: _note,
-                      minLines: 9,
-                      maxLines: 9,
-                      onChanged: presenter.eventEditedNote,
-                  ),
-              ),
-              _row(presenter.completeByLabel,
-                  Row(
-                    children: <Widget>[
-                        TodoSwitch(
-                            state: _completeBySwitchIsOn,
-                            onChanged: (isOn) {
-                                if(isOn)
-                                    presenter.eventCompleteByToday();
-                                else
-                                    presenter.eventCompleteByClear();
-                            },
-                        ),
-                        Container(width: 6),
-                        GestureDetector(
-                            onTap: presenter.eventEnableEditCompleteBy,
-                            child: Text(_completeByString, style: TextStyle(fontSize: 17))),
-                    ],
-                  ),
-              ),
-              _expandedRow(presenter.priorityLabel,
-                  TodoExclusive(
-                      value: _priority,
-                      itemNames: _priorityLabels,
-                      onValueChanged: presenter.eventEditedPriority,
-                  ),
-              ),
-              _row(presenter.completedLabel,
-                  TodoSwitch(
-                      state: _completed,
-                      onChanged: presenter.eventCompleted,
-                  ),
-              )
-          ]
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+            children: <Widget>[
+                _expandedRow(presenter.titleLabel,
+                    TodoTextField(
+                        value: _title,
+                        placeholder: _titlePlaceholder,
+                        onChanged: presenter.eventEditedTitle,
+                    ),
+                ),
+                _expandedRow(presenter.noteLabel,
+                    TodoTextField(
+                        value: _note,
+                        minLines: 9,
+                        maxLines: 9,
+                        onChanged: presenter.eventEditedNote,
+                    ),
+                ),
+                _row(presenter.completeByLabel,
+                    Row(
+                      children: <Widget>[
+                          TodoSwitch(
+                              state: _completeBySwitchIsOn,
+                              onChanged: (isOn) {
+                                  if(isOn)
+                                      presenter.eventCompleteByToday();
+                                  else
+                                      presenter.eventCompleteByClear();
+                              },
+                          ),
+                          Container(width: 6),
+                          GestureDetector(
+                              onTap: presenter.eventEnableEditCompleteBy,
+                              child: Text(_completeByString, style: TextStyle(fontSize: 17))),
+                      ],
+                    ),
+                ),
+                _expandedRow(presenter.priorityLabel,
+                    TodoExclusive(
+                        value: _priority,
+                        itemNames: _priorityLabels,
+                        onValueChanged: presenter.eventEditedPriority,
+                    ),
+                ),
+                _row(presenter.completedLabel,
+                    TodoSwitch(
+                        state: _completed,
+                        onChanged: presenter.eventCompleted,
+                    ),
+                )
+            ]
+        ),
       ),
     );
   }
