@@ -1,5 +1,7 @@
 //  Copyright (c) 2019 Lyle Resnick. All rights reserved.
 
-abstract class TodoItemDisplayPresenterOutput {
-    void show();
-}
+import 'TodoItemDisplayRowViewModel.dart';
+
+abstract class TodoItemDisplayPresenterOutput {}
+class ShowFieldList extends TodoItemDisplayPresenterOutput { List<TodoItemDisplayRowViewModel> model; ShowFieldList(this.model);}
+

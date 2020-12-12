@@ -1,7 +1,9 @@
 //  Copyright (c) 2019 Lyle Resnick. All rights reserved.
 
+import 'dart:async';
+
 import 'package:flutter_todo/Entities/Priority.dart';
-import '../../TodoItemRouter/UseCase/TodoItemUseCaseState.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/UseCase/TodoItemUseCaseState.dart';
 import 'TodoItemDisplayUseCaseOutput.dart';
 
 class TodoItemDisplayViewReadyUseCaseTransformer {
@@ -10,25 +12,25 @@ class TodoItemDisplayViewReadyUseCaseTransformer {
 
     TodoItemDisplayViewReadyUseCaseTransformer(this.state);
 
-    void transform(TodoItemDisplayUseCaseOutput output)  {
+    void transform(StreamSink<TodoItemDisplayUseCaseOutput> output)  {
 
         final todo = state.currentTodo;
-        output.presentBegin();
+        output.add(PresentBegin());
 
-        output.presentString(FieldName.title, todo.title);
+        output.add(PresentString(FieldName.title, todo.title));
         if( todo.note != "" ) {
-            output.presentString(FieldName.note, todo.note);
+            output.add(PresentString(FieldName.note, todo.note));
         }
         if (todo.completeBy != null) {
-            output.presentDate(FieldName.completeBy, todo.completeBy);
+            output.add(PresentDate(FieldName.completeBy, todo.completeBy));
         }
         switch(todo.priority) {
         case Priority.none:
             break;
         default:
-            output.presentPriority(FieldName.priority, todo.priority);
+            output.add(PresentPriority(FieldName.priority, todo.priority));
         }
-        output.presentBool(FieldName.completed, todo.completed);
-        output.presentEnd();
+        output.add(PresentBool(FieldName.completed, todo.completed));
+        output.add(PresentEnd());
     }
 }

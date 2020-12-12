@@ -1,129 +1,102 @@
 //  Copyright (c) 2019 Lyle Resnick. All rights reserved.
 
+import 'dart:async';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:flutter_todo/Entities/Priority.dart';
-import 'package:flutter_todo/Scenes/Common/Localize.dart';
-
-import '../UseCase/TodoItemEditUseCase.dart';
-import '../UseCase/TodoItemEditUseCaseOutput.dart';
-import '../UseCase/TodoItemEditPresentationModel.dart';
-import '../Router/TodoItemEditRouter.dart';
+import 'package:flutter_todo/Scenes/Common/Bloc.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemEdit/Router/TodoItemEditRouter.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemEdit/UseCase/TodoItemEditUseCase.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemEdit/UseCase/TodoItemEditUseCaseOutput.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemEdit/View/TodoItemEditScene.dart';
 
 import 'TodoItemEditViewModel.dart';
 import 'TodoItemEditPresenterOutput.dart';
 
-class TodoItemEditPresenter implements TodoItemEditUseCaseOutput {
+class TodoItemEditPresenter extends Bloc {
 
-    final TodoItemEditUseCase _useCase;
-    final TodoItemEditRouter _router;
+    final TodoItemEditUseCase useCase;
+    final TodoItemEditRouter router;
+    BuildContext buildContext;
 
-    TodoItemEditPresenterOutput output;
+    final _controller = StreamController<TodoItemEditPresenterOutput>();
+    get stream => _controller.stream;
 
-    TodoItemEditPresenter({@required TodoItemEditUseCase useCase, @required TodoItemEditRouter router})
-      : _useCase = useCase,
-        _router = router ;
-    
+    TodoItemEditPresenter({@required this.useCase, @required this.router}) {
+
+        useCase.stream
+            .listen((event) {
+                if (event is PresentModel) {
+                    _controller.sink.add(ShowModel(TodoItemEditViewModel.fromModel(event.model)));
+                }
+                else if (event is PresentSaveCompleted) {
+                    router.routeSaveCompleted();
+                }
+                else if (event is PresentEnableEditCompleteBy) {
+                    TodoItemEditScene.showEnableEditCompleteBy(this, event.completeBy);
+                }
+                else if (event is PresentTitleIsEmpty) {
+                    TodoItemEditScene.showTitleIsEmpty(this);
+                }
+            });
+    }
+
     void eventViewReady() {
-        _useCase.eventViewReady();
+        useCase.eventViewReady();
     }
 
     void eventEditedTitle(String title) {
-        _useCase.eventEditedTitle(title);
+        useCase.eventEditedTitle(title);
     }
 
     void eventEditedNote(String note) {
-        _useCase.eventEditedNote(note);
+        useCase.eventEditedNote(note);
     }
 
     void eventCompleteByClear() {
-        _useCase.eventCompleteByClear();
+        useCase.eventCompleteByClear();
     }
 
     void eventCompleteByToday() {
-        _useCase.eventCompleteByToday();
+        useCase.eventCompleteByToday();
     }
 
-    void eventEnableEditCompleteBy() {
-        _useCase.eventEnableEditCompleteBy();
+    void eventEnableEditCompleteBy(BuildContext context) {
+        buildContext = context;
+        useCase.eventEnableEditCompleteBy();
     }
 
     void eventEditedCompleteBy(DateTime completeBy) {
-        _useCase.eventEditedCompleteBy(completeBy);
+        useCase.eventEditedCompleteBy(completeBy);
     }
 
     void eventCompleted(bool completed) {
-        _useCase.eventCompleted(completed);
+        useCase.eventCompleted(completed);
     }
 
     void eventEditedPriority(int index) {
     
         final priority = priorityFromBangs(index);
-        _useCase.eventEditedPriority(priority);
+        useCase.eventEditedPriority(priority);
     }
 
-    void eventSave() {
-        _useCase.eventSave();
+    void eventSave(BuildContext context) {
+        buildContext = context;
+        useCase.eventSave();
     }
 
     void eventCancel() {
-        _router.routeEditingCancelled();
+        router.routeEditingCancelled();
     }
 
-    String get saveLabel => localizeString("save");
-    String get titleLabel => localizeString("title");
-    String get noteLabel => localizeString("note");
-    String get completeByLabel => localizeString("completeBy");
-    String get priorityLabel => localizeString("priority");
-    String get completedLabel => localizeString("completed");
-    String get setLabel => localizeString("set");
-
-
-    // TodoItemEditUseCaseOutput
-    
-    // TodoItemEditViewReadyUseCaseOutput
-    
-    void presentModel(TodoItemEditPresentationModel model) {
-        presentWithLocalizations(TodoItemEditViewModel.fromModel(model));
+    @override
+    void dispose() {
+        useCase.dispose();
+        _controller.close();
     }
 
-    void presentNewModel() {
-        presentWithLocalizations(TodoItemEditViewModel());
-    }
-
-    void presentWithLocalizations(TodoItemEditViewModel model) {
-        output.showModel(model,
-                localizeString("enterATitle"),
-                ["none", "low", "medium", "high"].map((value) => localizeString(value)).toList()
-        );
-    }
-
-// TodoItemEditCompleteByUseCaseOutput
-
-    void presentCompleteByClear() {
-        output.showCompleteByClear();
-    }
-
-    void presentEnableEditCompleteBy(DateTime completeBy) {
-        output.showEnableEditCompleteBy(completeBy);
-    }
-
-    void presentCompleteBy(DateTime completeBy) {
-    
-        output.showCompleteBy( (completeBy != null)
-            ? localizeDate(completeBy)
-            : "");
-    }
-
-    // TodoItemEditSaveUseCaseOutput
-
-    void presentSaveCompleted() {
-        _router.routeSaveCompleted();
-    }
-
-    void presentTitleIsEmpty() {
-        output.showTitleIsEmpty(localizeString("titleRequiredTitle"), localizeString("titleRequiredMessage"));
-    }
 }
 
 

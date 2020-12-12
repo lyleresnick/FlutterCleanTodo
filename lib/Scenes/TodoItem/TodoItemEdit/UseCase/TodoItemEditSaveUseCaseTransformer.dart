@@ -1,11 +1,12 @@
 //  Copyright (c) 2019 Lyle Resnick. All rights reserved.
 
+import 'dart:async';
+
 import 'package:flutter_todo/Managers/TodoManager.dart';
 import 'package:flutter_todo/Managers/TodoValues.dart';
 import 'package:flutter_todo/Managers/Result.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemEditMode.dart';
-
-import '../../TodoItemRouter/UseCase/TodoItemUseCaseState.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/UseCase/TodoItemUseCaseState.dart';
 
 import 'TodoItemEditUseCaseOutput.dart';
 import 'TodoItemEditUseCase.dart';
@@ -13,24 +14,21 @@ import 'TodoItemEditUseCase.dart';
 
 class TodoItemEditSaveUseCaseTransformer {
 
-    final TodoItemEditMode _editMode;
-    final TodoManager _todoManager;
-    final TodoItemUseCaseState _state;
+    final TodoItemEditMode editMode;
+    final TodoManager todoManager;
+    final TodoItemUseCaseState state;
 
-    TodoItemEditSaveUseCaseTransformer(TodoItemEditMode editMode, TodoManager todoManager, TodoItemUseCaseState state)
-      : _editMode = editMode,
-        _todoManager = todoManager,
-        _state = state;
+    TodoItemEditSaveUseCaseTransformer(this.editMode, this.todoManager, this.state);
 
-    void transform(EditingTodo editingTodo, TodoItemEditSaveUseCaseOutput output) async {
+    void transform(EditingTodo editingTodo, StreamSink<TodoItemEditUseCaseOutput> output) async {
 
         void completion(Result result) {
 
             if(result is SuccessResult) {
-                _state.currentTodo = result.data;
-                _state.itemChanged = true;
+                state.currentTodo = result.data;
+                state.itemChanged = true;
 
-                output.presentSaveCompleted();
+                output.add(PresentSaveCompleted());
             }
             else if(result is FailureResult)
                 assert(false, "Unresolved error: ${result.description}");
@@ -40,7 +38,7 @@ class TodoItemEditSaveUseCaseTransformer {
 
         if(editingTodo.title != "") {
 
-            switch(_editMode) {
+            switch(editMode) {
             case TodoItemEditMode.create:
                 completion(await _create(editingTodo));
                 break;
@@ -50,17 +48,17 @@ class TodoItemEditSaveUseCaseTransformer {
             }
         }
         else {
-            output.presentTitleIsEmpty();
+            output.add(PresentTitleIsEmpty());
         }
     }
 
     Future<Result> _create(EditingTodo editingTodo) async{
-        return await _todoManager.create(
+        return await todoManager.create(
             values: _todoValuesFromEditingTodo(editingTodo));
     }
 
     Future<Result> _update(EditingTodo editingTodo) async {
-        return await _todoManager.update(
+        return await todoManager.update(
             id: editingTodo.id,
             values: _todoValuesFromEditingTodo(editingTodo));
     }

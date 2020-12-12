@@ -1,27 +1,27 @@
 //  Copyright © 2019 Lyle Resnick. All rights reserved.
 
-import '../View/TodoItemRouterScene.dart';
-import '../Presenter/TodoItemRouterPresenter.dart';
-import '../UseCase/TodoItemRouterUseCase.dart';
-import 'package:flutter_todo/Scenes/TodoItem/TodoItemStartMode.dart';
-import '../../TodoItemRouter/Router/TodoItemRouterRouter.dart';
+import 'package:flutter/foundation.dart';
 
+import 'package:flutter_todo/EntityGateway/EntityGateway.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/Presenter/TodoItemRouterPresenter.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/Router/TodoItemRouterRouter.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/UseCase/TodoItemRouterUseCase.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/UseCase/TodoItemUseCaseState.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/View/TodoItemRouterScene.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemStartMode.dart';
 
 class TodoItemRouterAssembly {
 
     final TodoItemRouterScene scene;
-    final TodoItemRouterPresenter presenter;
-    final TodoItemRouterUseCase useCase;
-
-    TodoItemRouterAssembly._({this.scene, this.useCase, this.presenter});
+    TodoItemRouterAssembly._({@required this.scene});
 
     factory TodoItemRouterAssembly(TodoItemRouterRouter router, TodoItemStartMode startMode) {
 
-        final useCase = TodoItemRouterUseCase();
+        final useCaseState = TodoItemUseCaseState();
+        final useCase = TodoItemRouterUseCase(entityGateway: EntityGateway.entityGateway, useCaseState: useCaseState);
         final presenter = TodoItemRouterPresenter(useCase: useCase, router: router, startMode: startMode);
-        final scene = TodoItemRouterScene(presenter: presenter);
-        useCase.output = presenter;
+        final scene = TodoItemRouterScene(presenter: presenter, useCaseState: useCaseState);
 
-        return TodoItemRouterAssembly._(scene: scene, useCase: useCase, presenter: presenter);
+        return TodoItemRouterAssembly._(scene: scene);
     }
 }

@@ -1,88 +1,89 @@
 //  Copyright (c) 2019 Lyle Resnick. All rights reserved.
 
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter_todo/Scenes/Common/Bloc.dart';
 import 'package:flutter_todo/Scenes/Common/Localize.dart';
-import 'package:flutter_todo/Scenes/TodoList/UseCase/TodoListPresentationModel.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemDisplay/Router/TodoItemDisplayRouter.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemEdit/Router/TodoItemEditRouter.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/Router/TodoItemRouterRouter.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/UseCase/TodoItemRouterUseCase.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/UseCase/TodoItemRouterUseCaseOutput.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemStartMode.dart';
 
-import '../UseCase/TodoItemRouterUseCase.dart';
-import '../Router/TodoItemRouterRouter.dart';
-import '../UseCase/TodoItemRouterUseCaseOutput.dart';
-import '../../TodoItemDisplay/Router/TodoItemDisplayRouter.dart';
-import '../../TodoItemEdit/Router/TodoItemEditRouter.dart';
 
 import 'TodoItemRouterPresenterOutput.dart';
 
-class TodoItemRouterPresenter implements TodoItemRouterUseCaseOutput, TodoItemDisplayRouter, TodoItemEditRouter  {
+class TodoItemRouterPresenter extends Bloc implements TodoItemDisplayRouter, TodoItemEditRouter  {
 
-    final TodoItemRouterUseCase _useCase;
-    final TodoItemRouterRouter _router;
-    final TodoItemStartMode _startMode;
+    final TodoItemRouterUseCase useCase;
+    final TodoItemRouterRouter router;
+    final TodoItemStartMode startMode;
 
-    TodoItemRouterPresenterOutput output;
+    final _controller = StreamController<TodoItemRouterPresenterOutput>();
+    Stream<TodoItemRouterPresenterOutput> get stream => _controller.stream;
 
-    TodoItemRouterPresenter({TodoItemRouterUseCase useCase, TodoItemRouterRouter router, TodoItemStartMode startMode})
-        : _useCase = useCase,
-          _router = router,
-          _startMode = startMode;
+    TodoItemRouterPresenter({@required this.useCase, @required this.router, @required this.startMode}) {
+        useCase.stream
+            .listen((event) {
+                if (event is PresentViewReady) {
+                    _controller.sink.add(ShowViewReady(event.startMode));
+                }
+                else if (event is PresentChanged) {
+                    startMode.todoListChangedItemCallback(event.item);
+                }
+                else if (event is PresentNotFound) {
+                    final message = "todoNotFound"; //.localized
+                    //final message = String(format: messageFormat, id)
+                    _controller.sink.add(ShowMessageView(message));
+
+                }
+            });
+    }
 
     void eventViewReady() {
-        _useCase.eventViewReady(startMode: _startMode);
+        useCase.eventViewReady(startMode: startMode);
     }
 
     Future<bool> eventBack() async {
-        _useCase.eventBack();
+        useCase.eventBack();
         return true;
     }
 
     String get titleLabel => localizeString('todo');
 
-// TodoItemRouterUseCaseOutput
-
-// TodoItemRouterBackUseCaseOutput
-
-    @override
-    void presentChanged(TodoListPresentationModel item) {
-        _startMode.todoListChangedItemCallback(item);
-    }
-
-// TodoItemRouterViewReadyUseCaseOutput
-
-    @override
-    void presentViewReady(TodoItemStartMode startMode) {
-        output.showViewReady(startMode);
-    }
-
-    @override
-    void presentNotFound(String id) {
-        final message = "todoNotFound"; //.localized
-        //final message = String(format: messageFormat, id)
-        output.showMessageView(message);
-    }
 
 //  TodoItemDisplayRouter
 
   @override
   void routeEditView() {
-    output.showEditView();
+      _controller.sink.add(ShowEditView());
   }
 
 //  TodoItemEditRouter
 
     @override
     void routeSaveCompleted() {
-        output.showDisplayView();
+        _controller.sink.add(ShowDisplayView());
     }
 
     @override
     void routeEditingCancelled() {
-        switch(_startMode.runtimeType) {
+        switch(startMode.runtimeType) {
         case TodoItemStartModeUpdate:
-            output.showDisplayView();
+            _controller.sink.add(ShowDisplayView());
             break;
         case TodoItemStartModeCreate:
-            _router.routeCreateItemCancelled();
+            router.routeCreateItemCancelled();
             break;
         }
+    }
+
+    @override
+    void dispose() {
+        useCase.dispose();
+        _controller.close();
     }
 }
 

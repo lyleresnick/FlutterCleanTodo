@@ -1,92 +1,91 @@
 //  Copyright (c) 2019 Lyle Resnick. All rights reserved.
 
-import 'package:flutter_todo/Scenes/Common/Localize.dart';
+import 'dart:async';
 
-import '../UseCase/TodoListUseCase.dart';
-import '../Router/TodoListRouter.dart';
-import '../UseCase/TodoListPresentationModel.dart';
-import '../UseCase/TodoListUseCaseOutput.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_todo/Scenes/Common/Bloc.dart';
+import 'package:flutter_todo/Scenes/Common/Localize.dart';
+import 'package:flutter_todo/Scenes/TodoList/Router/TodoListRouter.dart';
+import 'package:flutter_todo/Scenes/TodoList/UseCase/TodoListUseCase.dart';
+import 'package:flutter_todo/Scenes/TodoList/UseCase/TodoListUseCaseOutput.dart';
+
 import 'TodoListRowViewModel.dart';
 import 'TodoListPresenterOutput.dart';
 
-class TodoListPresenter implements TodoListUseCaseOutput {
+class TodoListPresenter extends Bloc {
 
-    final TodoListUseCase _useCase;
-    TodoListRouter _router;
-    TodoListPresenterOutput output;
+    final TodoListUseCase useCase;
+    final TodoListRouter router;
+    final _controller = StreamController<TodoListPresenterOutput>();
+    Stream<TodoListPresenterOutput> get stream => _controller.stream;
 
     List<TodoListRowViewModel> _viewModelList = [];
 
-    TodoListPresenter({TodoListUseCase useCase, TodoListRouter router}) :_useCase = useCase, _router = router;
+    TodoListPresenter({@required this.useCase, @required this.router}) {
+        useCase.stream
+            .listen((event) {
+                if (event is PresentBegin) {
+                    _viewModelList = [];
+                }
+                else if (event is PresentItem) {
+                    _viewModelList.add(TodoListRowViewModel(event.model));
+                }
+                else if (event is PresentEnd) {
+                    _controller.sink.add(ShowTodoList(_viewModelList));
+                }
+                else if (event is PresentCompleted) {
+                    _viewModelList[event.index] = TodoListRowViewModel(event.model);
+                    _controller.sink.add(ShowTodoList(_viewModelList));
+                }
+                else if (event is PresentDeleted) {
+                    _viewModelList.removeAt(event.index);
+                    _controller.sink.add(ShowTodoList(_viewModelList));
+                }
+                else if (event is PresentUndoDeleted) {
+                    _controller.sink.add(ShowTodoList(_viewModelList));
+                }
+            });
+    }
+
+    String get titleLabel => localizeString("todoList");
 
     void eventViewReady() {
-        _useCase.eventViewReady();
+        useCase.eventViewReady();
     }
 
     void eventCompleted(int index) {
-        _useCase.eventCompleted(true, index, _viewModelList[index].id);
+        useCase.eventCompleted(true, index, _viewModelList[index].id);
     }
 
     void eventNotCompleted(int index) {
-        _useCase.eventCompleted(false, index, _viewModelList[index].id);
+        useCase.eventCompleted(false, index, _viewModelList[index].id);
     }
 
     void eventDelete(int index) {
-        _useCase.eventDelete(index, _viewModelList[index].id);
+        useCase.eventDelete(index, _viewModelList[index].id);
     }
 
     void eventCreate() {
 
-        _router.routeCreateItem((model) {
+        router.routeCreateItem((model) {
 
-            final index = _viewModelList.length;
             _viewModelList.add(TodoListRowViewModel(model));
-            output.showAdded(_viewModelList, index);
+            _controller.sink.add(ShowTodoList(_viewModelList));
         });
     }
 
     void eventItemSelected(int index) {
 
-        _router.routeDisplayItem(_viewModelList[index].id, (model) {
+        router.routeDisplayItem(_viewModelList[index].id, (model) {
 
             _viewModelList[index] = TodoListRowViewModel(model);
-            output.showChanged(_viewModelList, index);
+            _controller.sink.add(ShowTodoList(_viewModelList));
         });
     }
 
-// TodoListViewReadyUseCaseOutput
-
-    void presentTodoListBegin() {
-        _viewModelList = [];
+    @override
+    void dispose() {
+        useCase.dispose();
+        _controller.close();
     }
-
-    void present(TodoListPresentationModel model) {
-        _viewModelList.add(TodoListRowViewModel(model));
-    }
-
-    void presentTodoListEnd() {
-        output.showTodoList(_viewModelList);
-    }
-
-    String get titleLabel => localizeString("todoList");
-
-
-// TodoListCompleteUseCaseOutput
-
-    void presentCompleted(TodoListPresentationModel model, int index) {
-        _viewModelList[index] = TodoListRowViewModel(model);
-       output.showCompleted(_viewModelList, index);
-    }
-
-// TodoListDeleteUseCaseOutput
-
-    void presentDeleted(int index) {
-        _viewModelList.removeAt(index);
-        output.showDeleted(_viewModelList, index);
-    }
-
-  @override
-  void presentUndoDeleted(int index) {
-      output.showUndoDeleted(_viewModelList, index);
-  }
 }

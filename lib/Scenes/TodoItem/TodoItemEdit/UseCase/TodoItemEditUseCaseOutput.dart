@@ -2,27 +2,10 @@
 
 import 'TodoItemEditPresentationModel.dart';
 
-abstract class TodoItemEditUseCaseOutput implements
-    TodoItemEditViewReadyUseCaseOutput,
-    TodoItemEditSaveUseCaseOutput,
-    TodoItemEditCompleteByUseCaseOutput {}
+abstract class TodoItemEditUseCaseOutput {}
 
-abstract class TodoItemEditViewReadyUseCaseOutput {
-
-    void presentModel(TodoItemEditPresentationModel model);
-    void presentNewModel();
-}
-
-abstract class TodoItemEditSaveUseCaseOutput {
-
-    void presentSaveCompleted();
-    void presentTitleIsEmpty();
-}
-
-abstract class TodoItemEditCompleteByUseCaseOutput {
-
-    void presentEnableEditCompleteBy(DateTime completeBy);
-    void presentCompleteByClear();
-    void presentCompleteBy(DateTime completeBy);
-}
+class PresentModel extends TodoItemEditUseCaseOutput { final TodoItemEditPresentationModel model; PresentModel(this.model); }
+class PresentSaveCompleted extends TodoItemEditUseCaseOutput {}
+class PresentTitleIsEmpty extends TodoItemEditUseCaseOutput {}
+class PresentEnableEditCompleteBy extends TodoItemEditUseCaseOutput { final DateTime completeBy; PresentEnableEditCompleteBy(this.completeBy); }
 

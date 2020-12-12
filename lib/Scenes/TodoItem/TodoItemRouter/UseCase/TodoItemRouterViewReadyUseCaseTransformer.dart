@@ -1,24 +1,22 @@
 //  Copyright (c) 2019 Lyle Resnick. All rights reserved.
 
+import 'dart:async';
+
 import 'package:flutter_todo/Managers/TodoManager.dart';
 import 'package:flutter_todo/Managers/Result.dart';
-
-import '../../TodoItemStartMode.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemStartMode.dart';
 
 import 'TodoItemRouterUseCaseOutput.dart';
 import 'TodoItemUseCaseState.dart';
 
 class TodoItemRouterViewReadyUseCaseTransformer {
 
-    final TodoManager _todoManager;
-    final TodoItemUseCaseState _state;
+    final TodoManager todoManager;
+    final TodoItemUseCaseState state;
 
-    TodoItemRouterViewReadyUseCaseTransformer(TodoManager todoManager,
-            TodoItemUseCaseState state)
-          :  _todoManager = todoManager,
-            _state = state;
+    TodoItemRouterViewReadyUseCaseTransformer(this.todoManager, this.state);
 
-    void transform({TodoItemStartMode startMode, TodoItemRouterViewReadyUseCaseOutput output}) {
+    void transform({TodoItemStartMode startMode, StreamSink<TodoItemRouterUseCaseOutput> output}) {
 
         switch(startMode.runtimeType) {
         case TodoItemStartModeCreate:
@@ -32,30 +30,29 @@ class TodoItemRouterViewReadyUseCaseTransformer {
         }
     }
 
-    void _startCreate(TodoItemStartModeCreate startMode, TodoItemRouterViewReadyUseCaseOutput output) {
+    void _startCreate(TodoItemStartModeCreate startMode, StreamSink<TodoItemRouterUseCaseOutput> output) {
 
-        _state.currentTodo = null;
-        output.presentViewReady(startMode);
+        state.currentTodo = null;
+        output.add(PresentViewReady(startMode));
     }
 
-    void _startUpdate(TodoItemStartModeUpdate startMode, TodoItemRouterViewReadyUseCaseOutput output) async {
+    void _startUpdate(TodoItemStartModeUpdate startMode, StreamSink<TodoItemRouterUseCaseOutput> output) async {
 
-        final result = await _todoManager.fetch(id: startMode.id);
+        final result = await todoManager.fetch(id: startMode.id);
 
         if(result is SuccessResult) {
-            _state.currentTodo = result.data;
-            output.presentViewReady(startMode);
+            state.currentTodo = result.data;
+            output.add(PresentViewReady(startMode));
         }
         else if(result is FailureResult)
             assert(false, "Unresolved error: ${result.description}");
         else if(result is SemanticErrorResult) {
             switch (result.reason) {
                 case TodoErrorReason.notFound:
-                    output.presentNotFound(startMode.id);
+                    output.add(PresentNotFound(startMode.id));
                     break;
                 default:
-                    assert(false, "Unexpected Semantic error: reason ${result
-                            .reason}");
+                    assert(false, "Unexpected Semantic error: reason ${result.reason}");
             }
         }
     }

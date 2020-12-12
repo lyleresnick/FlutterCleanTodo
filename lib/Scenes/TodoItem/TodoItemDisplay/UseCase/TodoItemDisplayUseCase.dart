@@ -1,31 +1,30 @@
 //  Copyright (c) 2019 Lyle Resnick. All rights reserved.
 
-import 'package:flutter_todo/UseCaseStore/UseCaseStore.dart';
-import 'package:flutter_todo/UseCaseStore/RealUseCaseStore.dart';
-import 'package:flutter_todo/Scenes/TodoItem/TodoItemEditMode.dart';
+import 'dart:async';
 
-import '../../TodoItemRouter/UseCase/TodoItemUseCaseState.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_todo/Scenes/Common/Bloc.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/UseCase/TodoItemUseCaseState.dart';
 
 import 'TodoItemDisplayViewReadyUseCaseTransformer.dart';
 import 'TodoItemDisplayUseCaseOutput.dart';
 
-class TodoItemDisplayUseCase {
+class TodoItemDisplayUseCase extends Bloc {
 
-    TodoItemDisplayUseCaseOutput output;
-    final UseCaseStore _useCaseStore;
-    TodoItemUseCaseState _itemState;
+    final _controller = StreamController<TodoItemDisplayUseCaseOutput>();
+    Stream<TodoItemDisplayUseCaseOutput> get stream => _controller.stream;
+    TodoItemUseCaseState useCaseState;
 
-
-    TodoItemDisplayUseCase({UseCaseStore useCaseStore})
-        : _useCaseStore  = useCaseStore ?? RealUseCaseStore.store {
-
-        _itemState = _useCaseStore.getObject(itemStateKey);
-    }
+    TodoItemDisplayUseCase({@required this.useCaseState});
 
     void eventViewReady() {
+        final transformer = TodoItemDisplayViewReadyUseCaseTransformer(useCaseState);
+        transformer.transform(_controller.sink);
+    }
 
-        final transformer = TodoItemDisplayViewReadyUseCaseTransformer(_itemState);
-        transformer.transform(output);
+    @override
+    void dispose() {
+        _controller.close();
     }
 
 }

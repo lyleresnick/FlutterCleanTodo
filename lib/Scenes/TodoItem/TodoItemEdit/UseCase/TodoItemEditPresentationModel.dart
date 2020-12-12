@@ -1,5 +1,6 @@
 //  Copyright (c) 2019 Lyle Resnick. All rights reserved.
 
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemEdit/UseCase/TodoItemEditUseCase.dart';
 import 'package:meta/meta.dart';
 import 'package:flutter_todo/Entities/Todo.dart';
 import 'package:flutter_todo/Entities/Priority.dart';
@@ -8,7 +9,7 @@ class TodoItemEditPresentationModel {
 
     final String title;
     final String note;
-    final DateTime _completeBy;
+    DateTime _completeBy;
     final int priority;
     bool completed;
 
@@ -31,4 +32,15 @@ class TodoItemEditPresentationModel {
             completed: entity.completed
         );
     }
+
+    factory TodoItemEditPresentationModel.fromEditingTodo(EditingTodo editingTodo) {
+        return TodoItemEditPresentationModel(
+                title: editingTodo.title,
+                note: editingTodo.note,
+                completeBy: editingTodo.completeBy,
+                priority: bangsFromPriority(editingTodo.priority),
+                completed: editingTodo.completed
+        );
+    }
+
 }

@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 
 abstract class ActionDecoratedScene {
-    Widget leading(TargetPlatform platform);
-    List<Widget> actions(TargetPlatform platform);
+    Widget leading();
+    List<Widget> actions();
     bool get automaticallyImplyLeading;
 }
 

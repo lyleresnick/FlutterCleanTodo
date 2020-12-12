@@ -2,23 +2,6 @@
 
 import 'TodoItemEditViewModel.dart';
 
-abstract class TodoItemEditPresenterOutput implements
-    TodoItemEditViewReadyPresenterOutput,
-    TodoItemEditCompleteByPresenterOutput,
-    TodoItemEditSavePresenterOutput {}
+abstract class TodoItemEditPresenterOutput {}
 
-abstract class TodoItemEditViewReadyPresenterOutput {
-
-    void showModel(TodoItemEditViewModel model, String titlePlaceholder, List<String> priorityLabels);
-}
-
-abstract class TodoItemEditCompleteByPresenterOutput {
-
-    void showCompleteBy(String completeBy);
-    void showEnableEditCompleteBy(DateTime completeBy);
-    void showCompleteByClear();
-}
-
-abstract class TodoItemEditSavePresenterOutput {
-    void showTitleIsEmpty(String alertTitle, String message);
-}
+class ShowModel extends TodoItemEditPresenterOutput { final TodoItemEditViewModel model; ShowModel(this.model); }

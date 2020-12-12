@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../Presenter/TodoListRowViewModel.dart';
-import 'TodoListSceneInherited.dart';
+import 'package:flutter_todo/Scenes/Common/BlocProvider.dart';
+import 'package:flutter_todo/Scenes/TodoList/Presenter/TodoListPresenter.dart';
+import 'package:flutter_todo/Scenes/TodoList/Presenter/TodoListRowViewModel.dart';
 import 'CheckBox.dart';
-import 'package:uuid/uuid.dart';
 
 
 class TodoListCell extends StatelessWidget {
@@ -15,7 +15,7 @@ class TodoListCell extends StatelessWidget {
     @override
     Widget build(BuildContext context) {
 
-        final presenter = TodoListSceneInherited.of(context)?.presenter;
+        final presenter = BlocProvider.of<TodoListPresenter>(context);
 
         return Dismissible(
             key: UniqueKey(),
@@ -70,7 +70,7 @@ class TodoListCell extends StatelessWidget {
             child: CheckBox(
                 checked: row.completed,
                 onPressed: (checked) {
-                    final presenter = TodoListSceneInherited.of(context).presenter;
+                    final presenter = BlocProvider.of<TodoListPresenter>(context);
                     if(checked)
                         presenter.eventCompleted(index);
                     else

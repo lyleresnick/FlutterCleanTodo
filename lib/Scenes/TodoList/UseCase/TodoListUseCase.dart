@@ -1,34 +1,46 @@
 //  Copyright (c) 2019 Lyle Resnick. All rights reserved.
 
+import 'dart:async';
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_todo/EntityGateway/EntityGateway.dart';
+import 'package:flutter_todo/Scenes/Common/Bloc.dart';
+
 import 'TodoListViewReadyUseCaseTransformer.dart';
 import 'TodoListCompletedUseCaseTransformer.dart';
 import 'TodoListDeleteUseCaseTransformer.dart';
 import 'TodoListUseCaseOutput.dart';
-import '../../../EntityGateway/EntityGateway.dart';
 
-class TodoListUseCase {
+class TodoListUseCase extends Bloc {
 
-    TodoListUseCaseOutput output;
-    final EntityGateway _entityGateway;
+    final _controller = StreamController<TodoListUseCaseOutput>();
+    Stream<TodoListUseCaseOutput> get stream => _controller.stream;
 
-    TodoListUseCase({EntityGateway entityGateway})
-            : _entityGateway = entityGateway ?? EntityGateway.entityGateway;
+    final EntityGateway entityGateway;
+
+    TodoListUseCase({@required this.entityGateway});
 
     void eventViewReady() {
 
-        final transformer = TodoListViewReadyUseCaseTransformer(_entityGateway.todoManager);
-        transformer.transform(output: output);
+        final transformer = TodoListViewReadyUseCaseTransformer(entityGateway.todoManager);
+        transformer.transform(output: _controller.sink);
     }
 
     void eventCompleted(bool completed, int index, String id) {
 
-        final transformer = TodoListCompletedUseCaseTransformer(_entityGateway.todoManager);
-        transformer.transform(completed, index, id, output);
+        final transformer = TodoListCompletedUseCaseTransformer(entityGateway.todoManager);
+        transformer.transform(completed, index, id, _controller.sink);
     }
 
     void eventDelete(int index, String id) {
 
-        final transformer = TodoListDeleteUseCaseTransformer(_entityGateway.todoManager);
-        transformer.transform(index, id, output);
+        final transformer = TodoListDeleteUseCaseTransformer(entityGateway.todoManager);
+        transformer.transform(index, id, _controller.sink);
     }
+
+    @override
+    void dispose() {
+        _controller.close();
+    }
+
 }

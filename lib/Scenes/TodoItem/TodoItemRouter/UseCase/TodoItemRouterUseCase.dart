@@ -1,48 +1,42 @@
 //  Copyright (c) 2018 Lyle Resnick. All rights reserved.
 
-import 'package:flutter_todo/EntityGateway/EntityGateway.dart';
-import 'package:flutter_todo/UseCaseStore/UseCaseStore.dart';
-import 'package:flutter_todo/UseCaseStore/RealUseCaseStore.dart';
-import 'package:flutter_todo/Scenes/TodoList/UseCase/TodoListPresentationModel.dart';
+import 'dart:async';
+import 'package:flutter/foundation.dart';
 
-import '../../TodoItemStartMode.dart';
-import '../../TodoItemEditMode.dart';
+import 'package:flutter_todo/EntityGateway/EntityGateway.dart';
+import 'package:flutter_todo/Scenes/Common/Bloc.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemStartMode.dart';
+import 'package:flutter_todo/Scenes/TodoList/UseCase/TodoListPresentationModel.dart';
 
 import 'TodoItemRouterUseCaseOutput.dart';
 import 'TodoItemUseCaseState.dart';
 import 'TodoItemRouterViewReadyUseCaseTransformer.dart';
 
-class TodoItemRouterUseCase {
+class TodoItemRouterUseCase extends Bloc{
 
-    TodoItemRouterUseCaseOutput output;
-    final EntityGateway _entityGateway;
-    UseCaseStore _useCaseStore;
-    final _itemState = TodoItemUseCaseState();
+    final _controller = StreamController<TodoItemRouterUseCaseOutput>();
+    Stream<TodoItemRouterUseCaseOutput> get stream => _controller.stream;
 
-    TodoItemRouterUseCase({EntityGateway entityGateway, UseCaseStore useCaseStore})
-            : _entityGateway = entityGateway ?? EntityGateway.entityGateway,
-              _useCaseStore  = useCaseStore ?? RealUseCaseStore.store {
+    final EntityGateway entityGateway;
+    final TodoItemUseCaseState useCaseState;
 
-        _useCaseStore.setObject(itemStateKey, _itemState);
-    }
-
+    TodoItemRouterUseCase({@required this.entityGateway, @required this.useCaseState});
 
     void eventViewReady({TodoItemStartMode startMode}) {
 
-        final transformer = TodoItemRouterViewReadyUseCaseTransformer(_entityGateway.todoManager, _itemState);
-        transformer.transform(startMode: startMode, output: output);
+        final transformer = TodoItemRouterViewReadyUseCaseTransformer(entityGateway.todoManager, useCaseState);
+        transformer.transform(startMode: startMode, output: _controller.sink);
     }
 
     void eventBack() {
 
-        if(_itemState.itemChanged) {
-            output.presentChanged(TodoListPresentationModel(_itemState.currentTodo));
+        if(useCaseState.itemChanged) {
+            _controller.sink.add(PresentChanged(TodoListPresentationModel(useCaseState.currentTodo)));
         }
     }
 
-    destroy() {
-        _useCaseStore.setObject(itemStateKey, null);
+    @override
+    void dispose() {
+        _controller.close();
     }
-
-
 }

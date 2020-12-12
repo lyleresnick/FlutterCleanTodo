@@ -1,19 +1,22 @@
 //  Copyright (c) 2019 Lyle Resnick. All rights reserved.
 
-import '../../../Managers/TodoManager.dart';
-import '../../../Managers/Result.dart';
-import 'TodoListUseCaseTransformer.dart';
+import 'dart:async';
+
+import 'package:flutter_todo/Managers/Result.dart';
+import 'package:flutter_todo/Managers/TodoManager.dart';
+
 import 'TodoListUseCaseOutput.dart';
 
-class TodoListDeleteUseCaseTransformer extends TodoListUseCaseTransformer
+class TodoListDeleteUseCaseTransformer
 {
-    TodoListDeleteUseCaseTransformer(TodoManager todoManager) : super(todoManager);
+    final TodoManager todoManager;
+    TodoListDeleteUseCaseTransformer(this.todoManager);
 
-    void transform(int index, String id, TodoListDeleteUseCaseOutput output) async {
+    void transform(int index, String id, StreamSink<TodoListUseCaseOutput> output) async {
 
         final result = await todoManager.delete(id: id);
         if(result is SuccessResult)
-            output.presentDeleted(index);
+            output.add(PresentDeleted(index));
         else if(result is FailureResult)
             assert(false, "Unresolved error: ${result.description}");
         else if(result is SemanticErrorResult)

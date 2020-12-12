@@ -1,25 +1,29 @@
 //  Copyright (c) 2019 Lyle Resnick. All rights reserved.
 
-import '../../../Managers/TodoManager.dart';
-import '../../../Managers/Result.dart';
+import 'dart:async';
 
-import 'TodoListUseCaseTransformer.dart';
+
+import 'package:flutter_todo/Managers/Result.dart';
+import 'package:flutter_todo/Managers/TodoManager.dart';
+
 import 'TodoListUseCaseOutput.dart';
 import 'TodoListPresentationModel.dart';
 
-class TodoListViewReadyUseCaseTransformer extends TodoListUseCaseTransformer {
+class TodoListViewReadyUseCaseTransformer {
 
-    TodoListViewReadyUseCaseTransformer(TodoManager todoManager) : super(todoManager);
+    final TodoManager todoManager;
 
-    void transform({TodoListViewReadyUseCaseOutput output}) async {
+    TodoListViewReadyUseCaseTransformer(this.todoManager);
+
+    void transform({StreamSink<TodoListUseCaseOutput> output}) async {
 
         final result = await todoManager.all();
         if(result is SuccessResult) {
-            output.presentTodoListBegin();
+            output.add(PresentBegin());
             for(final entity in result.data) {
-                output.present(TodoListPresentationModel(entity));
+                output.add(PresentItem(TodoListPresentationModel(entity)));
             }
-            output.presentTodoListEnd();
+            output.add(PresentEnd());
         }
         else if(result is FailureResult)
             assert(false, "Unresolved error: ${result.description}");

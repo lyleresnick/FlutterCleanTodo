@@ -1,15 +1,16 @@
 //  Copyright (c) 2019 Lyle Resnick. All rights reserved.
 
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 
 import 'package:flutter_todo/Entities/Priority.dart';
 import 'package:flutter_todo/EntityGateway/EntityGateway.dart';
+import 'package:flutter_todo/Scenes/Common/Bloc.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemEdit/UseCase/TodoItemEditPresentationModel.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemEditMode.dart';
-import 'package:flutter_todo/UseCaseStore/UseCaseStore.dart';
-import 'package:flutter_todo/UseCaseStore/RealUseCaseStore.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/UseCase/TodoItemUseCaseState.dart';
 import 'package:flutter_todo/Entities/Todo.dart';
-
-import '../../TodoItemRouter/UseCase/TodoItemUseCaseState.dart';
 
 import 'TodoItemEditViewReadyUseCaseTransformer.dart';
 import 'TodoItemEditSaveUseCaseTransformer.dart';
@@ -45,73 +46,69 @@ class EditingTodo {
     }
 }
 
-class TodoItemEditUseCase {
+class TodoItemEditUseCase extends Bloc {
 
-    TodoItemEditUseCaseOutput output;
+    final _controller = StreamController<TodoItemEditUseCaseOutput>();
+    Stream<TodoItemEditUseCaseOutput> get stream => _controller.stream;
 
-    EditingTodo editingTodo;
-    TodoItemEditMode _editMode;
+    EditingTodo _editingTodo;
+    final TodoItemEditMode editMode;
 
-    final EntityGateway _entityGateway;
-    final UseCaseStore _useCaseStore;
-    TodoItemUseCaseState _itemState;
+    final EntityGateway entityGateway;
+    final TodoItemUseCaseState useCaseState;
 
-    TodoItemEditUseCase({EntityGateway entityGateway, UseCaseStore useCaseStore, @required TodoItemEditMode editMode})
-        : _entityGateway  = entityGateway ?? EntityGateway.entityGateway,
-          _useCaseStore  = useCaseStore ?? RealUseCaseStore.store
-    {
-        _itemState = _useCaseStore.getObject(itemStateKey);
-        _editMode = editMode;
-    }
+    TodoItemEditUseCase({@required this.entityGateway, @required this.useCaseState, @required this.editMode});
 
     void eventViewReady() {
 
-        final transformer = TodoItemEditViewReadyUseCaseTransformer(_editMode, _itemState);
-        editingTodo = transformer.transform(output);
+        final transformer = TodoItemEditViewReadyUseCaseTransformer(editMode, useCaseState);
+        _editingTodo = transformer.transform(_controller.sink);
     }
 
-    // MARK: - Data Capture
-
     void eventEditedTitle(String title) {
-    editingTodo.title = title;
+        _editingTodo.title = title;
     }
 
     void eventEditedNote(String note) {
-        editingTodo.note = note;
+        _editingTodo.note = note;
     }
 
     void eventCompleteByClear() {
-        editingTodo.completeBy = null;
-        output.presentCompleteByClear();
+        _editingTodo.completeBy = null;
+        _controller.sink.add(PresentModel(TodoItemEditPresentationModel.fromEditingTodo(_editingTodo)));
     }
 
     void eventCompleteByToday() {
-        editingTodo.completeBy = DateTime.now();
-        output.presentCompleteBy(editingTodo.completeBy);
+        _editingTodo.completeBy = DateTime.now();
+        _controller.sink.add(PresentModel(TodoItemEditPresentationModel.fromEditingTodo(_editingTodo)));
     }
 
     void eventEnableEditCompleteBy() {
-        output.presentEnableEditCompleteBy(editingTodo.completeBy);
+        _controller.sink.add(PresentEnableEditCompleteBy(_editingTodo.completeBy));
     }
 
     void eventEditedCompleteBy(DateTime completeBy) {
-        editingTodo.completeBy = completeBy;
-        output.presentCompleteBy(completeBy);
+        _editingTodo.completeBy = completeBy;
+        _controller.sink.add(PresentModel(TodoItemEditPresentationModel.fromEditingTodo(_editingTodo)));
     }
 
     void eventCompleted(bool completed) {
-        editingTodo.completed = completed;
+        _editingTodo.completed = completed;
     }
 
     void eventEditedPriority(Priority priority) {
-        editingTodo.priority = priority;
+        _editingTodo.priority = priority;
     }
-
-    // MARK: - Finalization
 
     void eventSave() {
 
-        final transformer = TodoItemEditSaveUseCaseTransformer(_editMode, _entityGateway.todoManager, _itemState);
-        transformer.transform(editingTodo, output);
+        final transformer = TodoItemEditSaveUseCaseTransformer(editMode, entityGateway.todoManager, useCaseState);
+        transformer.transform(_editingTodo, _controller.sink);
     }
+
+    @override
+    void dispose() {
+        _controller.close();
+    }
+
 }

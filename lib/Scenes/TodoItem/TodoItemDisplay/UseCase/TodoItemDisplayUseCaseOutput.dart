@@ -15,13 +15,12 @@ String fieldNameToString(FieldName fieldName) {
     return nameWithPrefix.split('.').last;
 }
 
-abstract class TodoItemDisplayUseCaseOutput {
+abstract class TodoItemDisplayUseCaseOutput {}
 
-    void presentBegin();
-    void presentString(FieldName field, String value);
-    void presentDate(FieldName field, DateTime value);
-    void presentBool(FieldName field, bool value);
-    void presentPriority(FieldName field, Priority value);
-    void presentEnd();
+class PresentBegin extends TodoItemDisplayUseCaseOutput {}
+class PresentString extends TodoItemDisplayUseCaseOutput { final FieldName field; final String value; PresentString(this.field, this.value); }
+class PresentDate extends TodoItemDisplayUseCaseOutput { final FieldName field; final DateTime value; PresentDate(this.field, this.value); }
+class PresentBool extends TodoItemDisplayUseCaseOutput { final FieldName field; final bool value; PresentBool(this.field, this.value); }
+class PresentPriority extends TodoItemDisplayUseCaseOutput { final FieldName field; final Priority value; PresentPriority(this.field, this.value); }
+class PresentEnd extends TodoItemDisplayUseCaseOutput {}
 
-}

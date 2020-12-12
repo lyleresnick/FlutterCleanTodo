@@ -1,26 +1,23 @@
 //  Copyright © 2019 Lyle Resnick. All rights reserved.
 
-import '../View/TodoItemDisplayScene.dart';
-import '../Presenter/TodoItemDisplayPresenter.dart';
-import '../UseCase/TodoItemDisplayUseCase.dart';
-import '../Router/TodoItemDisplayRouter.dart';
-
+import 'package:flutter/foundation.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemDisplay/Presenter/TodoItemDisplayPresenter.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemDisplay/Router/TodoItemDisplayRouter.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemDisplay/UseCase/TodoItemDisplayUseCase.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemDisplay/View/TodoItemDisplayScene.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/UseCase/TodoItemUseCaseState.dart';
 
 class TodoItemDisplayAssembly {
 
     final TodoItemDisplayScene scene;
-    final TodoItemDisplayPresenter presenter;
-    final TodoItemDisplayUseCase useCase;
 
-    TodoItemDisplayAssembly._({this.scene, this.useCase, this.presenter});
+    TodoItemDisplayAssembly._({@required this.scene});
 
-    factory TodoItemDisplayAssembly(TodoItemDisplayRouter router) {
-        final useCase = TodoItemDisplayUseCase();
+    factory TodoItemDisplayAssembly(TodoItemDisplayRouter router, TodoItemUseCaseState useCaseState) {
+        final useCase = TodoItemDisplayUseCase(useCaseState: useCaseState);
         final presenter = TodoItemDisplayPresenter(useCase: useCase, router: router);
         final scene = TodoItemDisplayScene(presenter: presenter);
-        useCase.output = presenter;
 
-        return TodoItemDisplayAssembly._(
-                scene: scene, useCase: useCase, presenter: presenter);
+        return TodoItemDisplayAssembly._(scene: scene);
     }
 }

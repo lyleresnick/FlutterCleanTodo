@@ -1,148 +1,84 @@
 //  Copyright (c) 2019 Lyle Resnick. All rights reserved.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_todo/Scenes/Common/ActionDecoratedScene.dart';
+import 'package:flutter_todo/Scenes/Common/BlocProvider.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemDisplay/View/TodoItemDisplayScene.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemEdit/View/TodoItemEditScene.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/Assembly/TodoItemRouterAssembly.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/Presenter/TodoItemRouterPresenter.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/Presenter/TodoItemRouterPresenterOutput.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/Router/TodoItemRouterRouter.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/UseCase/TodoItemUseCaseState.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemStartMode.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemEditMode.dart';
 
-import '../Presenter/TodoItemRouterPresenter.dart';
-import '../Presenter/TodoItemRouterPresenterOutput.dart';
-import '../Assembly/TodoItemRouterAssembly.dart';
 
-import '../../TodoItemDisplay/View/TodoItemDisplayScene.dart';
-import '../../TodoItemEdit/View/TodoItemEditScene.dart';
-import '../../TodoItemRouter/Router/TodoItemRouterRouter.dart';
-import '../../../Common/ActionDecoratedScene.dart';
-
-class TodoItemRouterScene extends StatefulWidget {
+class TodoItemRouterScene extends StatelessWidget {
 
     final TodoItemRouterPresenter presenter;
+    final TodoItemUseCaseState useCaseState;
 
-    TodoItemRouterScene({@required this.presenter});
-
-    @override
-    State<StatefulWidget> createState()  => TodoItemRouterSceneState();
+    TodoItemRouterScene({@required this.presenter, @required this.useCaseState}) {
+        presenter.eventViewReady();
+    }
 
     factory TodoItemRouterScene.assembled({@required TodoItemRouterRouter router, @required TodoItemStartMode startMode}) {
         return TodoItemRouterAssembly(router, startMode).scene;
-    }
-
-}
-
-enum _ViewConfiguration {
-    init,
-    display,
-    edit,
-    message
-}
-
-class TodoItemRouterSceneState extends State<TodoItemRouterScene> implements TodoItemRouterPresenterOutput {
-
-    TodoItemRouterPresenter presenter;
-    var _viewConfiguration = _ViewConfiguration.init;
-    TodoItemEditMode _editMode;
-    String _message;
-
-    @override
-    void initState() {
-        super.initState();
-        presenter = widget.presenter;
-        presenter.output = this;
-
-        presenter.eventViewReady();
     }
 
     @override
     Widget build(BuildContext context) {
 
         final platform = Theme.of(context).platform;
-        final body = makeBody();
-        final decoratedScene = (body is ActionDecoratedScene) ? body as ActionDecoratedScene: null;
         return WillPopScope(
           onWillPop: presenter.eventBack,
-          child: Scaffold(
-              appBar: AppBar(
-                  title: Text(presenter.titleLabel),
-                  backgroundColor: Colors.lightGreen,
-                  elevation: platform == TargetPlatform.iOS ? 0.0 : 4.0,
-                  actions: decoratedScene?.actions(platform),
-                  leading: decoratedScene?.leading(platform),
-                  automaticallyImplyLeading: decoratedScene?.automaticallyImplyLeading ?? false,
-              ),
-              body: body,
-          ),
+          child: BlocProvider<TodoItemRouterPresenter>(
+            bloc: presenter,
+            child: StreamBuilder<TodoItemRouterPresenterOutput>(
+                stream: presenter.stream,
+                builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                        return Material(color: Colors.black);
+                    }
+                    final data = snapshot.data;
+                    Widget body;
+
+                    if (data is ShowViewReady) {
+                        switch (data.startMode.runtimeType) {
+                            case TodoItemStartModeCreate:
+                                body = TodoItemEditScene.assembled(router: presenter, editMode: TodoItemEditMode.create, useCaseState: useCaseState);
+                                break;
+                            case TodoItemStartModeUpdate:
+                                body = TodoItemDisplayScene.assembled(router: presenter, useCaseState: useCaseState);
+                                break;
+                        }
+                    }
+                    else if (data is ShowDisplayView)
+                        body = TodoItemDisplayScene.assembled(router: presenter, useCaseState: useCaseState);
+                    else if (data is ShowEditView)
+                        body = TodoItemEditScene.assembled(router: presenter, editMode: TodoItemEditMode.update, useCaseState: useCaseState);
+                    else if (data is ShowMessageView)
+                        body = Text(data.message);
+                    else
+                        assert(false, "snapshot.data is: ${data.runtimeType}");
+
+                    final decoratedScene = (body is ActionDecoratedScene) ? body as ActionDecoratedScene : null;
+                    return Scaffold(
+                        appBar: AppBar(
+                            title: Text(presenter.titleLabel),
+                            backgroundColor: Colors.lightGreen,
+                            elevation: platform == TargetPlatform.iOS ? 0.0 : 4.0,
+                            actions: decoratedScene?.actions(),
+                            leading: decoratedScene?.leading(),
+                            automaticallyImplyLeading: decoratedScene?.automaticallyImplyLeading ?? false,
+                        ),
+                        body: body,
+                    );
+              }
+            )
+          )
         );
-    }
-
-
-
-    Widget makeBody() {
-        switch(_viewConfiguration) {
-        case _ViewConfiguration.init:
-            return Container();
-        case _ViewConfiguration.edit:
-            return TodoItemEditScene.assembled(router: presenter, editMode: _editMode);
-        case _ViewConfiguration.display:
-            return TodoItemDisplayScene.assembled(router: presenter);
-        case _ViewConfiguration.message:
-            return Text(_message);
-        default:
-            assert(false, "_viewConfiguration is: $_viewConfiguration");
-            return null;
-        }
-    }
-
-    // TodoItemRouterViewReadyPresenterOutput
-
-    // TodoItemRouterViewReadyPresenterOutput
-
-    @override
-    void showViewReady(TodoItemStartMode startMode) {
-        setState(() {
-            switch(startMode.runtimeType) {
-            case TodoItemStartModeCreate:
-                _viewConfiguration = _ViewConfiguration.edit;
-                _editMode = TodoItemEditMode.create;
-                _message = null;
-                break;
-            case TodoItemStartModeUpdate:
-                _configureDisplayView();
-                break;
-            }
-        });
-    }
-
-    @override
-    void showMessageView(String message) {
-        setState(() {
-            _viewConfiguration = _ViewConfiguration.message;
-            _editMode = null;
-            _message = message;
-        });
-    }
-
-    //  TodoItemRouterDisplayPresenterOutput
-    @override
-    void showDisplayView() {
-        setState(() {
-            _configureDisplayView();
-        });
-    }
-
-    void _configureDisplayView() {
-        _viewConfiguration = _ViewConfiguration.display;
-        _editMode = null;
-        _message = null;
-
-    }
-
-    // TodoItemRouterEditPresenterOutput
-    @override
-    void showEditView() {
-        setState(() {
-            _viewConfiguration = _ViewConfiguration.edit;
-            _editMode = TodoItemEditMode.update;
-            _message = null;
-        });
     }
 }
 

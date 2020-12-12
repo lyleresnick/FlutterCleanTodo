@@ -1,7 +1,7 @@
 //  Copyright (c) 2019 Lyle Resnick. All rights reserved.
 
-import '../../../Entities/Todo.dart';
-import '../../../Entities/Priority.dart';
+import 'package:flutter_todo/Entities/Priority.dart';
+import 'package:flutter_todo/Entities/Todo.dart';
 
 class TodoListPresentationModel {
 

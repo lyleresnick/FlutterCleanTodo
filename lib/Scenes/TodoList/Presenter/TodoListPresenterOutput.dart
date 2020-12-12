@@ -2,32 +2,16 @@
 
 import '../Presenter/TodoListRowViewModel.dart';
 
-abstract class TodoListPresenterOutput implements
-    TodoListViewReadyPresenterOutput,
-    TodoListCreatePresenterOutput,
-    TodoListDeletePresenterOutput,
-    TodoListChangedPresenterOutput,
-    TodoListCompletedPresenterOutput {}
-
-abstract class TodoListViewReadyPresenterOutput {
-    void showTodoList(List<TodoListRowViewModel> _viewModelList);
-}
-
-abstract class TodoListCreatePresenterOutput {
-    void showAdded(List<TodoListRowViewModel> _viewModelList, int index);
-}
-
-abstract class TodoListDeletePresenterOutput {
-    void showUndoDeleted(List<TodoListRowViewModel> _viewModelList, int index);
-    void showDeleted(List<TodoListRowViewModel> _viewModelList, int index);
-
-}
-
-abstract class TodoListChangedPresenterOutput {
-    void showChanged(List<TodoListRowViewModel> _viewModelList, int index);
-}
-
-abstract class TodoListCompletedPresenterOutput {
-    void showCompleted(List<TodoListRowViewModel> _viewModelList, int index);
-}
+abstract class TodoListPresenterOutput {}
+    // ViewReady
+class ShowTodoList extends TodoListPresenterOutput { final List<TodoListRowViewModel> viewModelList; ShowTodoList(this.viewModelList); }
+    // Create
+class ShowAdded extends TodoListPresenterOutput { final List<TodoListRowViewModel> viewModelList; int index; ShowAdded(this.viewModelList, this.index); }
+    // Delete
+class ShowUndoDeleted extends TodoListPresenterOutput { final List<TodoListRowViewModel> viewModelList; int index; ShowUndoDeleted(this.viewModelList, this.index); }
+class ShowDeleted extends TodoListPresenterOutput { final List<TodoListRowViewModel> viewModelList; int index; ShowDeleted(this.viewModelList, this.index); }
+    // Changed
+class ShowChanged extends TodoListPresenterOutput { final List<TodoListRowViewModel> viewModelList; int index; ShowChanged(this.viewModelList, this.index); }
+    // Completed
+class ShowCompleted extends TodoListPresenterOutput { final List<TodoListRowViewModel> viewModelList; int index; ShowCompleted(this.viewModelList, this.index); }
 

@@ -1,32 +1,61 @@
 //  Copyright (c) 2019 Lyle Resnick. All rights reserved.
 
-import 'package:flutter_todo/Entities/Priority.dart';
+import 'dart:async';
 
-import '../UseCase/TodoItemDisplayUseCase.dart';
-import '../Router/TodoItemDisplayRouter.dart';
-import 'TodoItemDisplayRowViewModel.dart';
-import '../UseCase/TodoItemDisplayUseCaseOutput.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_todo/Entities/Priority.dart';
+import 'package:flutter_todo/Scenes/Common/Bloc.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemDisplay/Router/TodoItemDisplayRouter.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemDisplay/UseCase/TodoItemDisplayUseCase.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemDisplay/UseCase/TodoItemDisplayUseCaseOutput.dart';
 import 'TodoItemDisplayPresenterOutput.dart';
 import 'package:flutter_todo/Scenes/Common/Localize.dart';
 
-class TodoItemDisplayPresenter implements TodoItemDisplayUseCaseOutput {
+import 'TodoItemDisplayRowViewModel.dart';
 
-    final TodoItemDisplayUseCase _useCase;
-    TodoItemDisplayRouter _router;
-    TodoItemDisplayPresenterOutput output;
+class TodoItemDisplayPresenter extends Bloc  {
+
+    final TodoItemDisplayUseCase useCase;
+    final TodoItemDisplayRouter router;
+    final _controller = StreamController<TodoItemDisplayPresenterOutput>();
+    Stream<TodoItemDisplayPresenterOutput> get stream => _controller.stream;
     List<TodoItemDisplayRowViewModel> _viewModelList;
 
 
-    TodoItemDisplayPresenter({TodoItemDisplayUseCase useCase, TodoItemDisplayRouter router})
-            :_useCase = useCase, _router = router;
-
-
+    TodoItemDisplayPresenter({@required this.useCase, @required this.router}) {
+        useCase.stream
+                .listen((event) {
+            if (event is PresentBegin) {
+                _viewModelList = [];
+            }
+            else if (event is PresentString) {
+                final fieldName = localizeString(fieldNameToString(event.field));
+                _viewModelList.add(TodoItemDisplayRowViewModel(fieldName, event.value));
+            }
+            if (event is PresentBool) {
+                final fieldName = localizeString(fieldNameToString(event.field));
+                _viewModelList.add(TodoItemDisplayRowViewModel(fieldName, localizeString(event.value ? "yes" : "no")));
+            }
+            else if (event is PresentPriority) {
+                final fieldName = localizeString(fieldNameToString(event.field));
+                _viewModelList.add(TodoItemDisplayRowViewModel(fieldName, localizeString(priorityToString(event.value))));
+            }
+            else if (event is PresentDate) {
+                final fieldName = localizeString(fieldNameToString(event.field));
+                _viewModelList.add(TodoItemDisplayRowViewModel(fieldName, localizeDate(event.value)));
+            }
+            else if (event is PresentEnd) {
+                _controller.sink.add(ShowFieldList(_viewModelList));
+            }
+        });
+    }
+    
     void eventViewReady() {
-        _useCase.eventViewReady();
+        useCase.eventViewReady();
     }
 
     void eventModeEdit() {
-        _router.routeEditView();
+        router.routeEditView();
     }
 
     TodoItemDisplayRowViewModel row(int index) {
@@ -39,37 +68,10 @@ class TodoItemDisplayPresenter implements TodoItemDisplayUseCaseOutput {
 
     String get editLabel => localizeString("edit");
 
-
-// TodoItemDisplayUseCaseOutput
-
     @override
-    void presentBegin() {
-        _viewModelList = <TodoItemDisplayRowViewModel>[];
+    void dispose() {
+        useCase.dispose();
+        _controller.close();
     }
 
-    @override
-    void presentString(FieldName field, String value) {
-        final fieldName = fieldNameToString(field);
-        _viewModelList.add(TodoItemDisplayRowViewModel(localizeString(fieldName), value));
-    }
-
-    @override
-    void presentDate(FieldName field, DateTime date) {
-        presentString(field, localizeDate(date));
-    }
-
-    @override
-    void presentBool(FieldName field, bool value) {
-        presentString(field, localizeString(value ? "yes" : "no"));
-    }
-
-    @override
-    void presentPriority(FieldName field, Priority value) {
-        presentString(field, localizeString(priorityToString(value)));
-    }
-
-    @override
-    void presentEnd() {
-        output.show();
-    }
 }

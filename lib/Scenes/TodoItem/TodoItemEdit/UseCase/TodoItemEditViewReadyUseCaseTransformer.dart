@@ -1,7 +1,9 @@
 //  Copyright (c) 2019 Lyle Resnick. All rights reserved.
 
+import 'dart:async';
+
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemEditMode.dart';
-import '../../TodoItemRouter/UseCase/TodoItemUseCaseState.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/UseCase/TodoItemUseCaseState.dart';
 
 import 'TodoItemEditUseCaseOutput.dart';
 import 'TodoItemEditUseCase.dart';
@@ -10,22 +12,21 @@ import 'TodoItemEditPresentationModel.dart';
 
 class TodoItemEditViewReadyUseCaseTransformer {
 
-    final TodoItemEditMode _editMode;
-    final TodoItemUseCaseState _state;
+    final TodoItemEditMode editMode;
+    final TodoItemUseCaseState state;
 
-    TodoItemEditViewReadyUseCaseTransformer(TodoItemEditMode editMode, TodoItemUseCaseState state )
-        : _editMode = editMode,
-          _state = state;
+    TodoItemEditViewReadyUseCaseTransformer(this.editMode, this.state );
 
-    EditingTodo transform(TodoItemEditViewReadyUseCaseOutput output)  {
+    EditingTodo transform(StreamSink<TodoItemEditUseCaseOutput> output)  {
 
-        switch(_editMode) {
+        switch(editMode) {
         case TodoItemEditMode.update:
-            output.presentModel(TodoItemEditPresentationModel.fromEntity(_state.currentTodo));
-            return EditingTodo.fromTodo( _state.currentTodo);
+            output.add(PresentModel(TodoItemEditPresentationModel.fromEntity(state.currentTodo)));
+            return EditingTodo.fromTodo(state.currentTodo);
         case TodoItemEditMode.create:
-            output.presentNewModel();
-            return EditingTodo();
+            final editingTodo = EditingTodo();
+            output.add(PresentModel(TodoItemEditPresentationModel.fromEditingTodo(editingTodo)));
+            return editingTodo;
         default:
             return null;
         }
