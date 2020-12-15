@@ -1,4 +1,4 @@
-# Todo in Flutter - VIPER Style
+# Todo in Flutter - VIPER Style with BLoCs
 
 This Todo app is a full reference implementation for VIPER written with Flutter. It demonstrates many of the tasks you would do on a daily basis in a VIPER based project such as:
 
@@ -8,10 +8,9 @@ This Todo app is a full reference implementation for VIPER written with Flutter.
 - localization, 
 - the use of view and presentation models
 - parameter passing between Scenes, 
-- data cache injection, 
 - output sub-protocols organized by event,
-- returning results from sibling Presenters,
-- separation of Entity Domain Objects from Data Transfer Objects
+- sharing state between sibling UseCases
+- separation of Entity Domain Objects from Data Transfer Objects (repository pattern)
 
 The are two Routers:
 * A Navigator acts as a root router managing a list and a detail scene. 
@@ -23,7 +22,7 @@ The app UI displays iOS native controls on an iOS Device and Android native cont
 This was done to explore the possibility of having native controls with one code set.
 It is more likely that you or your designer will choose a brand specific UI that will look the same on both devices. This is commonly done in commercial apps.
 
-TODO: introduce output transform from Presenter to PresenterProvider so StreamBuilder can be used to build partial Scenes (this is an optimization for views)
+The app is based on the BLoC/BLoc Provider pattern. The presenters and useCases are implemented as BloCs. Each Scene view uses a StreamBuilder to drive the display.
 
 
 ## Demo Modes
