@@ -22,8 +22,7 @@ The app UI displays iOS native controls on an iOS Device and Android native cont
 This was done to explore the possibility of having native controls with one code set.
 It is more likely that you or your designer will choose a brand specific UI that will look the same on both devices. This is commonly done in commercial apps.
 
-The app is based on the BLoC/BLoc Provider pattern. The presenters and useCases are implemented as BloCs. Each Scene view uses a StreamBuilder to drive the display.
-
+The app is based on the BLoC/BLoc Provider pattern. Each module's Presenter and UseCase is implemented as a BLoC. A BLoC uses a stream to return asynchronous events. Each Scene view uses a StreamBuilder to drive the display from events emitted by the Presenter. The Presenter processes the events emitted by the UseCase.
 
 ## Demo Modes
 
