@@ -2,37 +2,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
-
-class TodoTextField extends StatefulWidget {
+class TodoTextField extends StatelessWidget {
 
     final String value;
     final void Function(String) onChanged;
     final String placeholder;
     final int minLines;
     final int maxLines;
+    final _textEditingController = TextEditingController();
 
     TodoTextField({
         @required this.value,
         @required this.onChanged,
         this.placeholder,
         this.minLines = 1,
-        this.maxLines = 1
-    });
-
-    @override
-    State<StatefulWidget> createState()  => TodoTextFieldState();
-}
-
-class TodoTextFieldState extends State<TodoTextField> {
-
-    String _value;
-    final _textEditingController = TextEditingController();
-
-    @override
-    void initState() {
-        super.initState();
-        _value = widget.value;
-        _textEditingController.text = _value;
+        this.maxLines = 1 }) {
+        _textEditingController.text = value;
     }
 
     @override
@@ -40,30 +25,24 @@ class TodoTextFieldState extends State<TodoTextField> {
 
         final platform = Theme.of(context).platform;
 
-        void onChanged(value) {
-            setState(() {
-                _value = value;
-            });
-            widget.onChanged(value);
-        }
-
+        final onChanged = (value) => this.onChanged(value);
         if(platform == TargetPlatform.iOS) {
             return CupertinoTextField(
-                placeholder: widget.placeholder,
-                minLines: widget.minLines,
-                maxLines: widget.maxLines,
+                placeholder: placeholder,
+                minLines: minLines,
+                maxLines: maxLines,
                 controller: _textEditingController,
-                onChanged: onChanged,
+                onChanged: onChanged
             );
         }
         else {
            return TextField(
                decoration: InputDecoration(
                    border: UnderlineInputBorder(),
-                   hintText: widget.placeholder
+                   hintText: placeholder
                ),
-               minLines: widget.minLines,
-               maxLines: widget.maxLines,
+               minLines: minLines,
+               maxLines: maxLines,
                controller: _textEditingController,
                onChanged: onChanged,
            );
