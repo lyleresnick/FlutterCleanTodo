@@ -9,12 +9,11 @@ class SuccessResult<Entity> extends Result {
     SuccessResult({this.data});
 }
 
-class FailureResult<FailureSource> extends Result {
-    FailureSource source;
+class FailureResult extends Result {
     int code;
     String description;
 
-    FailureResult({this.source, this.code, this.description});
+    FailureResult({this.code, this.description});
 }
 
 class SemanticErrorResult<Reason> extends Result {
