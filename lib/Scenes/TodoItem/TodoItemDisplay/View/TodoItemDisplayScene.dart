@@ -6,23 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_todo/Scenes/Common/ActionDecoratedScene.dart';
 import 'package:flutter_todo/Scenes/Common/BlocProvider.dart';
-import 'package:flutter_todo/Scenes/TodoItem/TodoItemDisplay/Assembly/TodoDisplayItemAssembly.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemDisplay/Presenter/TodoItemDisplayPresenter.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemDisplay/Presenter/TodoItemDisplayPresenterOutput.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemDisplay/Presenter/TodoItemDisplayRowViewModel.dart';
-import 'package:flutter_todo/Scenes/TodoItem/TodoItemDisplay/Router/TodoItemDisplayRouter.dart';
-import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/UseCase/TodoItemUseCaseState.dart';
-
 
 class TodoItemDisplayScene extends StatelessWidget implements ActionDecoratedScene {
-  final TodoItemDisplayPresenter presenter;
+  final TodoItemDisplayPresenter _presenter;
 
-  TodoItemDisplayScene({@required this.presenter}) {
-    presenter.eventViewReady();
-  }
-
-  factory TodoItemDisplayScene.assembled({@required TodoItemDisplayRouter router, TodoItemUseCaseState useCaseState}) {
-    return TodoItemDisplayAssembly(router, useCaseState).scene;
+  TodoItemDisplayScene(this._presenter) {
+    _presenter.eventViewReady();
   }
 
   @override
@@ -32,7 +24,7 @@ class TodoItemDisplayScene extends StatelessWidget implements ActionDecoratedSce
 
   @override
   List<Widget> actions() {
-    return [_EditButton(label: presenter.editLabel, onPressed: presenter.eventModeEdit)];
+    return [_EditButton(label: _presenter.editLabel, onPressed: _presenter.eventModeEdit)];
   }
 
   @override
@@ -41,9 +33,9 @@ class TodoItemDisplayScene extends StatelessWidget implements ActionDecoratedSce
   @override
   Widget build(BuildContext context) {
     return BlocProvider<TodoItemDisplayPresenter>(
-        bloc: presenter,
+        bloc: _presenter,
         child: StreamBuilder<TodoItemDisplayPresenterOutput>(
-            stream: presenter.stream,
+            stream: _presenter.stream,
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return Text("Loading ...");

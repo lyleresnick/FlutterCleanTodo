@@ -2,7 +2,6 @@
 
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_todo/Entities/Priority.dart';
 import 'package:flutter_todo/Scenes/Common/Bloc.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemDisplay/Router/TodoItemDisplayRouter.dart';
@@ -15,15 +14,15 @@ import 'TodoItemDisplayRowViewModel.dart';
 
 class TodoItemDisplayPresenter extends Bloc  {
 
-    final TodoItemDisplayUseCase useCase;
-    final TodoItemDisplayRouter router;
+    final TodoItemDisplayUseCase _useCase;
+    final TodoItemDisplayRouter _router;
     final _controller = StreamController<TodoItemDisplayPresenterOutput>();
     Stream<TodoItemDisplayPresenterOutput> get stream => _controller.stream;
     List<TodoItemDisplayRowViewModel> _viewModelList;
 
 
-    TodoItemDisplayPresenter({@required this.useCase, @required this.router}) {
-        useCase.stream
+    TodoItemDisplayPresenter(this._useCase, this._router) {
+        _useCase.stream
                 .listen((event) {
             if (event is PresentBegin) {
                 _viewModelList = [];
@@ -51,11 +50,11 @@ class TodoItemDisplayPresenter extends Bloc  {
     }
     
     void eventViewReady() {
-        useCase.eventViewReady();
+        _useCase.eventViewReady();
     }
 
     void eventModeEdit() {
-        router.routeEditView();
+        _router.routeEditView();
     }
 
     TodoItemDisplayRowViewModel row(int index) {
@@ -70,7 +69,7 @@ class TodoItemDisplayPresenter extends Bloc  {
 
     @override
     void dispose() {
-        useCase.dispose();
+        _useCase.dispose();
         _controller.close();
     }
 

@@ -2,7 +2,6 @@
 
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_todo/Scenes/Common/Bloc.dart';
 import 'package:flutter_todo/Scenes/Common/Localize.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemDisplay/Router/TodoItemDisplayRouter.dart';
@@ -17,21 +16,21 @@ import 'TodoItemRouterPresenterOutput.dart';
 
 class TodoItemRouterPresenter extends Bloc implements TodoItemDisplayRouter, TodoItemEditRouter  {
 
-    final TodoItemRouterUseCase useCase;
+    final TodoItemRouterUseCase _useCase;
     final TodoItemRouterRouter router;
-    final TodoItemStartMode startMode;
+    final TodoItemStartMode _startMode;
 
     final _controller = StreamController<TodoItemRouterPresenterOutput>();
     Stream<TodoItemRouterPresenterOutput> get stream => _controller.stream;
 
-    TodoItemRouterPresenter({@required this.useCase, @required this.router, @required this.startMode}) {
-        useCase.stream
+    TodoItemRouterPresenter(this._useCase, this.router, this._startMode) {
+        _useCase.stream
             .listen((event) {
                 if (event is PresentViewReady) {
                     _controller.sink.add(ShowViewReady(event.startMode));
                 }
                 else if (event is PresentChanged) {
-                    startMode.todoListChangedItemCallback(event.item);
+                    _startMode.todoListChangedItemCallback(event.item);
                 }
                 else if (event is PresentNotFound) {
                     final message = "todoNotFound"; //.localized
@@ -43,11 +42,11 @@ class TodoItemRouterPresenter extends Bloc implements TodoItemDisplayRouter, Tod
     }
 
     void eventViewReady() {
-        useCase.eventViewReady(startMode: startMode);
+        _useCase.eventViewReady(startMode: _startMode);
     }
 
     Future<bool> eventBack() async {
-        useCase.eventBack();
+        _useCase.eventBack();
         return true;
     }
 
@@ -70,7 +69,7 @@ class TodoItemRouterPresenter extends Bloc implements TodoItemDisplayRouter, Tod
 
     @override
     void routeEditingCancelled() {
-        switch(startMode.runtimeType) {
+        switch(_startMode.runtimeType) {
         case TodoItemStartModeUpdate:
             _controller.sink.add(ShowDisplayView());
             break;
@@ -82,7 +81,7 @@ class TodoItemRouterPresenter extends Bloc implements TodoItemDisplayRouter, Tod
 
     @override
     void dispose() {
-        useCase.dispose();
+        _useCase.dispose();
         _controller.close();
     }
 }

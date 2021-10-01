@@ -16,7 +16,7 @@ class FailureResult extends Result {
     FailureResult({this.code, this.description});
 }
 
-class SemanticErrorResult<Reason> extends Result {
+class DomainMatterResult<Reason> extends Result {
     Reason reason;
-    SemanticErrorResult({this.reason});
+    DomainMatterResult({this.reason});
 }

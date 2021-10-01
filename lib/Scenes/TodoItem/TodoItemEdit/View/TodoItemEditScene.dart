@@ -20,10 +20,10 @@ import 'package:flutter_todo/Scenes/TodoItem/TodoItemEditMode.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/UseCase/TodoItemUseCaseState.dart';
 
 class TodoItemEditScene extends StatelessWidget implements ActionDecoratedScene {
-  final TodoItemEditPresenter presenter;
+  final TodoItemEditPresenter _presenter;
 
-  TodoItemEditScene({@required this.presenter}){
-      presenter.eventViewReady();
+  TodoItemEditScene(this._presenter) {
+      _presenter.eventViewReady();
   }
 
   factory TodoItemEditScene.assembled({@required TodoItemEditRouter router, @required TodoItemEditMode editMode, TodoItemUseCaseState useCaseState}) {
@@ -32,12 +32,12 @@ class TodoItemEditScene extends StatelessWidget implements ActionDecoratedScene 
 
   @override
   List<Widget> actions() {
-    return [SaveButton(onPressed: presenter.eventSave)];
+    return [SaveButton(onPressed: _presenter.eventSave)];
   }
 
   @override
   Widget leading() {
-    return CancelButton(onPressed: presenter.eventCancel);
+    return CancelButton(onPressed: _presenter.eventCancel);
   }
 
   @override
@@ -46,10 +46,10 @@ class TodoItemEditScene extends StatelessWidget implements ActionDecoratedScene 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<TodoItemEditPresenter>(
-      bloc: presenter,
+      bloc: _presenter,
       child: SingleChildScrollView(
         child: StreamBuilder<TodoItemEditPresenterOutput>(
-            stream: presenter.stream,
+            stream: _presenter.stream,
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return Text("Loading ...");
@@ -65,7 +65,7 @@ class TodoItemEditScene extends StatelessWidget implements ActionDecoratedScene 
                       TodoTextField(
                         value: model.title,
                         placeholder: localizeString("enterATitle"),
-                        onChanged: presenter.eventEditedTitle,
+                        onChanged: _presenter.eventEditedTitle,
                       ),
                     ),
                     _expandedRow(
@@ -74,7 +74,7 @@ class TodoItemEditScene extends StatelessWidget implements ActionDecoratedScene 
                         value: model.note,
                         minLines: 9,
                         maxLines: 9,
-                        onChanged: presenter.eventEditedNote,
+                        onChanged: _presenter.eventEditedNote,
                       ),
                     ),
                     _EditRow(
@@ -85,14 +85,14 @@ class TodoItemEditScene extends StatelessWidget implements ActionDecoratedScene 
                             state: model.completeBySwitchIsOn,
                             onChanged: (isOn) {
                               if (isOn)
-                                presenter.eventCompleteByToday();
+                                _presenter.eventCompleteByToday();
                               else
-                                presenter.eventCompleteByClear();
+                                _presenter.eventCompleteByClear();
                             },
                           ),
                           Container(width: 6),
                           GestureDetector(
-                              onTap: !model.completeBySwitchIsOn ? null : () => presenter.eventEnableEditCompleteBy(context),
+                              onTap: !model.completeBySwitchIsOn ? null : () => _presenter.eventEnableEditCompleteBy(context),
                               child: Text(model.completeByString,
                                   style: TextStyle(fontSize: 17))),
                         ],
@@ -104,14 +104,14 @@ class TodoItemEditScene extends StatelessWidget implements ActionDecoratedScene 
                         itemNames: ["none", "low", "medium", "high"]
                             .map((value) => localizeString(value))
                             .toList(),
-                        onValueChanged: presenter.eventEditedPriority,
+                        onValueChanged: _presenter.eventEditedPriority,
                       ),
                     ),
                     _EditRow(
                       title: localizeString("completed"), 
                       widget: TodoSwitch(
                         state: model.completed,
-                        onChanged: presenter.eventCompleted,
+                        onChanged: _presenter.eventCompleted,
                       ))
                   ]),
                 );

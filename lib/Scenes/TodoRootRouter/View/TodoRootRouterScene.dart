@@ -2,66 +2,55 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_todo/Scenes/Common/BlocProvider.dart';
-import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/View/TodoItemRouterScene.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/Assembly/TodoItemRouterAssembly.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemStartMode.dart';
-import 'package:flutter_todo/Scenes/TodoList/View/TodoListScene.dart';
-import 'package:flutter_todo/Scenes/TodoRootRouter/Assembly/TodoRootRooterAssembly.dart';
+import 'package:flutter_todo/Scenes/TodoList/Assembly/TodoListAssembly.dart';
 import 'package:flutter_todo/Scenes/TodoRootRouter/Presenter/TodoRootRouterPresenter.dart';
 import 'package:flutter_todo/Scenes/TodoRootRouter/Presenter/TodoRootRouterPresenterOutput.dart';
 
 class TodoRootRouterScene extends StatelessWidget {
+  final TodoRootRouterPresenter _presenter;
+  final navKey = GlobalKey<NavigatorState>();
 
-    final TodoRootRouterPresenter presenter;
+  static const routeTodoItem = '/todoItem';
+  static const routeTodoList = '/';
 
-    TodoRootRouterScene({@required this.presenter}) {
-        presenter.stream
-            .listen((event) {
-                if (event is ShowCreateItem) {
-                    Navigator.of(presenter.todoListContext).pushNamed('/todoItem', arguments: TodoItemStartModeCreate(event.completion));
-                }
-                else if (event is ShowItem) {
-                    Navigator.of(presenter.todoListContext).pushNamed('/todoItem', arguments: TodoItemStartModeUpdate(event.id, event.completion));
-                }
-                else if (event is ShowPop) {
-                    Navigator.of(presenter.todoItemContext).pop();
-                }
+  TodoRootRouterScene(this._presenter) {
+    _presenter.stream.listen((event) {
+      if (event is ShowCreateItem) {
+        navKey.currentState.pushNamed(routeTodoItem,
+            arguments: TodoItemStartModeCreate(event.completion));
+      } else if (event is ShowItem) {
+        navKey.currentState.pushNamed(routeTodoItem,
+            arguments: TodoItemStartModeUpdate(event.id, event.completion));
+      } else if (event is ShowPop) {
+        navKey.currentState.pop();
+      }
+    });
+  }
 
-        });
-    }
-
-    factory TodoRootRouterScene.assembled() {
-        return TodoRootRouterAssembly().scene;
-    }
-
-    @override
-    Widget build(BuildContext context) {
-        return BlocProvider<TodoRootRouterPresenter>(
-          bloc: presenter,
-          child: Navigator(
-              initialRoute: '/',
-              onGenerateRoute: (RouteSettings settings) {
-                  WidgetBuilder builder;
-                  switch (settings.name) {
-                      case '/':
-                          builder = (BuildContext context) {
-                              presenter.todoListContext = context;
-                              return TodoListScene.assembled(router: presenter);
-                          };
-                          break;
-                      case '/todoItem':
-                          builder = (BuildContext context) {
-                              presenter.todoItemContext = context;
-                              return TodoItemRouterScene.assembled(
-                                      router: presenter,
-                                      startMode: settings.arguments as TodoItemStartMode);
-                          };
-                          break;
-                      default:
-                          assert(false, 'Invalid route: ${settings.name}');
-                  }
-                  return MaterialPageRoute(builder: builder, settings: settings);
-              },
-          )
-        );
-    }
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider<TodoRootRouterPresenter>(
+        bloc: _presenter,
+        child: Navigator(
+          key: navKey,
+          initialRoute: routeTodoList,
+          onGenerateRoute: (RouteSettings settings) {
+            WidgetBuilder builder;
+            switch (settings.name) {
+              case routeTodoList:
+                builder = (_) => TodoListAssembly(_presenter).scene;
+                break;
+              case routeTodoItem:
+                builder = (_) => TodoItemRouterAssembly(
+                    _presenter, settings.arguments as TodoItemStartMode).scene;
+                break;
+              default:
+                assert(false, 'Invalid route: ${settings.name}');
+            }
+            return MaterialPageRoute(builder: builder, settings: settings);
+          },
+        ));
+  }
 }

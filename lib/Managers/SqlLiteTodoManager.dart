@@ -45,7 +45,7 @@ class SqlLiteTodoManager implements TodoManager {
           return Future.value(SuccessResult(data: todo));
       }
       catch (e) {
-          return Future.value(SemanticErrorResult(reason: e));
+          return Future.value(DomainMatterResult(reason: e));
       }
   }
 
@@ -80,7 +80,7 @@ class SqlLiteTodoManager implements TodoManager {
           return Future.value(SuccessResult(data: todo));
       }
       catch (e) {
-          return Future.value(SemanticErrorResult(reason: e));
+          return Future.value(DomainMatterResult(reason: e));
       }
   }
 
@@ -97,7 +97,7 @@ class SqlLiteTodoManager implements TodoManager {
       if(todo.length == 1 )
           return Future.value(SuccessResult(data: Todo.fromDynamicValueDictionary(todo[0])));
       else
-          return Future.value(SemanticErrorResult(reason: TodoErrorReason.notFound));
+          return Future.value(DomainMatterResult(reason: TodoErrorReason.notFound));
   }
 
   @override
@@ -121,6 +121,6 @@ class SqlLiteTodoManager implements TodoManager {
       if(count == 1 )
           return Future.value(SuccessResult(data: todo));
       else
-          return Future.value(SemanticErrorResult(reason: TodoErrorReason.notFound));
+          return Future.value(DomainMatterResult(reason: TodoErrorReason.notFound));
   }
 }

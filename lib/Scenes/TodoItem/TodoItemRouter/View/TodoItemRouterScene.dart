@@ -3,12 +3,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_todo/Scenes/Common/ActionDecoratedScene.dart';
 import 'package:flutter_todo/Scenes/Common/BlocProvider.dart';
-import 'package:flutter_todo/Scenes/TodoItem/TodoItemDisplay/View/TodoItemDisplayScene.dart';
-import 'package:flutter_todo/Scenes/TodoItem/TodoItemEdit/View/TodoItemEditScene.dart';
-import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/Assembly/TodoItemRouterAssembly.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemDisplay/Assembly/TodoDisplayItemAssembly.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemEdit/Assembly/TodoItemEditAssembly.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/Presenter/TodoItemRouterPresenter.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/Presenter/TodoItemRouterPresenterOutput.dart';
-import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/Router/TodoItemRouterRouter.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/UseCase/TodoItemUseCaseState.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemStartMode.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemEditMode.dart';
@@ -16,15 +14,11 @@ import 'package:flutter_todo/Scenes/TodoItem/TodoItemEditMode.dart';
 
 class TodoItemRouterScene extends StatelessWidget {
 
-    final TodoItemRouterPresenter presenter;
-    final TodoItemUseCaseState useCaseState;
+    final TodoItemRouterPresenter _presenter;
+    final TodoItemUseCaseState _useCaseState;
 
-    TodoItemRouterScene({@required this.presenter, @required this.useCaseState}) {
-        presenter.eventViewReady();
-    }
-
-    factory TodoItemRouterScene.assembled({@required TodoItemRouterRouter router, @required TodoItemStartMode startMode}) {
-        return TodoItemRouterAssembly(router, startMode).scene;
+    TodoItemRouterScene(this._presenter, this._useCaseState) {
+        _presenter.eventViewReady();
     }
 
     @override
@@ -32,11 +26,11 @@ class TodoItemRouterScene extends StatelessWidget {
 
         final platform = Theme.of(context).platform;
         return WillPopScope(
-          onWillPop: presenter.eventBack,
+          onWillPop: _presenter.eventBack,
           child: BlocProvider<TodoItemRouterPresenter>(
-            bloc: presenter,
+            bloc: _presenter,
             child: StreamBuilder<TodoItemRouterPresenterOutput>(
-                stream: presenter.stream,
+                stream: _presenter.stream,
                 builder: (context, snapshot) {
                     if (!snapshot.hasData) {
                         return Material(color: Colors.black);
@@ -47,17 +41,17 @@ class TodoItemRouterScene extends StatelessWidget {
                     if (data is ShowViewReady) {
                         switch (data.startMode.runtimeType) {
                             case TodoItemStartModeCreate:
-                                body = TodoItemEditScene.assembled(router: presenter, editMode: TodoItemEditMode.create, useCaseState: useCaseState);
+                                body = TodoItemEditAssembly(_presenter, TodoItemEditMode.create, _useCaseState).scene;
                                 break;
                             case TodoItemStartModeUpdate:
-                                body = TodoItemDisplayScene.assembled(router: presenter, useCaseState: useCaseState);
+                                body = TodoItemDisplayAssembly(_presenter, _useCaseState).scene;
                                 break;
                         }
                     }
                     else if (data is ShowDisplayView)
-                        body = TodoItemDisplayScene.assembled(router: presenter, useCaseState: useCaseState);
+                        body = TodoItemDisplayAssembly(_presenter, _useCaseState).scene;
                     else if (data is ShowEditView)
-                        body = TodoItemEditScene.assembled(router: presenter, editMode: TodoItemEditMode.update, useCaseState: useCaseState);
+                        body = TodoItemEditAssembly(_presenter, TodoItemEditMode.update, _useCaseState).scene;
                     else if (data is ShowMessageView)
                         body = Text(data.message);
                     else
@@ -66,7 +60,7 @@ class TodoItemRouterScene extends StatelessWidget {
                     final decoratedScene = (body is ActionDecoratedScene) ? body as ActionDecoratedScene : null;
                     return Scaffold(
                         appBar: AppBar(
-                            title: Text(presenter.titleLabel),
+                            title: Text(_presenter.titleLabel),
                             backgroundColor: Colors.lightGreen,
                             elevation: platform == TargetPlatform.iOS ? 0.0 : 4.0,
                             actions: decoratedScene?.actions(),

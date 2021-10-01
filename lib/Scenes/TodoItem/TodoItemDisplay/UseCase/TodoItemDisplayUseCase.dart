@@ -2,24 +2,39 @@
 
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter_todo/Entities/Priority.dart';
 import 'package:flutter_todo/Scenes/Common/Bloc.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/UseCase/TodoItemUseCaseState.dart';
 
-import 'TodoItemDisplayViewReadyUseCaseTransformer.dart';
 import 'TodoItemDisplayUseCaseOutput.dart';
 
 class TodoItemDisplayUseCase extends Bloc {
 
     final _controller = StreamController<TodoItemDisplayUseCaseOutput>();
     Stream<TodoItemDisplayUseCaseOutput> get stream => _controller.stream;
-    TodoItemUseCaseState useCaseState;
+    TodoItemUseCaseState _useCaseState;
 
-    TodoItemDisplayUseCase({@required this.useCaseState});
+    TodoItemDisplayUseCase(this._useCaseState);
 
     void eventViewReady() {
-        final transformer = TodoItemDisplayViewReadyUseCaseTransformer(useCaseState);
-        transformer.transform(_controller.sink);
+        final todo = _useCaseState.currentTodo;
+        _controller.sink.add(PresentBegin());
+
+        _controller.sink.add(PresentString(FieldName.title, todo.title));
+        if( todo.note != "" ) {
+            _controller.sink.add(PresentString(FieldName.note, todo.note));
+        }
+        if (todo.completeBy != null) {
+            _controller.sink.add(PresentDate(FieldName.completeBy, todo.completeBy));
+        }
+        switch(todo.priority) {
+            case Priority.none:
+                break;
+            default:
+                _controller.sink.add(PresentPriority(FieldName.priority, todo.priority));
+        }
+        _controller.sink.add(PresentBool(FieldName.completed, todo.completed));
+        _controller.sink.add(PresentEnd());
     }
 
     @override

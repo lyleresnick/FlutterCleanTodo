@@ -16,7 +16,7 @@ class TestTodoManager extends TodoManager {
             return Future.value(SuccessResult(data: todo));
         }
         on TodoErrorReason catch (reason) {
-            return Future.value(SemanticErrorResult(reason: reason));
+            return Future.value(DomainMatterResult(reason: reason));
         }
     }
 
@@ -34,7 +34,7 @@ class TestTodoManager extends TodoManager {
             return Future.value(SuccessResult(data: todo));
         }
         on TodoErrorReason catch (reason) {
-            return Future.value(SemanticErrorResult(reason: reason));
+            return Future.value(DomainMatterResult(reason: reason));
         }
     }
 
@@ -44,7 +44,7 @@ class TestTodoManager extends TodoManager {
             return Future.value(SuccessResult(data: todo));
         }
         on TodoErrorReason catch (reason) {
-            return Future.value(SemanticErrorResult(reason: reason));
+            return Future.value(DomainMatterResult(reason: reason));
         }
     }
 
@@ -57,7 +57,7 @@ class TestTodoManager extends TodoManager {
             return Future.value(SuccessResult(data: todo));
         }
         on TodoErrorReason catch (reason) {
-            return Future.value(SemanticErrorResult(reason: reason));
+            return Future.value(DomainMatterResult(reason: reason));
         }
     }
 

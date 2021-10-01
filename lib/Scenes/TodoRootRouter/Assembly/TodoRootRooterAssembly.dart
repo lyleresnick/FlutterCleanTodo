@@ -6,13 +6,13 @@ import 'package:flutter_todo/Scenes/TodoRootRouter/View/TodoRootRouterScene.dart
 class TodoRootRouterAssembly {
 
     final TodoRootRouterScene scene;
-    TodoRootRouterAssembly._({this.scene});
+    TodoRootRouterAssembly._(this.scene);
 
     factory TodoRootRouterAssembly() {
 
         final presenter = TodoRootRouterPresenter();
-        final scene = TodoRootRouterScene(presenter: presenter);
+        final scene = TodoRootRouterScene(presenter);
 
-        return TodoRootRouterAssembly._(scene: scene);
+        return TodoRootRouterAssembly._(scene);
     }
 }

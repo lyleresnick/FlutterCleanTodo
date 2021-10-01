@@ -2,7 +2,6 @@
 
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_todo/Scenes/Common/Bloc.dart';
 import 'package:flutter_todo/Scenes/Common/Localize.dart';
 import 'package:flutter_todo/Scenes/TodoList/Router/TodoListRouter.dart';
@@ -14,15 +13,15 @@ import 'TodoListPresenterOutput.dart';
 
 class TodoListPresenter extends Bloc {
 
-    final TodoListUseCase useCase;
-    final TodoListRouter router;
+    final TodoListUseCase _useCase;
+    final TodoListRouter _router;
     final _controller = StreamController<TodoListPresenterOutput>();
     Stream<TodoListPresenterOutput> get stream => _controller.stream;
 
     List<TodoListRowViewModel> _viewModelList = [];
 
-    TodoListPresenter({@required this.useCase, @required this.router}) {
-        useCase.stream
+    TodoListPresenter(this._useCase, this._router) {
+        _useCase.stream
             .listen((event) {
                 if (event is PresentBegin) {
                     _viewModelList = [];
@@ -50,24 +49,24 @@ class TodoListPresenter extends Bloc {
     String get titleLabel => localizeString("todoList");
 
     void eventViewReady() {
-        useCase.eventViewReady();
+        _useCase.eventViewReady();
     }
 
     void eventCompleted(int index) {
-        useCase.eventCompleted(true, index, _viewModelList[index].id);
+        _useCase.eventCompleted(true, index, _viewModelList[index].id);
     }
 
     void eventNotCompleted(int index) {
-        useCase.eventCompleted(false, index, _viewModelList[index].id);
+        _useCase.eventCompleted(false, index, _viewModelList[index].id);
     }
 
     void eventDelete(int index) {
-        useCase.eventDelete(index, _viewModelList[index].id);
+        _useCase.eventDelete(index, _viewModelList[index].id);
     }
 
     void eventCreate() {
 
-        router.routeCreateItem((model) {
+        _router.routeCreateItem((model) {
 
             _viewModelList.add(TodoListRowViewModel(model));
             _controller.sink.add(ShowTodoList(_viewModelList));
@@ -76,7 +75,7 @@ class TodoListPresenter extends Bloc {
 
     void eventItemSelected(int index) {
 
-        router.routeDisplayItem(_viewModelList[index].id, (model) {
+        _router.routeDisplayItem(_viewModelList[index].id, (model) {
 
             _viewModelList[index] = TodoListRowViewModel(model);
             _controller.sink.add(ShowTodoList(_viewModelList));
@@ -85,7 +84,7 @@ class TodoListPresenter extends Bloc {
 
     @override
     void dispose() {
-        useCase.dispose();
+        _useCase.dispose();
         _controller.close();
     }
 }

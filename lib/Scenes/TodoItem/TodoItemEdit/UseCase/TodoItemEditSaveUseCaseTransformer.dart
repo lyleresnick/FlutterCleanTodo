@@ -32,7 +32,7 @@ class TodoItemEditSaveUseCaseTransformer {
             }
             else if(result is FailureResult)
                 assert(false, "Unresolved error: ${result.description}");
-            else if(result is SemanticErrorResult)
+            else if(result is DomainMatterResult)
                 assert(false, "Unexpected Semantic error: reason ${result.reason}");
         }
 

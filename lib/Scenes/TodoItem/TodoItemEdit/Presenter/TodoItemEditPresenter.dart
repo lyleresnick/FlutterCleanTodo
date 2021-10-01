@@ -3,7 +3,6 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 
 import 'package:flutter_todo/Entities/Priority.dart';
 import 'package:flutter_todo/Scenes/Common/Bloc.dart';
@@ -17,22 +16,22 @@ import 'TodoItemEditPresenterOutput.dart';
 
 class TodoItemEditPresenter extends Bloc {
 
-    final TodoItemEditUseCase useCase;
-    final TodoItemEditRouter router;
+    final TodoItemEditUseCase _useCase;
+    final TodoItemEditRouter _router;
     BuildContext buildContext;
 
     final _controller = StreamController<TodoItemEditPresenterOutput>();
     get stream => _controller.stream;
 
-    TodoItemEditPresenter({@required this.useCase, @required this.router}) {
+    TodoItemEditPresenter(this._useCase, this._router) {
 
-        useCase.stream
+        _useCase.stream
             .listen((event) {
                 if (event is PresentModel) {
                     _controller.sink.add(ShowModel(TodoItemEditViewModel.fromModel(event.model)));
                 }
                 else if (event is PresentSaveCompleted) {
-                    router.routeSaveCompleted();
+                    _router.routeSaveCompleted();
                 }
                 else if (event is PresentEnableEditCompleteBy) {
                     TodoItemEditScene.showEnableEditCompleteBy(this, event.completeBy);
@@ -44,56 +43,56 @@ class TodoItemEditPresenter extends Bloc {
     }
 
     void eventViewReady() {
-        useCase.eventViewReady();
+        _useCase.eventViewReady();
     }
 
     void eventEditedTitle(String title) {
-        useCase.eventEditedTitle(title);
+        _useCase.eventEditedTitle(title);
     }
 
     void eventEditedNote(String note) {
-        useCase.eventEditedNote(note);
+        _useCase.eventEditedNote(note);
     }
 
     void eventCompleteByClear() {
-        useCase.eventCompleteByClear();
+        _useCase.eventCompleteByClear();
     }
 
     void eventCompleteByToday() {
-        useCase.eventCompleteByToday();
+        _useCase.eventCompleteByToday();
     }
 
     void eventEnableEditCompleteBy(BuildContext context) {
         buildContext = context;
-        useCase.eventEnableEditCompleteBy();
+        _useCase.eventEnableEditCompleteBy();
     }
 
     void eventEditedCompleteBy(DateTime completeBy) {
-        useCase.eventEditedCompleteBy(completeBy);
+        _useCase.eventEditedCompleteBy(completeBy);
     }
 
     void eventCompleted(bool completed) {
-        useCase.eventCompleted(completed);
+        _useCase.eventCompleted(completed);
     }
 
     void eventEditedPriority(int index) {
     
         final priority = priorityFromBangs(index);
-        useCase.eventEditedPriority(priority);
+        _useCase.eventEditedPriority(priority);
     }
 
     void eventSave(BuildContext context) {
         buildContext = context;
-        useCase.eventSave();
+        _useCase.eventSave();
     }
 
     void eventCancel() {
-        router.routeEditingCancelled();
+        _router.routeEditingCancelled();
     }
 
     @override
     void dispose() {
-        useCase.dispose();
+        _useCase.dispose();
         _controller.close();
     }
 
