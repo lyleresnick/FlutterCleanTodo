@@ -30,7 +30,7 @@ class SqlLiteTodoManager implements TodoManager {
 
       final result = await fetch(id: id);
       try {
-          if(!(result is SuccessResult)) throw TodoErrorReason.notFound;
+          if(!(result is SuccessResult)) throw TodoDomainReason.notFound;
           final todo = (result as SuccessResult).data as Todo;
           todo.completed = completed;
 
@@ -41,11 +41,11 @@ class SqlLiteTodoManager implements TodoManager {
               where: "id = ?",
               whereArgs: [id],
           );
-          if(count != 1 ) throw TodoErrorReason.notFound;
+          if(count != 1 ) throw TodoDomainReason.notFound;
           return Future.value(SuccessResult(data: todo));
       }
       catch (e) {
-          return Future.value(DomainMatterResult(reason: e));
+          return Future.value(DomainIssueResult(reason: e));
       }
   }
 
@@ -67,7 +67,7 @@ class SqlLiteTodoManager implements TodoManager {
 
       final result = await fetch(id: id);
       try {
-          if(!(result is SuccessResult)) throw TodoErrorReason.notFound;
+          if(!(result is SuccessResult)) throw TodoDomainReason.notFound;
           final todo = (result as SuccessResult).data as Todo;
 
           final database = await db.database;
@@ -76,11 +76,11 @@ class SqlLiteTodoManager implements TodoManager {
               where: "id = ?",
               whereArgs: [id],
           );
-          if(count != 1 ) throw TodoErrorReason.notFound;
+          if(count != 1 ) throw TodoDomainReason.notFound;
           return Future.value(SuccessResult(data: todo));
       }
       catch (e) {
-          return Future.value(DomainMatterResult(reason: e));
+          return Future.value(DomainIssueResult(reason: e));
       }
   }
 
@@ -97,7 +97,7 @@ class SqlLiteTodoManager implements TodoManager {
       if(todo.length == 1 )
           return Future.value(SuccessResult(data: Todo.fromDynamicValueDictionary(todo[0])));
       else
-          return Future.value(DomainMatterResult(reason: TodoErrorReason.notFound));
+          return Future.value(DomainIssueResult(reason: TodoDomainReason.notFound));
   }
 
   @override
@@ -121,6 +121,6 @@ class SqlLiteTodoManager implements TodoManager {
       if(count == 1 )
           return Future.value(SuccessResult(data: todo));
       else
-          return Future.value(DomainMatterResult(reason: TodoErrorReason.notFound));
+          return Future.value(DomainIssueResult(reason: TodoDomainReason.notFound));
   }
 }

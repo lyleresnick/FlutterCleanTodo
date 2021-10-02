@@ -7,30 +7,26 @@ import 'package:flutter_todo/Scenes/TodoList/Router/TodoListRouter.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/Router/TodoItemRouterRouter.dart';
 import 'package:flutter_todo/Scenes/TodoRootRouter/Presenter/TodoRootRouterPresenterOutput.dart';
 
-class TodoRootRouterPresenter extends Bloc implements TodoItemRouterRouter, TodoListRouter {
-
-    final _controller = StreamController<TodoRootRouterPresenterOutput>();
-    Stream<TodoRootRouterPresenterOutput> get stream => _controller.stream;
+class TodoRootRouterPresenter extends Bloc
+    implements TodoItemRouterRouter, TodoListRouter {
+  final _controller = StreamController<TodoRootRouterPresenterOutput>();
+  Stream<TodoRootRouterPresenterOutput> get stream => _controller.stream;
 
 //    TodoItemRouterRouter
 
-    void routeCreateItemCancelled() {
-        _controller.sink.add(ShowPop());
-    }
+  void routeCreateItemCancelled() {
+    _controller.sink.add(ShowPop());
+  }
 
 // TodoListRouter
 
-    void routeDisplayItem(id, completion) {
-        _controller.sink.add(ShowItem(id, completion));
-    }
+  @override
+  void routeShowItemDetail() {
+    _controller.sink.add(ShowRowDetail());
+  }
 
-    void routeCreateItem(completion) {
-        _controller.sink.add(ShowCreateItem(completion));
-    }
-
-    @override
-    void dispose() {
-        _controller.close();
-    }
-
+  @override
+  void dispose() {
+    _controller.close();
+  }
 }

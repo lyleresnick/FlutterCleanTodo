@@ -5,55 +5,57 @@ import 'dart:async';
 import 'package:flutter_todo/EntityGateway/EntityGateway.dart';
 import 'package:flutter_todo/Managers/Result.dart';
 import 'package:flutter_todo/Managers/TodoManager.dart';
+import 'package:flutter_todo/Scenes/AppState/TodoAppState.dart';
 import 'package:flutter_todo/Scenes/Common/Bloc.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemStartMode.dart';
-import 'package:flutter_todo/Scenes/TodoList/UseCase/TodoListPresentationModel.dart';
 
 import 'TodoItemRouterUseCaseOutput.dart';
-import 'TodoItemUseCaseState.dart';
+import '../../TodoItemState.dart';
 
-class TodoItemRouterUseCase extends Bloc{
+class TodoItemRouterUseCase extends Bloc {
 
     final _controller = StreamController<TodoItemRouterUseCaseOutput>();
     Stream<TodoItemRouterUseCaseOutput> get stream => _controller.stream;
 
     final EntityGateway _entityGateway;
-    final TodoItemUseCaseState _useCaseState;
+    final TodoAppState _appState;
 
-    TodoItemRouterUseCase(this._entityGateway, this._useCaseState);
+    TodoItemRouterUseCase(this._entityGateway, this._appState) {
+        _appState.itemState = TodoItemState();
+    }
 
     void eventViewReady({TodoItemStartMode startMode}) {
 
-        switch(startMode.runtimeType) {
+        switch(_appState.itemStartMode.runtimeType) {
             case TodoItemStartModeCreate:
-                _startCreate(startMode, _controller.sink);
+                _startCreate(_controller.sink);
                 break;
             case TodoItemStartModeUpdate:
-                _startUpdate(startMode, _controller.sink);
+                _startUpdate(_controller.sink);
                 break;
             default:
                 assert(false, "startMode.runtimeType is not defined" );
         }
     }
 
-    void _startCreate(TodoItemStartModeCreate startMode, StreamSink<TodoItemRouterUseCaseOutput> output) {
-        _useCaseState.currentTodo = null;
-        output.add(PresentViewReady(startMode));
+    void _startCreate(StreamSink<TodoItemRouterUseCaseOutput> output) {
+        output.add(PresentEditView());
     }
 
-    void _startUpdate(TodoItemStartModeUpdate startMode, StreamSink<TodoItemRouterUseCaseOutput> output) async {
+    void _startUpdate(StreamSink<TodoItemRouterUseCaseOutput> output) async {
+        final startMode = _appState.itemStartMode as TodoItemStartModeUpdate;
 
-        final result = await _entityGateway.todoManager.fetch(id: startMode.id);
+        final result = await _entityGateway.todoManager.fetch(id: _appState.toDoList[startMode.index].id);
         if(result is SuccessResult) {
-            _useCaseState.currentTodo = result.data;
-            output.add(PresentViewReady(startMode));
+            _appState.itemState.currentTodo = result.data;
+            output.add(PresentDisplayView());
         }
         else if(result is FailureResult)
             assert(false, "Unresolved error: ${result.description}");
-        else if(result is DomainMatterResult) {
+        else if(result is DomainIssueResult) {
             switch (result.reason) {
-                case TodoErrorReason.notFound:
-                    output.add(PresentNotFound(startMode.id));
+                case TodoDomainReason.notFound:
+                    output.add(PresentNotFound(_appState.toDoList[startMode.index].id));
                     break;
                 default:
                     assert(false, "Unexpected Semantic error: reason ${result.reason}");
@@ -62,8 +64,8 @@ class TodoItemRouterUseCase extends Bloc{
     }
 
     void eventBack() {
-        if(_useCaseState.itemChanged) {
-            _controller.sink.add(PresentChanged(TodoListPresentationModel(_useCaseState.currentTodo)));
+        if(_appState.itemState.itemChanged) {
+            _appState.itemStartMode.todoListChangedItemCallback();
         }
     }
 

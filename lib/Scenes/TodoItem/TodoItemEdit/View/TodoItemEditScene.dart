@@ -12,22 +12,14 @@ import 'package:flutter_todo/Scenes/Common/TodoExclusive.dart';
 import 'package:flutter_todo/Scenes/Common/TodoOkDialog.dart';
 import 'package:flutter_todo/Scenes/Common/TodoSwitch.dart';
 import 'package:flutter_todo/Scenes/Common/TodoTextField.dart';
-import 'package:flutter_todo/Scenes/TodoItem/TodoItemEdit/Assembly/TodoItemEditAssembly.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemEdit/Presenter/TodoItemEditPresenter.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemEdit/Presenter/TodoItemEditPresenterOutput.dart';
-import 'package:flutter_todo/Scenes/TodoItem/TodoItemEdit/Router/TodoItemEditRouter.dart';
-import 'package:flutter_todo/Scenes/TodoItem/TodoItemEditMode.dart';
-import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/UseCase/TodoItemUseCaseState.dart';
 
 class TodoItemEditScene extends StatelessWidget implements ActionDecoratedScene {
   final TodoItemEditPresenter _presenter;
 
   TodoItemEditScene(this._presenter) {
       _presenter.eventViewReady();
-  }
-
-  factory TodoItemEditScene.assembled({@required TodoItemEditRouter router, @required TodoItemEditMode editMode, TodoItemUseCaseState useCaseState}) {
-    return TodoItemEditAssembly(router, editMode, useCaseState).scene;
   }
 
   @override

@@ -3,7 +3,7 @@
 import 'package:flutter_todo/Entities/Priority.dart';
 import 'package:flutter_todo/Entities/Todo.dart';
 
-class TodoListPresentationModel {
+class TodoListPresentationRowModel {
 
     final String id;
     final String title;
@@ -11,7 +11,7 @@ class TodoListPresentationModel {
     final int priority;
     final bool completed;
 
-    TodoListPresentationModel(Todo entity) :
+    TodoListPresentationRowModel(Todo entity) :
         id = entity.id,
         title = entity.title,
         completeBy = entity.completeBy,

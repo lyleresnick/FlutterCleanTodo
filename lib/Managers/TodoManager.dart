@@ -2,7 +2,7 @@
 import 'Result.dart';
 import 'TodoValues.dart';
 
-enum TodoErrorReason {
+enum TodoDomainReason {
     notFound
 }
 

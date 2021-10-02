@@ -3,8 +3,8 @@
 import 'dart:async';
 
 import 'package:flutter_todo/Entities/Priority.dart';
+import 'package:flutter_todo/Scenes/AppState/TodoAppState.dart';
 import 'package:flutter_todo/Scenes/Common/Bloc.dart';
-import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/UseCase/TodoItemUseCaseState.dart';
 
 import 'TodoItemDisplayUseCaseOutput.dart';
 
@@ -12,12 +12,12 @@ class TodoItemDisplayUseCase extends Bloc {
 
     final _controller = StreamController<TodoItemDisplayUseCaseOutput>();
     Stream<TodoItemDisplayUseCaseOutput> get stream => _controller.stream;
-    TodoItemUseCaseState _useCaseState;
+    TodoAppState _appState;
 
-    TodoItemDisplayUseCase(this._useCaseState);
+    TodoItemDisplayUseCase(this._appState);
 
     void eventViewReady() {
-        final todo = _useCaseState.currentTodo;
+        final todo = _appState.itemState.currentTodo;
         _controller.sink.add(PresentBegin());
 
         _controller.sink.add(PresentString(FieldName.title, todo.title));

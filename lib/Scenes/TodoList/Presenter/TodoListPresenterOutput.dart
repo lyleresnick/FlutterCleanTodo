@@ -4,7 +4,7 @@ import '../Presenter/TodoListRowViewModel.dart';
 
 abstract class TodoListPresenterOutput {}
     // ViewReady
-class ShowTodoList extends TodoListPresenterOutput { final List<TodoListRowViewModel> viewModelList; ShowTodoList(this.viewModelList); }
+class ShowTodoListModel extends TodoListPresenterOutput { final List<TodoListRowViewModel> viewModelList; ShowTodoListModel(this.viewModelList); }
     // Create
 class ShowAdded extends TodoListPresenterOutput { final List<TodoListRowViewModel> viewModelList; int index; ShowAdded(this.viewModelList, this.index); }
     // Delete

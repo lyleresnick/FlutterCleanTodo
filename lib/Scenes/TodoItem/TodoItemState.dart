@@ -2,8 +2,7 @@
 
 import 'package:flutter_todo/Entities/Todo.dart';
 
-class TodoItemUseCaseState {
-
+class TodoItemState {
     Todo currentTodo;
     var itemChanged = false;
 }

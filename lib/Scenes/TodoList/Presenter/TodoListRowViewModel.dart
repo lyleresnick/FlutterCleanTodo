@@ -1,6 +1,6 @@
 //  Copyright (c) 2019 Lyle Resnick. All rights reserved.
 
-import '../UseCase/TodoListPresentationModel.dart';
+import '../UseCase/TodoListPresentationRowModel.dart';
 import 'package:flutter_todo/Scenes/Common/Localize.dart';
 
 class TodoListRowViewModel {
@@ -11,7 +11,7 @@ class TodoListRowViewModel {
     final String priority;
     final bool completed;
 
-    TodoListRowViewModel(TodoListPresentationModel model) :
+    TodoListRowViewModel(TodoListPresentationRowModel model) :
         id = model.id,
         title = model.title,
         completeBy = (model.completeBy != null) ? localizeDate(model.completeBy) : "",

@@ -15,8 +15,8 @@ class TestTodoManager extends TodoManager {
             todo.completed = completed;
             return Future.value(SuccessResult(data: todo));
         }
-        on TodoErrorReason catch (reason) {
-            return Future.value(DomainMatterResult(reason: reason));
+        on TodoDomainReason catch (reason) {
+            return Future.value(DomainIssueResult(reason: reason));
         }
     }
 
@@ -33,8 +33,8 @@ class TestTodoManager extends TodoManager {
             values.setOn(todo: todo);
             return Future.value(SuccessResult(data: todo));
         }
-        on TodoErrorReason catch (reason) {
-            return Future.value(DomainMatterResult(reason: reason));
+        on TodoDomainReason catch (reason) {
+            return Future.value(DomainIssueResult(reason: reason));
         }
     }
 
@@ -43,8 +43,8 @@ class TestTodoManager extends TodoManager {
             final todo = _findTodo(id: id);
             return Future.value(SuccessResult(data: todo));
         }
-        on TodoErrorReason catch (reason) {
-            return Future.value(DomainMatterResult(reason: reason));
+        on TodoDomainReason catch (reason) {
+            return Future.value(DomainIssueResult(reason: reason));
         }
     }
 
@@ -56,8 +56,8 @@ class TestTodoManager extends TodoManager {
             TodoTestData().data.remove(index);
             return Future.value(SuccessResult(data: todo));
         }
-        on TodoErrorReason catch (reason) {
-            return Future.value(DomainMatterResult(reason: reason));
+        on TodoDomainReason catch (reason) {
+            return Future.value(DomainIssueResult(reason: reason));
         }
     }
 
@@ -68,7 +68,7 @@ class TestTodoManager extends TodoManager {
                 return entity;
             }
         }
-        throw TodoErrorReason.notFound;
+        throw TodoDomainReason.notFound;
     }
 
     int _findTodoIndex({String id}) {
@@ -79,7 +79,7 @@ class TestTodoManager extends TodoManager {
             }
             index++;
         }
-        throw TodoErrorReason.notFound;
+        throw TodoDomainReason.notFound;
     }
 }
 

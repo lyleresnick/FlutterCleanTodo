@@ -7,17 +7,12 @@ import 'package:flutter_todo/Scenes/TodoItem/TodoItemDisplay/Assembly/TodoDispla
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemEdit/Assembly/TodoItemEditAssembly.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/Presenter/TodoItemRouterPresenter.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/Presenter/TodoItemRouterPresenterOutput.dart';
-import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/UseCase/TodoItemUseCaseState.dart';
-import 'package:flutter_todo/Scenes/TodoItem/TodoItemStartMode.dart';
-import 'package:flutter_todo/Scenes/TodoItem/TodoItemEditMode.dart';
-
 
 class TodoItemRouterScene extends StatelessWidget {
 
     final TodoItemRouterPresenter _presenter;
-    final TodoItemUseCaseState _useCaseState;
 
-    TodoItemRouterScene(this._presenter, this._useCaseState) {
+    TodoItemRouterScene(this._presenter) {
         _presenter.eventViewReady();
     }
 
@@ -38,20 +33,10 @@ class TodoItemRouterScene extends StatelessWidget {
                     final data = snapshot.data;
                     Widget body;
 
-                    if (data is ShowViewReady) {
-                        switch (data.startMode.runtimeType) {
-                            case TodoItemStartModeCreate:
-                                body = TodoItemEditAssembly(_presenter, TodoItemEditMode.create, _useCaseState).scene;
-                                break;
-                            case TodoItemStartModeUpdate:
-                                body = TodoItemDisplayAssembly(_presenter, _useCaseState).scene;
-                                break;
-                        }
-                    }
-                    else if (data is ShowDisplayView)
-                        body = TodoItemDisplayAssembly(_presenter, _useCaseState).scene;
+                    if (data is ShowDisplayView)
+                        body = TodoItemDisplayAssembly(_presenter).scene;
                     else if (data is ShowEditView)
-                        body = TodoItemEditAssembly(_presenter, TodoItemEditMode.update, _useCaseState).scene;
+                        body = TodoItemEditAssembly(_presenter).scene;
                     else if (data is ShowMessageView)
                         body = Text(data.message);
                     else

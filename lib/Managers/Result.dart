@@ -16,7 +16,7 @@ class FailureResult extends Result {
     FailureResult({this.code, this.description});
 }
 
-class DomainMatterResult<Reason> extends Result {
-    Reason reason;
-    DomainMatterResult({this.reason});
+class DomainIssueResult<Issue> extends Result {
+    Issue reason;
+    DomainIssueResult({this.reason});
 }

@@ -33,6 +33,12 @@ class TodoItemEditPresenter extends Bloc {
                 else if (event is PresentSaveCompleted) {
                     _router.routeSaveCompleted();
                 }
+                else if (event is PresentEditingCancelled) {
+                    _router.routeEditingCancelled();
+                }
+                else if (event is PresentCreateCancelled) {
+                    _router.routeCreateCancelled();
+                }
                 else if (event is PresentEnableEditCompleteBy) {
                     TodoItemEditScene.showEnableEditCompleteBy(this, event.completeBy);
                 }
@@ -87,7 +93,7 @@ class TodoItemEditPresenter extends Bloc {
     }
 
     void eventCancel() {
-        _router.routeEditingCancelled();
+        _useCase.eventCancel();
     }
 
     @override

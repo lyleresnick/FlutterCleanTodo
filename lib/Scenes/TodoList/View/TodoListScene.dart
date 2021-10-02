@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_todo/Scenes/Common/BlocProvider.dart';
+import 'package:flutter_todo/Scenes/Common/Localize.dart';
 import 'package:flutter_todo/Scenes/TodoList/Presenter/TodoListPresenter.dart';
 import 'package:flutter_todo/Scenes/TodoList/Presenter/TodoListPresenterOutput.dart';
 import 'TodoListCell.dart';
@@ -19,7 +20,7 @@ class TodoListScene extends StatelessWidget {
     final platform = Theme.of(context).platform;
     return Scaffold(
       appBar: AppBar(
-        title: Text(_presenter.titleLabel),
+        title: Text(localizeString("todoList")),
         backgroundColor: Colors.lightGreen,
         elevation: platform == TargetPlatform.iOS ? 0.0 : 4.0,
         actions: _actions(platform),
@@ -34,7 +35,7 @@ class TodoListScene extends StatelessWidget {
                   return Text("Loading ...");
                 }
                 final data = snapshot.data;
-                if (data is ShowTodoList)
+                if (data is ShowTodoListModel)
                   return ListView.builder(
                       itemCount: data.viewModelList.length,
                       itemBuilder: (context, index) => TodoListCell(

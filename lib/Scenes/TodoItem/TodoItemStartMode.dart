@@ -1,14 +1,10 @@
 //  Copyright (c) 2019 Lyle Resnick. All rights reserved.
 
-import '../TodoList/UseCase/TodoListPresentationModel.dart';
-
-typedef  TodoListChangedItemCallback = void Function(TodoListPresentationModel todoListPresentationModel);
-
+typedef  TodoListChangedItemCallback = void Function();
 
 abstract class TodoItemStartMode {
     TodoListChangedItemCallback todoListChangedItemCallback;
     TodoItemStartMode(this.todoListChangedItemCallback);
-
 }
 
 class TodoItemStartModeCreate extends TodoItemStartMode {
@@ -16,7 +12,7 @@ class TodoItemStartModeCreate extends TodoItemStartMode {
 }
 
 class TodoItemStartModeUpdate extends TodoItemStartMode {
-    String id;
-    TodoItemStartModeUpdate(this.id, todoListChangedItemCallback) : super(todoListChangedItemCallback);
+    int index;
+    TodoItemStartModeUpdate(this.index, todoListChangedItemCallback) : super(todoListChangedItemCallback);
 }
 

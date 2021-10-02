@@ -4,13 +4,13 @@ import 'dart:async';
 
 import 'package:flutter_todo/Entities/Priority.dart';
 import 'package:flutter_todo/EntityGateway/EntityGateway.dart';
+import 'package:flutter_todo/Scenes/AppState/TodoAppState.dart';
 import 'package:flutter_todo/Scenes/Common/Bloc.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemEdit/UseCase/TodoItemEditPresentationModel.dart';
-import 'package:flutter_todo/Scenes/TodoItem/TodoItemEditMode.dart';
-import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/UseCase/TodoItemUseCaseState.dart';
 import 'package:flutter_todo/Entities/Todo.dart';
+import 'package:flutter_todo/Scenes/TodoItem/TodoItemStartMode.dart';
 
-import 'TodoItemEditSaveUseCaseTransformer.dart';
+import 'TodoItemEditUseCaseSaveTransformer.dart';
 import 'TodoItemEditUseCaseOutput.dart';
 
 class EditingTodo {
@@ -44,26 +44,23 @@ class TodoItemEditUseCase extends Bloc {
   Stream<TodoItemEditUseCaseOutput> get stream => _controller.stream;
 
   EditingTodo _editingTodo;
-  final TodoItemEditMode editMode;
 
-  final EntityGateway entityGateway;
-  final TodoItemUseCaseState useCaseState;
+  final EntityGateway _entityGateway;
+  final TodoAppState _appState;
 
-  TodoItemEditUseCase(this.entityGateway, this.useCaseState, this.editMode);
+  TodoItemEditUseCase(this._entityGateway, this._appState);
 
   void eventViewReady() {
-    switch (editMode) {
-      case TodoItemEditMode.update:
-        _controller.sink.add(PresentModel(
-            TodoItemEditPresentationModel.fromEntity(
-                useCaseState.currentTodo)));
-        _editingTodo = EditingTodo.fromTodo(useCaseState.currentTodo);
-        break;
-      case TodoItemEditMode.create:
+    if (_appState.itemStartMode is TodoItemStartModeUpdate ) {
+      _controller.sink.add(PresentModel(
+          TodoItemEditPresentationModel.fromEntity(
+              _appState.itemState.currentTodo)));
+      _editingTodo = EditingTodo.fromTodo(_appState.itemState.currentTodo);
+    }
+    else {
         _editingTodo = EditingTodo();
         _controller.sink.add(PresentModel(
             TodoItemEditPresentationModel.fromEditingTodo(_editingTodo)));
-        break;
     }
   }
 
@@ -106,10 +103,16 @@ class TodoItemEditUseCase extends Bloc {
   }
 
   void eventSave() {
-    final transformer = TodoItemEditSaveUseCaseTransformer(
-        editMode, entityGateway.todoManager, useCaseState);
+    final transformer = TodoItemEditUseCaseSaveTransformer(_entityGateway.todoManager, _appState);
     transformer.transform(_editingTodo, _controller.sink);
   }
+
+  void eventCancel() {
+    if(_appState.itemStartMode is TodoItemStartModeCreate)
+      _controller.sink.add(PresentCreateCancelled());
+    else
+      _controller.sink.add(PresentEditingCancelled());
+    }
 
   @override
   void dispose() {
