@@ -4,13 +4,15 @@ import 'dart:async';
 
 import 'package:flutter_todo/Entities/Priority.dart';
 import 'package:flutter_todo/EntityGateway/EntityGateway.dart';
+import 'package:flutter_todo/Managers/Result.dart';
+import 'package:flutter_todo/Managers/TodoValues.dart';
 import 'package:flutter_todo/Scenes/AppState/TodoAppState.dart';
 import 'package:flutter_todo/Scenes/Common/Bloc.dart';
+import 'package:flutter_todo/Scenes/Common/ErrorMessages.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemEdit/UseCase/TodoItemEditPresentationModel.dart';
 import 'package:flutter_todo/Entities/Todo.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemStartMode.dart';
 
-import 'TodoItemEditUseCaseSaveTransformer.dart';
 import 'TodoItemEditUseCaseOutput.dart';
 
 class EditingTodo {
@@ -51,17 +53,18 @@ class TodoItemEditUseCase extends Bloc {
   TodoItemEditUseCase(this._entityGateway, this._appState);
 
   void eventViewReady() {
-    if (_appState.itemStartMode is TodoItemStartModeUpdate ) {
-      _controller.sink.add(PresentModel(
-          TodoItemEditPresentationModel.fromEntity(
-              _appState.itemState.currentTodo)));
+    if (_appState.itemStartMode is TodoItemStartModeUpdate) {
       _editingTodo = EditingTodo.fromTodo(_appState.itemState.currentTodo);
+    } else {
+      _editingTodo = EditingTodo();
     }
-    else {
-        _editingTodo = EditingTodo();
-        _controller.sink.add(PresentModel(
-            TodoItemEditPresentationModel.fromEditingTodo(_editingTodo)));
-    }
+    _refreshPresentation();
+  }
+
+  _refreshPresentation({ErrorMessage errorMessage, bool showEditCompleteBy = false}) {
+    _controller.sink.add(PresentModel(
+        TodoItemEditPresentationModel.fromEditingTodo(_editingTodo,
+            errorMessage: errorMessage, showEditCompleteBy: showEditCompleteBy)));
   }
 
   void eventEditedTitle(String title) {
@@ -74,24 +77,21 @@ class TodoItemEditUseCase extends Bloc {
 
   void eventCompleteByClear() {
     _editingTodo.completeBy = null;
-    _controller.sink.add(PresentModel(
-        TodoItemEditPresentationModel.fromEditingTodo(_editingTodo)));
+    _refreshPresentation();
   }
 
   void eventCompleteByToday() {
     _editingTodo.completeBy = DateTime.now();
-    _controller.sink.add(PresentModel(
-        TodoItemEditPresentationModel.fromEditingTodo(_editingTodo)));
+    _refreshPresentation();
   }
 
   void eventEnableEditCompleteBy() {
-    _controller.sink.add(PresentEnableEditCompleteBy(_editingTodo.completeBy));
+    _refreshPresentation(showEditCompleteBy: true);
   }
 
   void eventEditedCompleteBy(DateTime completeBy) {
     _editingTodo.completeBy = completeBy;
-    _controller.sink.add(PresentModel(
-        TodoItemEditPresentationModel.fromEditingTodo(_editingTodo)));
+    _refreshPresentation();
   }
 
   void eventCompleted(bool completed) {
@@ -102,17 +102,40 @@ class TodoItemEditUseCase extends Bloc {
     _editingTodo.priority = priority;
   }
 
-  void eventSave() {
-    final transformer = TodoItemEditUseCaseSaveTransformer(_entityGateway.todoManager, _appState);
-    transformer.transform(_editingTodo, _controller.sink);
+  void eventSave() async {
+    Result result;
+
+    if (_editingTodo.title == "") {
+      _refreshPresentation(errorMessage: ErrorMessage.titleIsEmpty);
+      return;
+    }
+    switch (_appState.itemStartMode.runtimeType) {
+      case TodoItemStartModeCreate:
+        result = await _entityGateway.todoManager
+            .create(values: TodoValues.fromEditing(_editingTodo));
+        break;
+      case TodoItemStartModeUpdate:
+        result = await _entityGateway.todoManager.update(
+            id: _editingTodo.id, values: TodoValues.fromEditing(_editingTodo));
+        break;
+    }
+    if (result is SuccessResult) {
+      _appState.itemState.currentTodo = result.data;
+      _appState.itemState.itemChanged = true;
+
+      _controller.sink.add(PresentSaveCompleted());
+    } else if (result is FailureResult)
+      assert(false, "Unresolved error: ${result.description}");
+    else if (result is DomainIssueResult)
+      assert(false, "Unexpected Semantic error: reason ${result.reason}");
   }
 
   void eventCancel() {
-    if(_appState.itemStartMode is TodoItemStartModeCreate)
+    if (_appState.itemStartMode is TodoItemStartModeCreate)
       _controller.sink.add(PresentCreateCancelled());
     else
       _controller.sink.add(PresentEditingCancelled());
-    }
+  }
 
   @override
   void dispose() {

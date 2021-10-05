@@ -15,11 +15,12 @@ import 'package:flutter_todo/Scenes/Common/TodoTextField.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemEdit/Presenter/TodoItemEditPresenter.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemEdit/Presenter/TodoItemEditPresenterOutput.dart';
 
-class TodoItemEditScene extends StatelessWidget implements ActionDecoratedScene {
+class TodoItemEditScene extends StatelessWidget
+    implements ActionDecoratedScene {
   final TodoItemEditPresenter _presenter;
 
   TodoItemEditScene(this._presenter) {
-      _presenter.eventViewReady();
+    _presenter.eventViewReady();
   }
 
   @override
@@ -49,6 +50,14 @@ class TodoItemEditScene extends StatelessWidget implements ActionDecoratedScene 
               final data = snapshot.data;
               if (data is ShowModel) {
                 final model = data.model;
+
+                if (model.errorMessage != null) {
+                  _showTitleIsEmpty(context);
+                }
+                else if(model.showEditCompleteBy) {
+                  _showEditCompleteByPopover(context, model.completeBy);
+                }
+
                 return Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Column(children: <Widget>[
@@ -70,25 +79,27 @@ class TodoItemEditScene extends StatelessWidget implements ActionDecoratedScene 
                       ),
                     ),
                     _EditRow(
-                      title: localizeString("completeBy"), 
-                      widget: Row(
-                        children: <Widget>[
-                          TodoSwitch(
-                            state: model.completeBySwitchIsOn,
-                            onChanged: (isOn) {
-                              if (isOn)
-                                _presenter.eventCompleteByToday();
-                              else
-                                _presenter.eventCompleteByClear();
-                            },
-                          ),
-                          Container(width: 6),
-                          GestureDetector(
-                              onTap: !model.completeBySwitchIsOn ? null : () => _presenter.eventEnableEditCompleteBy(context),
-                              child: Text(model.completeByString,
-                                  style: TextStyle(fontSize: 17))),
-                        ],
-                      )),
+                        title: localizeString("completeBy"),
+                        widget: Row(
+                          children: <Widget>[
+                            TodoSwitch(
+                              state: model.completeBySwitchIsOn,
+                              onChanged: (isOn) {
+                                if (isOn)
+                                  _presenter.eventCompleteByToday();
+                                else
+                                  _presenter.eventCompleteByClear();
+                              },
+                            ),
+                            Container(width: 6),
+                            GestureDetector(
+                                onTap: !model.completeBySwitchIsOn
+                                    ? null
+                                    :  _presenter.eventEnableEditCompleteBy,
+                                child: Text(model.completeByString,
+                                    style: TextStyle(fontSize: 17))),
+                          ],
+                        )),
                     _expandedRow(
                       localizeString("priority"),
                       TodoExclusive(
@@ -100,15 +111,14 @@ class TodoItemEditScene extends StatelessWidget implements ActionDecoratedScene 
                       ),
                     ),
                     _EditRow(
-                      title: localizeString("completed"), 
-                      widget: TodoSwitch(
-                        state: model.completed,
-                        onChanged: _presenter.eventCompleted,
-                      ))
+                        title: localizeString("completed"),
+                        widget: TodoSwitch(
+                          state: model.completed,
+                          onChanged: _presenter.eventCompleted,
+                        ))
                   ]),
                 );
-              }
-              else
+              } else
                 return null;
             }),
       ),
@@ -119,36 +129,43 @@ class TodoItemEditScene extends StatelessWidget implements ActionDecoratedScene 
     return _EditRow(title: title, widget: Expanded(child: widget));
   }
 
-  static void showEnableEditCompleteBy(TodoItemEditPresenter presenter, DateTime completeBy) async {
-    if (Platform.isIOS)
-      CupertinoPopoverDatePicker().show(completeBy, presenter.buildContext,
-          presenter.eventEditedCompleteBy, localizeString("set"));
-    else {
-      final newCompleteBy = await showDatePicker(
-          context: presenter.buildContext,
-          firstDate:
-              DateTime.now().isBefore(completeBy) ? DateTime.now() : completeBy,
-          initialDate: completeBy,
-          lastDate: DateTime(2030));
-      if (newCompleteBy != null) presenter.eventEditedCompleteBy(newCompleteBy);
-    }
+  void _showEditCompleteByPopover(
+      BuildContext context, DateTime completeBy) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      if (Platform.isIOS)
+        CupertinoPopoverDatePicker().show(completeBy, context,
+        _presenter.eventEditedCompleteBy, localizeString("set"));
+      else {
+        final newCompleteBy = await showDatePicker(
+            context: context,
+            firstDate: DateTime.now().isBefore(completeBy)
+                ? DateTime.now()
+                : completeBy,
+            initialDate: completeBy,
+            lastDate: DateTime(2030));
+        if (newCompleteBy != null)
+          _presenter.eventEditedCompleteBy(newCompleteBy);
+      }
+    });
   }
 
-  static void showTitleIsEmpty(TodoItemEditPresenter presenter) {
-    TodoOkDialog.show(presenter.buildContext, localizeString("titleRequiredTitle"),
+   void _showTitleIsEmpty(BuildContext context) {
+    TodoOkDialog.show(context, localizeString("titleRequiredTitle"),
         localizeString("titleRequiredMessage"));
   }
 }
 
 class _EditRow extends StatelessWidget {
-  const _EditRow({@required this.title, @required this.widget,});
+  const _EditRow({
+    @required this.title,
+    @required this.widget,
+  });
 
   final String title;
   final Widget widget;
 
   @override
   Widget build(BuildContext context) {
-
     return Padding(
       padding: const EdgeInsets.only(bottom: 5.0),
       child: Row(
@@ -169,39 +186,34 @@ class _EditRow extends StatelessWidget {
 }
 
 class SaveButton extends StatelessWidget {
-
-  final Function(BuildContext) onPressed;
+  final Function() onPressed;
   const SaveButton({this.onPressed});
 
   @override
   Widget build(BuildContext context) {
-
-    return Builder(
-      builder: (context) {
-        return (Platform.isIOS)
-            ? CupertinoButton(
-                child: Text(localizeString("save"),
-                  style: TextStyle(fontSize: 18, color: Colors.white),
-                ),
-                onPressed: () => onPressed(context),
-              )
-            : IconButton(
-                icon: Icon(Icons.save),
-                onPressed: () => onPressed(context),
-              );
-      }
-    );
+    return Builder(builder: (context) {
+      return (Platform.isIOS)
+          ? CupertinoButton(
+              child: Text(
+                localizeString("save"),
+                style: TextStyle(fontSize: 18, color: Colors.white),
+              ),
+              onPressed:  onPressed,
+            )
+          : IconButton(
+              icon: Icon(Icons.save),
+              onPressed: onPressed,
+            );
+    });
   }
 }
 
 class CancelButton extends StatelessWidget {
-
   final Function onPressed;
   const CancelButton({this.onPressed});
 
   @override
   Widget build(BuildContext context) {
-    
     final icon = (Platform.isIOS) ? Icons.clear : Icons.cancel;
     return IconButton(
       icon: Icon(icon),

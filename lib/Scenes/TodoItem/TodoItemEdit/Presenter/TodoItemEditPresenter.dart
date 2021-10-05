@@ -1,15 +1,11 @@
 //  Copyright (c) 2019 Lyle Resnick. All rights reserved.
 
 import 'dart:async';
-
-import 'package:flutter/cupertino.dart';
-
 import 'package:flutter_todo/Entities/Priority.dart';
 import 'package:flutter_todo/Scenes/Common/Bloc.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemEdit/Router/TodoItemEditRouter.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemEdit/UseCase/TodoItemEditUseCase.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemEdit/UseCase/TodoItemEditUseCaseOutput.dart';
-import 'package:flutter_todo/Scenes/TodoItem/TodoItemEdit/View/TodoItemEditScene.dart';
 
 import 'TodoItemEditViewModel.dart';
 import 'TodoItemEditPresenterOutput.dart';
@@ -18,7 +14,6 @@ class TodoItemEditPresenter extends Bloc {
 
     final TodoItemEditUseCase _useCase;
     final TodoItemEditRouter _router;
-    BuildContext buildContext;
 
     final _controller = StreamController<TodoItemEditPresenterOutput>();
     get stream => _controller.stream;
@@ -38,12 +33,6 @@ class TodoItemEditPresenter extends Bloc {
                 }
                 else if (event is PresentCreateCancelled) {
                     _router.routeCreateCancelled();
-                }
-                else if (event is PresentEnableEditCompleteBy) {
-                    TodoItemEditScene.showEnableEditCompleteBy(this, event.completeBy);
-                }
-                else if (event is PresentTitleIsEmpty) {
-                    TodoItemEditScene.showTitleIsEmpty(this);
                 }
             });
     }
@@ -68,8 +57,7 @@ class TodoItemEditPresenter extends Bloc {
         _useCase.eventCompleteByToday();
     }
 
-    void eventEnableEditCompleteBy(BuildContext context) {
-        buildContext = context;
+    void eventEnableEditCompleteBy() {
         _useCase.eventEnableEditCompleteBy();
     }
 
@@ -87,8 +75,7 @@ class TodoItemEditPresenter extends Bloc {
         _useCase.eventEditedPriority(priority);
     }
 
-    void eventSave(BuildContext context) {
-        buildContext = context;
+    void eventSave() {
         _useCase.eventSave();
     }
 

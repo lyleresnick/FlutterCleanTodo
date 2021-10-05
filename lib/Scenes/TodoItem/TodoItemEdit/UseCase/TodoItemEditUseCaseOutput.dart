@@ -8,6 +8,4 @@ class PresentModel extends TodoItemEditUseCaseOutput { final TodoItemEditPresent
 class PresentSaveCompleted extends TodoItemEditUseCaseOutput {}
 class PresentEditingCancelled extends TodoItemEditUseCaseOutput {}
 class PresentCreateCancelled extends TodoItemEditUseCaseOutput {}
-class PresentTitleIsEmpty extends TodoItemEditUseCaseOutput {}
-class PresentEnableEditCompleteBy extends TodoItemEditUseCaseOutput { final DateTime completeBy; PresentEnableEditCompleteBy(this.completeBy); }
 
