@@ -20,6 +20,5 @@ abstract class EntityGateway {
         case _Implementation.db:
             return SqlLiteEntityGateway();
         }
-        return null;
     }
 }

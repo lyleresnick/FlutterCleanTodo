@@ -1,20 +1,15 @@
 //  Copyright (c) 2019 Lyle Resnick. All rights reserved.
 
-import 'dart:async';
-
 import 'package:flutter_todo/EntityGateway/EntityGateway.dart';
 import 'package:flutter_todo/Managers/Result.dart';
 import 'package:flutter_todo/Scenes/AppState/TodoAppState.dart';
-import 'package:flutter_todo/Scenes/Common/Bloc.dart';
+import 'package:flutter_todo/Scenes/Common/StarterBloc.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemStartMode.dart';
 
 import 'TodoListPresentationRowModel.dart';
 import 'TodoListUseCaseOutput.dart';
 
-class TodoListUseCase extends Bloc {
-
-    final _controller = StreamController<TodoListUseCaseOutput>();
-    Stream<TodoListUseCaseOutput> get stream => _controller.stream;
+class TodoListUseCase with StarterBloc<TodoListUseCaseOutput> {
 
     final EntityGateway _entityGateway;
     final TodoAppState _appState;
@@ -34,12 +29,12 @@ class TodoListUseCase extends Bloc {
     }
 
     void _refreshPresentation() {
-        _controller.sink.add(
+        streamAdd(
             PresentModel(_appState.toDoList.map((entity) => TodoListPresentationRowModel(entity)).toList()));
     }
 
     void eventCompleted(bool completed, int index) async {
-        final result = await _entityGateway.todoManager.completed(id: _appState.toDoList[index].id, completed: completed);
+        final result = await _entityGateway.todoManager.completed(_appState.toDoList[index].id, completed);
         if(result is SuccessResult) {
             _appState.toDoList[index].completed = completed;
             _refreshPresentation();
@@ -51,7 +46,7 @@ class TodoListUseCase extends Bloc {
     }
 
     void eventDelete(int index) async {
-        final result = await _entityGateway.todoManager.delete(id: _appState.toDoList[index].id);
+        final result = await _entityGateway.todoManager.delete(_appState.toDoList[index].id);
         if(result is SuccessResult) {
             _appState.toDoList.removeAt(index);
             _refreshPresentation();
@@ -64,17 +59,17 @@ class TodoListUseCase extends Bloc {
 
     void eventItemSelected(int index) {
         _appState.itemStartMode = TodoItemStartModeUpdate(index, _refreshPresentation);
-        _controller.sink.add(PresentItemDetail());
+        streamAdd(PresentItemDetail());
     }
 
     void eventCreate() {
         _appState.itemStartMode = TodoItemStartModeCreate(_refreshPresentation);
-        _controller.sink.add(PresentItemDetail());
+        streamAdd(PresentItemDetail());
     }
 
     @override
     void dispose() {
-        _controller.close();
+        super.dispose();
     }
 
 }

@@ -10,12 +10,12 @@ class TodoListCell extends StatelessWidget {
     final TodoListRowViewModel row;
     final int index;
 
-    TodoListCell({@required this.row, @required this.index});
+    TodoListCell({required this.row, required this.index});
 
     @override
     Widget build(BuildContext context) {
 
-        final presenter = BlocProvider.of<TodoListPresenter>(context);
+        final presenter = BlocProvider.of<TodoListPresenter>(context)!;
 
         return Dismissible(
             key: UniqueKey(),
@@ -27,7 +27,7 @@ class TodoListCell extends StatelessWidget {
                 height: 56,
                 decoration: BoxDecoration(
                     color: Colors.white,
-                    border: Border(bottom: BorderSide(color: Colors.grey[300]))
+                    border: Border(bottom: BorderSide(color: Colors.grey[300]!))
                 ),
                 child: Container(
                     padding: EdgeInsets.symmetric(vertical: 6),
@@ -70,7 +70,7 @@ class TodoListCell extends StatelessWidget {
             child: CheckBox(
                 checked: row.completed,
                 onPressed: (checked) {
-                    final presenter = BlocProvider.of<TodoListPresenter>(context);
+                    final presenter = BlocProvider.of<TodoListPresenter>(context)!;
                     if(checked)
                         presenter.eventCompleted(index);
                     else

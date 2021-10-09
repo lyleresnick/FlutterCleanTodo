@@ -1,9 +1,7 @@
 //  Copyright (c) 2019 Lyle Resnick. All rights reserved.
 
-import 'dart:async';
-
 import 'package:flutter_todo/Entities/Priority.dart';
-import 'package:flutter_todo/Scenes/Common/Bloc.dart';
+import 'package:flutter_todo/Scenes/Common/StarterBloc.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemDisplay/Router/TodoItemDisplayRouter.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemDisplay/UseCase/TodoItemDisplayUseCase.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemDisplay/UseCase/TodoItemDisplayUseCaseOutput.dart';
@@ -12,13 +10,11 @@ import 'package:flutter_todo/Scenes/Common/Localize.dart';
 
 import 'TodoItemDisplayRowViewModel.dart';
 
-class TodoItemDisplayPresenter extends Bloc  {
+class TodoItemDisplayPresenter with StarterBloc<TodoItemDisplayPresenterOutput>  {
 
     final TodoItemDisplayUseCase _useCase;
     final TodoItemDisplayRouter _router;
-    final _controller = StreamController<TodoItemDisplayPresenterOutput>();
-    Stream<TodoItemDisplayPresenterOutput> get stream => _controller.stream;
-    List<TodoItemDisplayRowViewModel> _viewModelList;
+    late List<TodoItemDisplayRowViewModel> _viewModelList;
 
 
     TodoItemDisplayPresenter(this._useCase, this._router) {
@@ -41,10 +37,10 @@ class TodoItemDisplayPresenter extends Bloc  {
             }
             else if (event is PresentDate) {
                 final fieldName = localizeString(fieldNameToString(event.field));
-                _viewModelList.add(TodoItemDisplayRowViewModel(fieldName, localizeDate(event.value)));
+                _viewModelList.add(TodoItemDisplayRowViewModel(fieldName, localizeDate(event.value!)));
             }
             else if (event is PresentEnd) {
-                _controller.sink.add(ShowFieldList(_viewModelList));
+                streamAdd(ShowFieldList(_viewModelList));
             }
         });
     }
@@ -70,7 +66,7 @@ class TodoItemDisplayPresenter extends Bloc  {
     @override
     void dispose() {
         _useCase.dispose();
-        _controller.close();
+        super.dispose();
     }
 
 }

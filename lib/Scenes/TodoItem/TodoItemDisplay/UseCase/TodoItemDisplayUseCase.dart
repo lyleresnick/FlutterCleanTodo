@@ -1,45 +1,41 @@
 //  Copyright (c) 2019 Lyle Resnick. All rights reserved.
 
-import 'dart:async';
-
 import 'package:flutter_todo/Entities/Priority.dart';
 import 'package:flutter_todo/Scenes/AppState/TodoAppState.dart';
-import 'package:flutter_todo/Scenes/Common/Bloc.dart';
+import 'package:flutter_todo/Scenes/Common/StarterBloc.dart';
 
 import 'TodoItemDisplayUseCaseOutput.dart';
 
-class TodoItemDisplayUseCase extends Bloc {
+class TodoItemDisplayUseCase with StarterBloc<TodoItemDisplayUseCaseOutput> {
 
-    final _controller = StreamController<TodoItemDisplayUseCaseOutput>();
-    Stream<TodoItemDisplayUseCaseOutput> get stream => _controller.stream;
     TodoAppState _appState;
 
     TodoItemDisplayUseCase(this._appState);
 
     void eventViewReady() {
         final todo = _appState.itemState.currentTodo;
-        _controller.sink.add(PresentBegin());
+        streamAdd(PresentBegin());
 
-        _controller.sink.add(PresentString(FieldName.title, todo.title));
+        streamAdd(PresentString(FieldName.title, todo.title));
         if( todo.note != "" ) {
-            _controller.sink.add(PresentString(FieldName.note, todo.note));
+            streamAdd(PresentString(FieldName.note, todo.note));
         }
         if (todo.completeBy != null) {
-            _controller.sink.add(PresentDate(FieldName.completeBy, todo.completeBy));
+            streamAdd(PresentDate(FieldName.completeBy, todo.completeBy));
         }
         switch(todo.priority) {
             case Priority.none:
                 break;
             default:
-                _controller.sink.add(PresentPriority(FieldName.priority, todo.priority));
+                streamAdd(PresentPriority(FieldName.priority, todo.priority));
         }
-        _controller.sink.add(PresentBool(FieldName.completed, todo.completed));
-        _controller.sink.add(PresentEnd());
+        streamAdd(PresentBool(FieldName.completed, todo.completed));
+        streamAdd(PresentEnd());
     }
 
     @override
     void dispose() {
-        _controller.close();
+        super.dispose();
     }
 
 }

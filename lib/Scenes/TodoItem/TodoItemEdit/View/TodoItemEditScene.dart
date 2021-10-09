@@ -55,7 +55,7 @@ class TodoItemEditScene extends StatelessWidget
                   _showTitleIsEmpty(context);
                 }
                 else if(model.showEditCompleteBy) {
-                  _showEditCompleteByPopover(context, model.completeBy);
+                  _showEditCompleteByPopover(context, model.completeBy!);
                 }
 
                 return Padding(
@@ -118,8 +118,10 @@ class TodoItemEditScene extends StatelessWidget
                         ))
                   ]),
                 );
-              } else
-                return null;
+              } else {
+                assert(false, "unknown event $data");
+                return Container(color: Colors.red);
+              }
             }),
       ),
     );
@@ -131,7 +133,7 @@ class TodoItemEditScene extends StatelessWidget
 
   void _showEditCompleteByPopover(
       BuildContext context, DateTime completeBy) {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
       if (Platform.isIOS)
         CupertinoPopoverDatePicker().show(completeBy, context,
         _presenter.eventEditedCompleteBy, localizeString("set"));
@@ -157,8 +159,8 @@ class TodoItemEditScene extends StatelessWidget
 
 class _EditRow extends StatelessWidget {
   const _EditRow({
-    @required this.title,
-    @required this.widget,
+    required this.title,
+    required this.widget,
   });
 
   final String title;
@@ -186,7 +188,7 @@ class _EditRow extends StatelessWidget {
 }
 
 class SaveButton extends StatelessWidget {
-  final Function() onPressed;
+  final void Function()? onPressed;
   const SaveButton({this.onPressed});
 
   @override
@@ -209,7 +211,7 @@ class SaveButton extends StatelessWidget {
 }
 
 class CancelButton extends StatelessWidget {
-  final Function onPressed;
+  final void Function()? onPressed;
   const CancelButton({this.onPressed});
 
   @override

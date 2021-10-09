@@ -1,14 +1,12 @@
 //  Copyright (c) 2019 Lyle Resnick. All rights reserved.
 
-import 'dart:async';
-
 import 'package:flutter_todo/Entities/Priority.dart';
 import 'package:flutter_todo/EntityGateway/EntityGateway.dart';
 import 'package:flutter_todo/Managers/Result.dart';
 import 'package:flutter_todo/Managers/TodoValues.dart';
 import 'package:flutter_todo/Scenes/AppState/TodoAppState.dart';
-import 'package:flutter_todo/Scenes/Common/Bloc.dart';
 import 'package:flutter_todo/Scenes/Common/ErrorMessages.dart';
+import 'package:flutter_todo/Scenes/Common/StarterBloc.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemEdit/UseCase/TodoItemEditPresentationModel.dart';
 import 'package:flutter_todo/Entities/Todo.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemStartMode.dart';
@@ -16,10 +14,10 @@ import 'package:flutter_todo/Scenes/TodoItem/TodoItemStartMode.dart';
 import 'TodoItemEditUseCaseOutput.dart';
 
 class EditingTodo {
-  String id;
+  String? id;
   String title;
   String note;
-  DateTime completeBy;
+  DateTime? completeBy;
   Priority priority;
   bool completed;
 
@@ -31,24 +29,25 @@ class EditingTodo {
       this.priority = Priority.none,
       this.completed = false});
 
-  EditingTodo.fromTodo(Todo todo) {
-    id = todo.id;
-    title = todo.title;
-    note = todo.note;
-    completeBy = todo.completeBy;
-    priority = todo.priority;
-    completed = todo.completed;
+  factory EditingTodo.fromTodo(Todo todo) {
+
+    return EditingTodo(
+      id: todo.id,
+      title: todo.title,
+      note: todo.note,
+      completeBy: todo.completeBy,
+      priority: todo.priority,
+      completed: todo.completed
+    );
   }
 }
 
-class TodoItemEditUseCase extends Bloc {
-  final _controller = StreamController<TodoItemEditUseCaseOutput>();
-  Stream<TodoItemEditUseCaseOutput> get stream => _controller.stream;
+class TodoItemEditUseCase with StarterBloc<TodoItemEditUseCaseOutput> {
 
-  EditingTodo _editingTodo;
+  late EditingTodo _editingTodo;
 
-  final EntityGateway _entityGateway;
-  final TodoAppState _appState;
+  late final EntityGateway _entityGateway;
+  late final TodoAppState _appState;
 
   TodoItemEditUseCase(this._entityGateway, this._appState);
 
@@ -61,8 +60,8 @@ class TodoItemEditUseCase extends Bloc {
     _refreshPresentation();
   }
 
-  _refreshPresentation({ErrorMessage errorMessage, bool showEditCompleteBy = false}) {
-    _controller.sink.add(PresentModel(
+  _refreshPresentation({ErrorMessage? errorMessage, bool showEditCompleteBy = false}) {
+    streamAdd(PresentModel(
         TodoItemEditPresentationModel.fromEditingTodo(_editingTodo,
             errorMessage: errorMessage, showEditCompleteBy: showEditCompleteBy)));
   }
@@ -103,27 +102,35 @@ class TodoItemEditUseCase extends Bloc {
   }
 
   void eventSave() async {
-    Result result;
 
     if (_editingTodo.title == "") {
       _refreshPresentation(errorMessage: ErrorMessage.titleIsEmpty);
       return;
     }
+    late Result result;
     switch (_appState.itemStartMode.runtimeType) {
       case TodoItemStartModeCreate:
         result = await _entityGateway.todoManager
-            .create(values: TodoValues.fromEditing(_editingTodo));
+            .create(TodoValues.fromEditing(_editingTodo));
         break;
       case TodoItemStartModeUpdate:
-        result = await _entityGateway.todoManager.update(
-            id: _editingTodo.id, values: TodoValues.fromEditing(_editingTodo));
+        result = await _entityGateway.todoManager.update( _editingTodo.id!, TodoValues.fromEditing(_editingTodo));
         break;
     }
     if (result is SuccessResult) {
-      _appState.itemState.currentTodo = result.data;
+      final todo = result.data as Todo;
+      _appState.itemState.currentTodo = todo;
+      switch (_appState.itemStartMode.runtimeType) {
+        case TodoItemStartModeCreate:
+          _appState.toDoList.add(todo);
+          break;
+        case TodoItemStartModeUpdate:
+          _appState.toDoList[
+            (_appState.itemStartMode as TodoItemStartModeUpdate).index] = todo;
+          break;
+      }
       _appState.itemState.itemChanged = true;
-
-      _controller.sink.add(PresentSaveCompleted());
+      streamAdd(PresentSaveCompleted());
     } else if (result is FailureResult)
       assert(false, "Unresolved error: ${result.description}");
     else if (result is DomainIssueResult)
@@ -132,13 +139,13 @@ class TodoItemEditUseCase extends Bloc {
 
   void eventCancel() {
     if (_appState.itemStartMode is TodoItemStartModeCreate)
-      _controller.sink.add(PresentCreateCancelled());
+      streamAdd(PresentCreateCancelled());
     else
-      _controller.sink.add(PresentEditingCancelled());
+      streamAdd(PresentEditingCancelled());
   }
 
   @override
   void dispose() {
-    _controller.close();
+    super.dispose();
   }
 }

@@ -26,12 +26,12 @@ class SqlLiteTodoManager implements TodoManager {
   }
 
   @override
-  Future<Result> completed({String id, bool completed}) async {
+  Future<Result> completed(String id, bool completed) async {
 
-      final result = await fetch(id: id);
+      final result = await fetch(id);
       try {
-          if(!(result is SuccessResult)) throw TodoDomainReason.notFound;
-          final todo = (result as SuccessResult).data as Todo;
+          if(result is! SuccessResult) throw TodoDomainReason.notFound;
+          final todo = result.data as Todo;
           todo.completed = completed;
 
           final database = await db.database;
@@ -50,7 +50,7 @@ class SqlLiteTodoManager implements TodoManager {
   }
 
   @override
-  Future<Result> create({TodoValues values}) async {
+  Future<Result> create(TodoValues values) async {
 
       final database = await db.database;
       final todo = values.toTodo( id: Uuid().v1());
@@ -63,12 +63,12 @@ class SqlLiteTodoManager implements TodoManager {
   }
 
   @override
-  Future<Result> delete({String id}) async {
+  Future<Result> delete(String id) async {
 
-      final result = await fetch(id: id);
+      final result = await fetch(id);
       try {
-          if(!(result is SuccessResult)) throw TodoDomainReason.notFound;
-          final todo = (result as SuccessResult).data as Todo;
+          if(result is! SuccessResult) throw TodoDomainReason.notFound;
+          final todo = result.data as Todo;
 
           final database = await db.database;
           final count = await database.delete(
@@ -85,7 +85,7 @@ class SqlLiteTodoManager implements TodoManager {
   }
 
   @override
-  Future<Result> fetch({String id}) async {
+  Future<Result> fetch(String id) async {
 
       final database = await db.database;
       final todo = await database.query(
@@ -101,7 +101,7 @@ class SqlLiteTodoManager implements TodoManager {
   }
 
   @override
-  Future<Result> update({String id, TodoValues values}) async {
+  Future<Result> update(String id, TodoValues values) async {
       var todo = Todo(
           id: id,
           title: values.title,

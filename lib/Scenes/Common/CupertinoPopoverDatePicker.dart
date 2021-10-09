@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 class CupertinoPopoverDatePicker {
 
-    DateTime _currentPickerValue;
+    late DateTime _currentPickerValue;
 
     void show(DateTime time, BuildContext context, Function(DateTime) onSet, String setLabel) {
         _currentPickerValue = time;
@@ -58,7 +58,7 @@ class CupertinoPopoverDatePicker {
         );
     }
 
-    Widget _bottomPicker({double height, Widget picker}) {
+    Widget _bottomPicker({required double height, required Widget picker}) {
         return Container(
             height: height,
             padding: const EdgeInsets.only(top: 6.0),

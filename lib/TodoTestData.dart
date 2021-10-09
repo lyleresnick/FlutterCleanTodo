@@ -3,7 +3,7 @@ import 'Entities/Todo.dart';
 
 
 class TodoTestData {
-    List<Todo> data;
+    late List<Todo> data;
 
     factory TodoTestData() {
         return _shared;

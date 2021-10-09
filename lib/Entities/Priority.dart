@@ -7,21 +7,6 @@ enum Priority {
     none
 }
 
-int bangs(Priority priority) {
-
-    switch (priority) {
-        case Priority.high:
-            return 3;
-        case Priority.medium:
-            return 2;
-        case Priority.low:
-            return 1;
-        case Priority.none:
-            return 0;
-    }
-    return 0;
-}
-
 Priority priorityFromBangs(int bangs) {
 
     switch(bangs) {
@@ -51,7 +36,7 @@ int bangsFromPriority(Priority priority) {
     case Priority.none:
         return 0;
     default:
-        return null;
+        throw FormatException("bangsFromPriority: invalid priority $priority");
     }
 }
 

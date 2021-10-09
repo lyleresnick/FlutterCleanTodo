@@ -7,7 +7,7 @@ class TodoLocalizations {
 
     final Locale locale;
 
-    static TodoLocalizations of(BuildContext context) {
+    static TodoLocalizations? of(BuildContext context) {
         return Localizations.of<TodoLocalizations>(context, TodoLocalizations);
     }
 
@@ -69,15 +69,18 @@ class TodoLocalizations {
     };
 
     String localize(String string) {
-        return _localizedValues[locale.languageCode][string];
+        final localized = _localizedValues[locale.languageCode]?[string];
+        if (localized == null)
+            throw Exception("localize: no entry for language code '${locale.languageCode}', key: '$string'");
+        return localized;
     }
 }
 
 class TodoLocalizationsDelegate extends LocalizationsDelegate<TodoLocalizations> {
     const TodoLocalizationsDelegate();
 
-    static String _localeString;
-    static TodoLocalizations _todoLocalizations;
+    static late String _localeString;
+    static late TodoLocalizations _todoLocalizations;
 
     @override
     bool isSupported(Locale locale) => ['en', 'fr'].contains(locale.languageCode);

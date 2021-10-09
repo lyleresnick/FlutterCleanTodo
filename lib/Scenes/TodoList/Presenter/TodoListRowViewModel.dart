@@ -14,7 +14,7 @@ class TodoListRowViewModel {
     TodoListRowViewModel(TodoListPresentationRowModel model) :
         id = model.id,
         title = model.title,
-        completeBy = (model.completeBy != null) ? localizeDate(model.completeBy) : "",
+        completeBy = (model.completeBy != null) ? localizeDate(model.completeBy!) : "",
         priority = List<String>.generate(model.priority + 1, (index) => " " ).reduce((value, element) => "!$value" ),
         completed = model.completed ;
 

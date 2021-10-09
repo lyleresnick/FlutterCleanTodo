@@ -2,8 +2,8 @@
 
 import 'dart:async';
 
-import 'package:flutter_todo/Scenes/Common/Bloc.dart';
 import 'package:flutter_todo/Scenes/Common/Localize.dart';
+import 'package:flutter_todo/Scenes/Common/StarterBloc.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemDisplay/Router/TodoItemDisplayRouter.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemEdit/Router/TodoItemEditRouter.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/Router/TodoItemRouterRouter.dart';
@@ -13,27 +13,24 @@ import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/UseCase/TodoItemRout
 
 import 'TodoItemRouterPresenterOutput.dart';
 
-class TodoItemRouterPresenter extends Bloc implements TodoItemDisplayRouter, TodoItemEditRouter  {
+class TodoItemRouterPresenter with StarterBloc<TodoItemRouterPresenterOutput> implements TodoItemDisplayRouter, TodoItemEditRouter  {
 
     final TodoItemRouterUseCase _useCase;
     final TodoItemRouterRouter router;
-
-    final _controller = StreamController<TodoItemRouterPresenterOutput>();
-    Stream<TodoItemRouterPresenterOutput> get stream => _controller.stream;
 
     TodoItemRouterPresenter(this._useCase, this.router) {
         _useCase.stream
             .listen((event) {
                 if (event is PresentDisplayView) {
-                    _controller.sink.add(ShowDisplayView());
+                    streamAdd(ShowDisplayView());
                 }
                 else if (event is PresentEditView) {
-                  _controller.sink.add(ShowEditView());
+                  streamAdd(ShowEditView());
                 }
                 else if (event is PresentNotFound) {
                     final message = "todoNotFound"; //.localized
                     //final message = String(format: messageFormat, id)
-                    _controller.sink.add(ShowMessageView(message));
+                    streamAdd(ShowMessageView(message));
 
                 }
             });
@@ -55,19 +52,19 @@ class TodoItemRouterPresenter extends Bloc implements TodoItemDisplayRouter, Tod
 
   @override
   void routeEditView() {
-      _controller.sink.add(ShowEditView());
+      streamAdd(ShowEditView());
   }
 
 //  TodoItemEditRouter
 
     @override
     void routeSaveCompleted() {
-        _controller.sink.add(ShowDisplayView());
+      streamAdd(ShowDisplayView());
     }
 
     @override
     void routeEditingCancelled() {
-        _controller.sink.add(ShowDisplayView());
+      streamAdd(ShowDisplayView());
     }
 
 
@@ -80,7 +77,7 @@ class TodoItemRouterPresenter extends Bloc implements TodoItemDisplayRouter, Tod
     @override
     void dispose() {
         _useCase.dispose();
-        _controller.close();
+        super.dispose();
     }
 
 }

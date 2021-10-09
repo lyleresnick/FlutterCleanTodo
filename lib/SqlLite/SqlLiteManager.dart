@@ -7,7 +7,7 @@ class SqlLiteManager {
     SqlLiteManager._private();
     factory SqlLiteManager() => _instance;
 
-    Database _database;
+    Database? _database;
     Future<Database> get database async {
 
         if(_database == null) {
@@ -28,6 +28,6 @@ class SqlLiteManager {
                 version: 1,
             );
         }
-        return _database;
+        return _database!;
     }
 }

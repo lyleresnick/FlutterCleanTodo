@@ -8,7 +8,7 @@ class TodoSwitch extends StatefulWidget {
     final bool _state;
     final void Function(bool) _onChanged;
 
-    TodoSwitch({@required bool state, @required Function(bool) onChanged})
+    TodoSwitch({required bool state, required Function(bool) onChanged})
             : _state = state,  _onChanged = onChanged;
 
     @override
@@ -18,7 +18,7 @@ class TodoSwitch extends StatefulWidget {
 
 class TodoSwitchState extends State<TodoSwitch> {
 
-    bool _state;
+    late bool _state;
 
     @override
     void initState() {

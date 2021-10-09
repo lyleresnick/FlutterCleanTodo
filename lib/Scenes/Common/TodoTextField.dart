@@ -6,14 +6,14 @@ class TodoTextField extends StatelessWidget {
 
     final String value;
     final void Function(String) onChanged;
-    final String placeholder;
+    final String? placeholder;
     final int minLines;
     final int maxLines;
     final _textEditingController = TextEditingController();
 
     TodoTextField({
-        @required this.value,
-        @required this.onChanged,
+        required this.value,
+        required this.onChanged,
         this.placeholder,
         this.minLines = 1,
         this.maxLines = 1 }) {

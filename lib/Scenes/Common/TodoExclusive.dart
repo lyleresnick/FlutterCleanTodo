@@ -6,10 +6,10 @@ import 'package:flutter/cupertino.dart';
 class TodoExclusive extends StatefulWidget {
 
     final int value;
-    final void Function(int) onValueChanged;
+    final void Function(int?) onValueChanged;
     final List<String> itemNames;
 
-    TodoExclusive({@required this.value, @required this.itemNames, @required this.onValueChanged});
+    TodoExclusive({required this.value, required this.itemNames, required this.onValueChanged});
 
     @override
     State<StatefulWidget> createState()  => TodoExclusiveState();
@@ -18,8 +18,8 @@ class TodoExclusive extends StatefulWidget {
 
 class TodoExclusiveState extends State<TodoExclusive> {
 
-    int _value;
-    Map<int,Text> _cupertinoItems;
+    int? _value;
+    late Map<int,Text> _cupertinoItems;
 
     @override
     void initState() {
@@ -33,7 +33,7 @@ class TodoExclusiveState extends State<TodoExclusive> {
 
         final platform = Theme.of(context).platform;
 
-        void onChanged(int value) {
+        void onChanged(int? value) {
             setState(() {
                 _value = value;
             });
@@ -71,9 +71,9 @@ class TodoExclusiveState extends State<TodoExclusive> {
         return children;
     }
 
-    List<RadioListTile> _makeRadioTiles(int groupValue, List<String> titles, Function(int) onChanged) {
+    List<RadioListTile> _makeRadioTiles(int? groupValue, List<String> titles, void Function(int?) onChanged) {
 
-        final children = List<RadioListTile>();
+        final List<RadioListTile> children = [];
         var index = 0;
         for(var title in titles) {
             final tile = RadioListTile(

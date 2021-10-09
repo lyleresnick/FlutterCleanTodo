@@ -31,7 +31,7 @@ class TodoItemRouterScene extends StatelessWidget {
                         return Material(color: Colors.black);
                     }
                     final data = snapshot.data;
-                    Widget body;
+                    late Widget body;
 
                     if (data is ShowDisplayView)
                         body = TodoItemDisplayAssembly(_presenter).scene;

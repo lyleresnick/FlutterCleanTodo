@@ -3,8 +3,8 @@ import 'package:flutter_todo/Scenes/TodoItem/TodoItemState.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemStartMode.dart';
 
 abstract class AppState {
-  List<Todo> toDoList;
-  TodoItemStartMode itemStartMode;
-  TodoItemState itemState;
+  late List<Todo> toDoList;
+  late TodoItemStartMode itemStartMode;
+  late TodoItemState itemState;
 }
 

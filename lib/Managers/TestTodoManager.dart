@@ -7,11 +7,11 @@ import 'Result.dart';
 
 class TestTodoManager extends TodoManager {
 
-    Future<Result> all() => Future.value(SuccessResult(data: TodoTestData().data));
+    Future<Result> all() => Future.value(SuccessResult(data: TodoTestData().data.toList())); // make copy
 
-    Future<Result> completed({String id, bool completed}) {
+    Future<Result> completed(String id, bool completed) {
         try {
-            final todo = _findTodo(id: id);
+            final todo = _findTodo(id);
             todo.completed = completed;
             return Future.value(SuccessResult(data: todo));
         }
@@ -20,16 +20,16 @@ class TestTodoManager extends TodoManager {
         }
     }
 
-    Future<Result> create({TodoValues values}) {
+    Future<Result> create(TodoValues values) {
         final todo = values.toTodo( id: Uuid().v1());
         TodoTestData().data.add(todo);
         return Future.value(SuccessResult(data: todo));
     }
 
-    Future<Result> update({String id, TodoValues values}) {
+    Future<Result> update(String id, TodoValues values) {
 
         try {
-            final todo = _findTodo(id: id);
+            final todo = _findTodo(id);
             values.setOn(todo: todo);
             return Future.value(SuccessResult(data: todo));
         }
@@ -38,9 +38,9 @@ class TestTodoManager extends TodoManager {
         }
     }
 
-    Future<Result> fetch({String id}) {
+    Future<Result> fetch(String id) {
         try {
-            final todo = _findTodo(id: id);
+            final todo = _findTodo(id);
             return Future.value(SuccessResult(data: todo));
         }
         on TodoDomainReason catch (reason) {
@@ -48,10 +48,10 @@ class TestTodoManager extends TodoManager {
         }
     }
 
-    Future<Result> delete({String id}) {
+    Future<Result> delete(String id) {
 
         try {
-            final index = _findTodoIndex(id: id);
+            final index = _findTodoIndex(id);
             final todo = TodoTestData().data[index];
             TodoTestData().data.remove(index);
             return Future.value(SuccessResult(data: todo));
@@ -62,7 +62,7 @@ class TestTodoManager extends TodoManager {
     }
 
 
-    Todo _findTodo({String id}) {
+    Todo _findTodo(String id) {
         for(final entity in TodoTestData().data) {
             if(entity.id == id) {
                 return entity;
@@ -71,7 +71,7 @@ class TestTodoManager extends TodoManager {
         throw TodoDomainReason.notFound;
     }
 
-    int _findTodoIndex({String id}) {
+    int _findTodoIndex(String id) {
         int index = 0;
         for (final entity in TodoTestData().data) {
             if(entity.id == id) {

@@ -1,8 +1,7 @@
 //  Copyright (c) 2019 Lyle Resnick. All rights reserved.
 
-import 'dart:async';
 import 'package:flutter_todo/Entities/Priority.dart';
-import 'package:flutter_todo/Scenes/Common/Bloc.dart';
+import 'package:flutter_todo/Scenes/Common/StarterBloc.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemEdit/Router/TodoItemEditRouter.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemEdit/UseCase/TodoItemEditUseCase.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemEdit/UseCase/TodoItemEditUseCaseOutput.dart';
@@ -10,20 +9,17 @@ import 'package:flutter_todo/Scenes/TodoItem/TodoItemEdit/UseCase/TodoItemEditUs
 import 'TodoItemEditViewModel.dart';
 import 'TodoItemEditPresenterOutput.dart';
 
-class TodoItemEditPresenter extends Bloc {
+class TodoItemEditPresenter with StarterBloc<TodoItemEditPresenterOutput> {
 
     final TodoItemEditUseCase _useCase;
     final TodoItemEditRouter _router;
-
-    final _controller = StreamController<TodoItemEditPresenterOutput>();
-    get stream => _controller.stream;
 
     TodoItemEditPresenter(this._useCase, this._router) {
 
         _useCase.stream
             .listen((event) {
                 if (event is PresentModel) {
-                    _controller.sink.add(ShowModel(TodoItemEditViewModel.fromModel(event.model)));
+                    streamAdd(ShowModel(TodoItemEditViewModel.fromModel(event.model)));
                 }
                 else if (event is PresentSaveCompleted) {
                     _router.routeSaveCompleted();
@@ -69,9 +65,9 @@ class TodoItemEditPresenter extends Bloc {
         _useCase.eventCompleted(completed);
     }
 
-    void eventEditedPriority(int index) {
+    void eventEditedPriority(int? index) {
     
-        final priority = priorityFromBangs(index);
+        final priority = priorityFromBangs(index!);
         _useCase.eventEditedPriority(priority);
     }
 
@@ -86,7 +82,7 @@ class TodoItemEditPresenter extends Bloc {
     @override
     void dispose() {
         _useCase.dispose();
-        _controller.close();
+        super.dispose();
     }
 
 }

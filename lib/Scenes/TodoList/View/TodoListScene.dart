@@ -40,8 +40,10 @@ class TodoListScene extends StatelessWidget {
                       itemCount: data.viewModelList.length,
                       itemBuilder: (context, index) => TodoListCell(
                           row: data.viewModelList[index], index: index));
-                else
-                  return null;
+                else {
+                  assert(false, "unknown event $data");
+                  return Container(color: Colors.red);
+                }
               }),
         ),
       ),

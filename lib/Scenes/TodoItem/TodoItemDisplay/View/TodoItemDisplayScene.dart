@@ -18,7 +18,7 @@ class TodoItemDisplayScene extends StatelessWidget implements ActionDecoratedSce
   }
 
   @override
-  Widget leading() {
+  Widget? leading() {
     return null;
   }
 
@@ -48,9 +48,10 @@ class TodoItemDisplayScene extends StatelessWidget implements ActionDecoratedSce
                     return _Row(row: data.model[i]);
                   },
                 );
+              } else {
+                assert(false, "unknown event $data");
+                return Container(color: Colors.red);
               }
-              else
-                return null;
           }
         )
     );
@@ -59,8 +60,8 @@ class TodoItemDisplayScene extends StatelessWidget implements ActionDecoratedSce
 
 class _Row extends StatelessWidget {
   const _Row({
-    Key key,
-    @required this.row,
+    Key? key,
+    required this.row,
   }) : super(key: key);
 
   final TodoItemDisplayRowViewModel row;
@@ -102,8 +103,8 @@ class _Row extends StatelessWidget {
 
 class _EditButton extends StatelessWidget {
   final String label;
-  final Function onPressed;
-  const _EditButton({@required this.label, @required this.onPressed});
+  final void Function() onPressed;
+  const _EditButton({required this.label, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {

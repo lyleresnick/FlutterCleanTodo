@@ -17,9 +17,9 @@ class TodoRootRouterScene extends StatelessWidget {
   TodoRootRouterScene(this._presenter) {
     _presenter.stream.listen((event) {
       if (event is ShowRowDetail) {
-        navKey.currentState.pushNamed(routeTodoItem);
+        navKey.currentState!.pushNamed(routeTodoItem);
       } else if (event is ShowPop) {
-        navKey.currentState.pop();
+        navKey.currentState!.pop();
       }
     });
   }
@@ -32,7 +32,7 @@ class TodoRootRouterScene extends StatelessWidget {
           key: navKey,
           initialRoute: routeTodoList,
           onGenerateRoute: (RouteSettings settings) {
-            WidgetBuilder builder;
+            late WidgetBuilder builder;
             switch (settings.name) {
               case routeTodoList:
                 builder = (_) => TodoListAssembly(_presenter).scene;

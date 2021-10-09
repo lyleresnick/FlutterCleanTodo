@@ -7,7 +7,7 @@ class CheckBox extends StatefulWidget {
     final bool _checked;
     final CheckBoxOnPressed _onPressed;
 
-    CheckBox({bool checked = false, CheckBoxOnPressed onPressed})
+    CheckBox({bool checked = false, required CheckBoxOnPressed onPressed})
         : _checked = checked, _onPressed = onPressed;
 
   @override
@@ -17,7 +17,7 @@ class CheckBox extends StatefulWidget {
 
 class CheckBoxState extends State<CheckBox> {
 
-  bool _checked;
+  late bool _checked;
 
   @override
   void initState() {

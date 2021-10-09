@@ -3,7 +3,7 @@
 import 'package:flutter_todo/Entities/Todo.dart';
 
 class TodoItemState {
-    Todo currentTodo;
+    late Todo currentTodo;
     var itemChanged = false;
 }
 
