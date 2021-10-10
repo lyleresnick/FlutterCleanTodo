@@ -7,57 +7,57 @@ import 'Result.dart';
 
 class TestTodoManager extends TodoManager {
 
-    Future<Result> all() => Future.value(SuccessResult(data: TodoTestData().data.toList())); // make copy
+    Future<Result<List<Todo>, TodoDomainReason>> all() => Future.value(Result.success(TodoTestData().data.toList())); // make copy
 
-    Future<Result> completed(String id, bool completed) {
+    Future<Result<Todo, TodoDomainReason>> completed(String id, bool completed) {
         try {
             final todo = _findTodo(id);
             todo.completed = completed;
-            return Future.value(SuccessResult(data: todo));
+            return Future.value(Result.success(todo));
         }
         on TodoDomainReason catch (reason) {
-            return Future.value(DomainIssueResult(reason: reason));
+            return Future.value(Result.domainIssue(reason));
         }
     }
 
-    Future<Result> create(TodoValues values) {
+    Future<Result<Todo, TodoDomainReason>> create(TodoValues values) {
         final todo = values.toTodo( id: Uuid().v1());
         TodoTestData().data.add(todo);
-        return Future.value(SuccessResult(data: todo));
+        return Future.value(Result.success(todo));
     }
 
-    Future<Result> update(String id, TodoValues values) {
+    Future<Result<Todo, TodoDomainReason>> update(String id, TodoValues values) {
 
         try {
             final todo = _findTodo(id);
             values.setOn(todo: todo);
-            return Future.value(SuccessResult(data: todo));
+            return Future.value(Result.success(todo));
         }
         on TodoDomainReason catch (reason) {
-            return Future.value(DomainIssueResult(reason: reason));
+            return Future.value(Result.domainIssue(reason));
         }
     }
 
-    Future<Result> fetch(String id) {
+    Future<Result<Todo, TodoDomainReason>> fetch(String id) {
         try {
             final todo = _findTodo(id);
-            return Future.value(SuccessResult(data: todo));
+            return Future.value(Result.success(todo));
         }
         on TodoDomainReason catch (reason) {
-            return Future.value(DomainIssueResult(reason: reason));
+            return Future.value(Result.domainIssue(reason));
         }
     }
 
-    Future<Result> delete(String id) {
+    Future<Result<Todo, TodoDomainReason>> delete(String id) {
 
         try {
             final index = _findTodoIndex(id);
             final todo = TodoTestData().data[index];
             TodoTestData().data.remove(index);
-            return Future.value(SuccessResult(data: todo));
+            return Future.value(Result.success(todo));
         }
         on TodoDomainReason catch (reason) {
-            return Future.value(DomainIssueResult(reason: reason));
+            return Future.value(Result.domainIssue(reason));
         }
     }
 

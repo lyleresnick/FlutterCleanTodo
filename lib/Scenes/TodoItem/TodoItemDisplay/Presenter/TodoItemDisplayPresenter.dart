@@ -37,7 +37,7 @@ class TodoItemDisplayPresenter with StarterBloc<TodoItemDisplayPresenterOutput> 
             }
             else if (event is PresentDate) {
                 final fieldName = localizeString(fieldNameToString(event.field));
-                _viewModelList.add(TodoItemDisplayRowViewModel(fieldName, localizeDate(event.value!)));
+                _viewModelList.add(TodoItemDisplayRowViewModel(fieldName, localizeDate(event.value)));
             }
             else if (event is PresentEnd) {
                 streamAdd(ShowFieldList(_viewModelList));

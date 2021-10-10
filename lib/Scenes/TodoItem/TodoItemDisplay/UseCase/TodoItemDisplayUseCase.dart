@@ -20,8 +20,9 @@ class TodoItemDisplayUseCase with StarterBloc<TodoItemDisplayUseCaseOutput> {
         if( todo.note != "" ) {
             streamAdd(PresentString(FieldName.note, todo.note));
         }
-        if (todo.completeBy != null) {
-            streamAdd(PresentDate(FieldName.completeBy, todo.completeBy));
+        final completeBy = todo.completeBy;
+        if (completeBy != null) {
+            streamAdd(PresentDate(FieldName.completeBy, completeBy));
         }
         switch(todo.priority) {
             case Priority.none:

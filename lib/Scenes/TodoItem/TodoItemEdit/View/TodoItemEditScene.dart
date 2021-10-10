@@ -40,25 +40,25 @@ class TodoItemEditScene extends StatelessWidget
   Widget build(BuildContext context) {
     return BlocProvider<TodoItemEditPresenter>(
       bloc: _presenter,
-      child: SingleChildScrollView(
-        child: StreamBuilder<TodoItemEditPresenterOutput>(
-            stream: _presenter.stream,
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return Text("Loading ...");
+      child: StreamBuilder<TodoItemEditPresenterOutput>(
+          stream: _presenter.stream,
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return Text("Loading ...");
+            }
+            final data = snapshot.data;
+            if (data is ShowModel) {
+              final model = data.model;
+
+              if (model.errorMessage != null) {
+                _showTitleIsEmpty(context);
               }
-              final data = snapshot.data;
-              if (data is ShowModel) {
-                final model = data.model;
+              else if(model.showEditCompleteBy) {
+                _showEditCompleteByPopover(context, model.completeBy!);
+              }
 
-                if (model.errorMessage != null) {
-                  _showTitleIsEmpty(context);
-                }
-                else if(model.showEditCompleteBy) {
-                  _showEditCompleteByPopover(context, model.completeBy!);
-                }
-
-                return Padding(
+              return SingleChildScrollView(
+                child: Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Column(children: <Widget>[
                     _expandedRow(
@@ -117,13 +117,13 @@ class TodoItemEditScene extends StatelessWidget
                           onChanged: _presenter.eventCompleted,
                         ))
                   ]),
-                );
-              } else {
-                assert(false, "unknown event $data");
-                return Container(color: Colors.red);
-              }
-            }),
-      ),
+                ),
+              );
+            } else {
+              assert(false, "unknown event $data");
+              return Container(color: Colors.red);
+            }
+          }),
     );
   }
 

@@ -26,7 +26,7 @@ class TodoOkDialog {
                     title: Text(alertTitle),
                     content: Text(message),
                     actions: [
-                      FlatButton(
+                      TextButton(
                         child: Text("OK"),
                         onPressed: () => Navigator.of(context).pop(),
                       )

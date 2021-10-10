@@ -117,24 +117,27 @@ class TodoItemEditUseCase with StarterBloc<TodoItemEditUseCaseOutput> {
         result = await _entityGateway.todoManager.update( _editingTodo.id!, TodoValues.fromEditing(_editingTodo));
         break;
     }
-    if (result is SuccessResult) {
-      final todo = result.data as Todo;
-      _appState.itemState.currentTodo = todo;
-      switch (_appState.itemStartMode.runtimeType) {
-        case TodoItemStartModeCreate:
-          _appState.toDoList.add(todo);
-          break;
-        case TodoItemStartModeUpdate:
-          _appState.toDoList[
-            (_appState.itemStartMode as TodoItemStartModeUpdate).index] = todo;
-          break;
-      }
-      _appState.itemState.itemChanged = true;
-      streamAdd(PresentSaveCompleted());
-    } else if (result is FailureResult)
-      assert(false, "Unresolved error: ${result.description}");
-    else if (result is DomainIssueResult)
-      assert(false, "Unexpected Semantic error: reason ${result.reason}");
+    result.when(
+        success: (todo) {
+          _appState.itemState.currentTodo = todo;
+          switch (_appState.itemStartMode.runtimeType) {
+            case TodoItemStartModeCreate:
+              _appState.toDoList.add(todo);
+              break;
+            case TodoItemStartModeUpdate:
+              _appState.toDoList[
+              (_appState.itemStartMode as TodoItemStartModeUpdate).index] = todo;
+              break;
+          }
+          _appState.itemState.itemChanged = true;
+          streamAdd(PresentSaveCompleted());
+        },
+        failure: (code, description) {
+          assert(false, "Unresolved error: $description");
+        },
+        domainIssue: (reason) {
+          assert(false, "Unexpected Semantic error: reason $reason");
+        });
   }
 
   void eventCancel() {

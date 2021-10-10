@@ -27,15 +27,15 @@ class CheckBoxState extends State<CheckBox> {
 
   @override
   Widget build(BuildContext context) {
+      final hitSpace = 44.0;
       return SizedBox(
-          width: 44,
-          height: 44,
-          child: new FlatButton(
-              padding: EdgeInsets.all(0),
+          width: hitSpace,
+          height: hitSpace,
+          child: new TextButton(
               onPressed: _onClicked,
               child:  Image(
-                  width: 44,
-                  height: 44,
+                  width: hitSpace,
+                  height: hitSpace,
                   image: AssetImage(
                       _checked
                       ? 'images/checkbox_checked.png'
