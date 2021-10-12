@@ -24,17 +24,17 @@ class SqlLiteTodoManager implements TodoManager {
   @override
   Future<Result<Todo, TodoDomainReason>> completed(String id, bool completed) async {
     try {
-      final todo = await _fetchBody(id);
-      todo.completed = completed;
-
       final database = await db.database;
       final count = await database.update(
         'todo',
-        todo.toDynamicValueMap(),
+        {
+          'completed': completed ? 1 : 0,
+        },
         where: "id = ?",
         whereArgs: [id],
       );
       if (count != 1) throw TodoDomainReason.updateFailure;
+      final todo = await _fetchBody(id);
       return Result.success(todo);
     } on TodoDomainReason catch (reason) {
       return Result.domainIssue(reason);

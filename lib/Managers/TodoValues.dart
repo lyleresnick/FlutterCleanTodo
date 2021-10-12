@@ -34,14 +34,5 @@ class TodoValues {
         );
     }
 
-    void setOn({required Todo todo}) {
-
-        todo.title = this.title;
-        todo.note = this.note;
-        todo.completeBy = this.completeBy;
-        todo.priority = this.priority;
-        todo.completed = this.completed;
-    }
-
 }
 
