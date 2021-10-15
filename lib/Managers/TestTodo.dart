@@ -1,8 +1,5 @@
 import 'package:flutter_todo/Entities/Priority.dart';
 import 'package:flutter_todo/Entities/Todo.dart';
-import 'package:flutter_todo/Entities/entity.dart';
-import 'package:intl/intl.dart';
-
 import 'TodoValues.dart';
 
 class TestTodo {

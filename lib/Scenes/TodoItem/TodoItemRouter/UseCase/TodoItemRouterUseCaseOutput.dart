@@ -1,8 +1,13 @@
 //  Copyright (c) 2019 Lyle Resnick. All rights reserved.
 
-abstract class TodoItemRouterUseCaseOutput {}
+import 'package:freezed_annotation/freezed_annotation.dart';
+part "TodoItemRouterUseCaseOutput.freezed.dart";
 
-class PresentEditView extends TodoItemRouterUseCaseOutput {}
-class PresentDisplayView extends TodoItemRouterUseCaseOutput {}
-class PresentNotFound extends TodoItemRouterUseCaseOutput { final String id; PresentNotFound(this.id); }
+@freezed
+class TodoItemRouterUseCaseOutput with _$TodoItemRouterUseCaseOutput  {
+  const factory TodoItemRouterUseCaseOutput.presentEditView() = _PresentEditView;
+  const factory TodoItemRouterUseCaseOutput.presentDisplayView() = _PresentDisplayView;
+  const factory TodoItemRouterUseCaseOutput.presentNotFound(String id) = _PresentNotFound;
+}
+
 

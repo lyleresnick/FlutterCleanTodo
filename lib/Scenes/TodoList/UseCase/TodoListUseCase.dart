@@ -22,12 +22,12 @@ class TodoListUseCase with StarterBloc<TodoListUseCaseOutput> {
     }, failure: (code, description) {
       assert(false, "Unresolved error: $description");
     }, domainIssue: (reason) {
-      assert(false, "Unexpected Semantic error: reason $reason");
+      assert(false, "Unexpected Domain issue: reason $reason");
     });
   }
 
   void _refreshPresentation() {
-    streamAdd(PresentModel(_appState.toDoList
+    streamAdd(TodoListUseCaseOutput.presentModel(_appState.toDoList
         .map((entity) => TodoListPresentationRowModel(entity))
         .toList()));
   }
@@ -41,7 +41,7 @@ class TodoListUseCase with StarterBloc<TodoListUseCaseOutput> {
     }, failure: (code, description) {
       assert(false, "Unresolved error: $description");
     }, domainIssue: (reason) {
-      assert(false, "Unexpected Semantic error: reason $reason");
+      assert(false, "Unexpected Domain issue: reason $reason");
     });
   }
 
@@ -54,19 +54,19 @@ class TodoListUseCase with StarterBloc<TodoListUseCaseOutput> {
     }, failure: (code, description) {
       assert(false, "Unresolved error: $description");
     }, domainIssue: (reason) {
-      assert(false, "Unexpected Semantic error: reason $reason");
+      assert(false, "Unexpected Domain issue: reason $reason");
     });
   }
 
   void eventItemSelected(int index) {
     _appState.itemStartMode =
         TodoItemStartModeUpdate(index, _refreshPresentation);
-    streamAdd(PresentItemDetail());
+    streamAdd(TodoListUseCaseOutput.presentItemDetail());
   }
 
   void eventCreate() {
     _appState.itemStartMode = TodoItemStartModeCreate(_refreshPresentation);
-    streamAdd(PresentItemDetail());
+    streamAdd(TodoListUseCaseOutput.presentItemDetail());
   }
 
   @override

@@ -10,78 +10,66 @@ import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/Router/TodoItemRoute
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/UseCase/TodoItemRouterUseCase.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/UseCase/TodoItemRouterUseCaseOutput.dart';
 
-
 import 'TodoItemRouterPresenterOutput.dart';
 
-class TodoItemRouterPresenter with StarterBloc<TodoItemRouterPresenterOutput> implements TodoItemDisplayRouter, TodoItemEditRouter  {
+class TodoItemRouterPresenter
+    with StarterBloc<TodoItemRouterPresenterOutput>
+    implements TodoItemDisplayRouter, TodoItemEditRouter {
+  final TodoItemRouterUseCase _useCase;
+  final TodoItemRouterRouter router;
 
-    final TodoItemRouterUseCase _useCase;
-    final TodoItemRouterRouter router;
+  TodoItemRouterPresenter(this._useCase, this.router) {
+    _useCase.stream.listen((event) {
+      event.when(presentDisplayView: () {
+        streamAdd(TodoItemRouterPresenterOutput.showDisplayView());
+      }, presentEditView: () {
+        streamAdd(TodoItemRouterPresenterOutput.showEditView());
+      }, presentNotFound: (String id) {
+        final message = "todoNotFound"; //.localized
+        //final message = String(format: messageFormat, id)
+        streamAdd(TodoItemRouterPresenterOutput.showMessageView(message));
+      });
+    });
+  }
 
-    TodoItemRouterPresenter(this._useCase, this.router) {
-        _useCase.stream
-            .listen((event) {
-                if (event is PresentDisplayView) {
-                    streamAdd(ShowDisplayView());
-                }
-                else if (event is PresentEditView) {
-                  streamAdd(ShowEditView());
-                }
-                else if (event is PresentNotFound) {
-                    final message = "todoNotFound"; //.localized
-                    //final message = String(format: messageFormat, id)
-                    streamAdd(ShowMessageView(message));
+  void eventViewReady() {
+    _useCase.eventViewReady();
+  }
 
-                }
-            });
-    }
+  Future<bool> eventBack() async {
+    _useCase.eventBack();
+    return true;
+  }
 
-    void eventViewReady() {
-        _useCase.eventViewReady();
-    }
-
-    Future<bool> eventBack() async {
-        _useCase.eventBack();
-        return true;
-    }
-
-    String get titleLabel => localizeString('todo');
-
+  String get titleLabel => localizeString('todo');
 
 //  TodoItemDisplayRouter
 
   @override
   void routeEditView() {
-      streamAdd(ShowEditView());
+    streamAdd(TodoItemRouterPresenterOutput.showEditView());
   }
 
 //  TodoItemEditRouter
 
-    @override
-    void routeSaveCompleted() {
-      streamAdd(ShowDisplayView());
-    }
+  @override
+  void routeSaveCompleted() {
+    streamAdd(TodoItemRouterPresenterOutput.showDisplayView());
+  }
 
-    @override
-    void routeEditingCancelled() {
-      streamAdd(ShowDisplayView());
-    }
+  @override
+  void routeEditingCancelled() {
+    streamAdd(TodoItemRouterPresenterOutput.showDisplayView());
+  }
 
+  @override
+  void routeCreateCancelled() {
+    router.routeCreateItemCancelled();
+  }
 
-    @override
-    void routeCreateCancelled() {
-      router.routeCreateItemCancelled();
-    }
-
-
-    @override
-    void dispose() {
-        _useCase.dispose();
-        super.dispose();
-    }
-
+  @override
+  void dispose() {
+    _useCase.dispose();
+    super.dispose();
+  }
 }
-
-
-
-

@@ -10,7 +10,8 @@ import 'package:flutter_todo/Scenes/TodoItem/TodoItemDisplay/Presenter/TodoItemD
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemDisplay/Presenter/TodoItemDisplayPresenterOutput.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemDisplay/Presenter/TodoItemDisplayRowViewModel.dart';
 
-class TodoItemDisplayScene extends StatelessWidget implements ActionDecoratedScene {
+class TodoItemDisplayScene extends StatelessWidget
+    implements ActionDecoratedScene {
   final TodoItemDisplayPresenter _presenter;
 
   TodoItemDisplayScene(this._presenter) {
@@ -24,7 +25,10 @@ class TodoItemDisplayScene extends StatelessWidget implements ActionDecoratedSce
 
   @override
   List<Widget> actions() {
-    return [_EditButton(label: _presenter.editLabel, onPressed: _presenter.eventModeEdit)];
+    return [
+      _EditButton(
+          label: _presenter.editLabel, onPressed: _presenter.eventModeEdit)
+    ];
   }
 
   @override
@@ -40,21 +44,15 @@ class TodoItemDisplayScene extends StatelessWidget implements ActionDecoratedSce
               if (!snapshot.hasData) {
                 return Text("Loading ...");
               }
-              final data = snapshot.data;
-              if (data is ShowFieldList) {
+              return snapshot.data!.when(showFieldList: (model) {
                 return ListView.builder(
-                  itemCount: data.model.length,
+                  itemCount: model.length,
                   itemBuilder: (BuildContext context, int i) {
-                    return _Row(row: data.model[i]);
+                    return _Row(row: model[i]);
                   },
                 );
-              } else {
-                assert(false, "unknown event $data");
-                return Container(color: Colors.red);
-              }
-          }
-        )
-    );
+              });
+            }));
   }
 }
 
@@ -109,16 +107,16 @@ class _EditButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return (Platform.isIOS)
-            ? CupertinoButton(
-      child: Text(label,
-        style: TextStyle(fontSize: 18, color: Colors.white),
-      ),
-      onPressed: onPressed,
-    )
-            : IconButton(
-      icon: Icon(Icons.edit),
-      onPressed: onPressed,
-    );
+        ? CupertinoButton(
+            child: Text(
+              label,
+              style: TextStyle(fontSize: 18, color: Colors.white),
+            ),
+            onPressed: onPressed,
+          )
+        : IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: onPressed,
+          );
   }
 }
-

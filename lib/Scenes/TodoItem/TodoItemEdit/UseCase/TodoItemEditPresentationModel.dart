@@ -8,7 +8,7 @@ class TodoItemEditPresentationModel {
   final String title;
   final String note;
   DateTime? _completeBy;
-  final int priority;
+  final Priority priority;
   bool completed;
   ErrorMessage? errorMessage;
   bool showEditCompleteBy;
@@ -31,7 +31,7 @@ class TodoItemEditPresentationModel {
         title: editingTodo.title,
         note: editingTodo.note,
         completeBy: editingTodo.completeBy,
-        priority: bangsFromPriority(editingTodo.priority),
+        priority: editingTodo.priority,
         completed: editingTodo.completed,
         errorMessage: errorMessage,
         showEditCompleteBy: showEditCompleteBy);

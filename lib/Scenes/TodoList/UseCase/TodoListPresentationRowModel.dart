@@ -8,13 +8,13 @@ class TodoListPresentationRowModel {
     final String id;
     final String title;
     final DateTime? completeBy;
-    final int priority;
+    final Priority priority;
     final bool completed;
 
     TodoListPresentationRowModel(Todo entity) :
         id = entity.id,
         title = entity.title,
         completeBy = entity.completeBy,
-        priority = bangsFromPriority(entity.priority),
+        priority = entity.priority,
         completed = entity.completed;
 }

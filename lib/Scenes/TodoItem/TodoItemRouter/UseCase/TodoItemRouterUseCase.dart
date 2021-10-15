@@ -31,7 +31,7 @@ class TodoItemRouterUseCase with StarterBloc<TodoItemRouterUseCaseOutput> {
   }
 
   void _startCreate() {
-    streamAdd(PresentEditView());
+    streamAdd(TodoItemRouterUseCaseOutput.presentEditView());
   }
 
   void _startUpdate() async {
@@ -41,16 +41,16 @@ class TodoItemRouterUseCase with StarterBloc<TodoItemRouterUseCaseOutput> {
         .fetch(_appState.toDoList[startMode.index].id);
     result.when(success: (todo) {
       _appState.itemState.currentTodo = todo;
-      streamAdd(PresentDisplayView());
+      streamAdd(TodoItemRouterUseCaseOutput.presentDisplayView());
     }, failure: (code, description) {
       assert(false, "Unresolved error: $description");
     }, domainIssue: (reason) {
       switch (reason) {
         case TodoDomainReason.notFound:
-          streamAdd(PresentNotFound(_appState.toDoList[startMode.index].id));
+          streamAdd(TodoItemRouterUseCaseOutput.presentNotFound(_appState.toDoList[startMode.index].id));
           break;
         default:
-          assert(false, "Unexpected Semantic error: reason $reason");
+          assert(false, "Unexpected Domain issue: reason $reason");
       }
     });
   }
