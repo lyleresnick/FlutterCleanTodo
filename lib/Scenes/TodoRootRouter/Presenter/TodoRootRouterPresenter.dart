@@ -11,14 +11,14 @@ class TodoRootRouterPresenter with StarterBloc<TodoRootRouterPresenterOutput>
 //    TodoItemRouterRouter
 
   void routeCreateItemCancelled() {
-    streamAdd(ShowPop());
+    streamAdd(TodoRootRouterPresenterOutput.showPop());
   }
 
 // TodoListRouter
 
   @override
   void routeShowItemDetail() {
-    streamAdd(ShowRowDetail());
+    streamAdd(TodoRootRouterPresenterOutput.showRowDetail());
   }
 
   @override

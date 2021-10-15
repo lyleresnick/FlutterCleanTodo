@@ -10,81 +10,70 @@ import 'TodoItemEditViewModel.dart';
 import 'TodoItemEditPresenterOutput.dart';
 
 class TodoItemEditPresenter with StarterBloc<TodoItemEditPresenterOutput> {
+  final TodoItemEditUseCase _useCase;
+  final TodoItemEditRouter _router;
 
-    final TodoItemEditUseCase _useCase;
-    final TodoItemEditRouter _router;
+  TodoItemEditPresenter(this._useCase, this._router) {
+    _useCase.stream.listen((event) {
+      event.when(
+          presentModel: (model) {
+            streamAdd(TodoItemEditPresenterOutput.showModel(
+                TodoItemEditViewModel.fromModel(model)));
+          },
+          presentSaveCompleted: _router.routeSaveCompleted,
+          presentCreateCancelled: _router.routeCreateCancelled,
+          presentEditingCancelled: _router.routeEditingCancelled);
+    });
+  }
 
-    TodoItemEditPresenter(this._useCase, this._router) {
+  void eventViewReady() {
+    _useCase.eventViewReady();
+  }
 
-        _useCase.stream
-            .listen((event) {
-                if (event is PresentModel) {
-                    streamAdd(ShowModel(TodoItemEditViewModel.fromModel(event.model)));
-                }
-                else if (event is PresentSaveCompleted) {
-                    _router.routeSaveCompleted();
-                }
-                else if (event is PresentEditingCancelled) {
-                    _router.routeEditingCancelled();
-                }
-                else if (event is PresentCreateCancelled) {
-                    _router.routeCreateCancelled();
-                }
-            });
-    }
+  void eventEditedTitle(String title) {
+    _useCase.eventEditedTitle(title);
+  }
 
-    void eventViewReady() {
-        _useCase.eventViewReady();
-    }
+  void eventEditedNote(String note) {
+    _useCase.eventEditedNote(note);
+  }
 
-    void eventEditedTitle(String title) {
-        _useCase.eventEditedTitle(title);
-    }
+  void eventCompleteByClear() {
+    _useCase.eventCompleteByClear();
+  }
 
-    void eventEditedNote(String note) {
-        _useCase.eventEditedNote(note);
-    }
+  void eventCompleteByToday() {
+    _useCase.eventCompleteByToday();
+  }
 
-    void eventCompleteByClear() {
-        _useCase.eventCompleteByClear();
-    }
+  void eventEnableEditCompleteBy() {
+    _useCase.eventEnableEditCompleteBy();
+  }
 
-    void eventCompleteByToday() {
-        _useCase.eventCompleteByToday();
-    }
+  void eventEditedCompleteBy(DateTime completeBy) {
+    _useCase.eventEditedCompleteBy(completeBy);
+  }
 
-    void eventEnableEditCompleteBy() {
-        _useCase.eventEnableEditCompleteBy();
-    }
+  void eventCompleted(bool completed) {
+    _useCase.eventCompleted(completed);
+  }
 
-    void eventEditedCompleteBy(DateTime completeBy) {
-        _useCase.eventEditedCompleteBy(completeBy);
-    }
+  void eventEditedPriority(int? index) {
+    final priority = priorityFromBangs(index!);
+    _useCase.eventEditedPriority(priority);
+  }
 
-    void eventCompleted(bool completed) {
-        _useCase.eventCompleted(completed);
-    }
+  void eventSave() {
+    _useCase.eventSave();
+  }
 
-    void eventEditedPriority(int? index) {
-    
-        final priority = priorityFromBangs(index!);
-        _useCase.eventEditedPriority(priority);
-    }
+  void eventCancel() {
+    _useCase.eventCancel();
+  }
 
-    void eventSave() {
-        _useCase.eventSave();
-    }
-
-    void eventCancel() {
-        _useCase.eventCancel();
-    }
-
-    @override
-    void dispose() {
-        _useCase.dispose();
-        super.dispose();
-    }
-
+  @override
+  void dispose() {
+    _useCase.dispose();
+    super.dispose();
+  }
 }
-
-

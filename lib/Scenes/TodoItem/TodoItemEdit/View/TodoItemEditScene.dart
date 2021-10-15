@@ -39,104 +39,96 @@ class TodoItemEditScene extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     return BlocProvider<TodoItemEditPresenter>(
-      bloc: _presenter,
-      child: StreamBuilder<TodoItemEditPresenterOutput>(
-          stream: _presenter.stream,
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return Text("Loading ...");
-            }
-            final data = snapshot.data;
-            if (data is ShowModel) {
-              final model = data.model;
-
-              if (model.errorMessage != null) {
-                _showTitleIsEmpty(context);
-              }
-              else if(model.showEditCompleteBy) {
-                _showEditCompleteByPopover(context, model.completeBy!);
+        bloc: _presenter,
+        child: StreamBuilder<TodoItemEditPresenterOutput>(
+            stream: _presenter.stream,
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return Text("Loading ...");
               }
 
-              return SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(children: <Widget>[
-                    _expandedRow(
-                      localizeString("title"),
-                      TodoTextField(
-                        value: model.title,
-                        placeholder: localizeString("enterATitle"),
-                        onChanged: _presenter.eventEditedTitle,
+              return snapshot.data!.when(showModel: (model) {
+                if (model.errorMessage != null) {
+                  _showTitleIsEmpty(context);
+                } else if (model.showEditCompleteBy) {
+                  _showEditCompleteByPopover(context, model.completeBy!);
+                }
+
+                return SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Column(children: <Widget>[
+                      _expandedRow(
+                        localizeString("title"),
+                        TodoTextField(
+                          value: model.title,
+                          placeholder: localizeString("enterATitle"),
+                          onChanged: _presenter.eventEditedTitle,
+                        ),
                       ),
-                    ),
-                    _expandedRow(
-                      localizeString("note"),
-                      TodoTextField(
-                        value: model.note,
-                        minLines: 9,
-                        maxLines: 9,
-                        onChanged: _presenter.eventEditedNote,
+                      _expandedRow(
+                        localizeString("note"),
+                        TodoTextField(
+                          value: model.note,
+                          minLines: 9,
+                          maxLines: 9,
+                          onChanged: _presenter.eventEditedNote,
+                        ),
                       ),
-                    ),
-                    _EditRow(
-                        title: localizeString("completeBy"),
-                        widget: Row(
-                          children: <Widget>[
-                            TodoSwitch(
-                              state: model.completeBySwitchIsOn,
-                              onChanged: (isOn) {
-                                if (isOn)
-                                  _presenter.eventCompleteByToday();
-                                else
-                                  _presenter.eventCompleteByClear();
-                              },
-                            ),
-                            Container(width: 6),
-                            GestureDetector(
-                                onTap: !model.completeBySwitchIsOn
-                                    ? null
-                                    :  _presenter.eventEnableEditCompleteBy,
-                                child: Text(model.completeByString,
-                                    style: TextStyle(fontSize: 17))),
-                          ],
-                        )),
-                    _expandedRow(
-                      localizeString("priority"),
-                      TodoExclusive(
-                        value: model.priority,
-                        itemNames: ["none", "low", "medium", "high"]
-                            .map((value) => localizeString(value))
-                            .toList(),
-                        onValueChanged: _presenter.eventEditedPriority,
+                      _EditRow(
+                          title: localizeString("completeBy"),
+                          widget: Row(
+                            children: <Widget>[
+                              TodoSwitch(
+                                state: model.completeBySwitchIsOn,
+                                onChanged: (isOn) {
+                                  if (isOn)
+                                    _presenter.eventCompleteByToday();
+                                  else
+                                    _presenter.eventCompleteByClear();
+                                },
+                              ),
+                              Container(width: 6),
+                              GestureDetector(
+                                  onTap: !model.completeBySwitchIsOn
+                                      ? null
+                                      : _presenter.eventEnableEditCompleteBy,
+                                  child: Text(model.completeByString,
+                                      style: TextStyle(fontSize: 17))),
+                            ],
+                          )),
+                      _expandedRow(
+                        localizeString("priority"),
+                        TodoExclusive(
+                          value: model.priority,
+                          itemNames: ["none", "low", "medium", "high"]
+                              .map((value) => localizeString(value))
+                              .toList(),
+                          onValueChanged: _presenter.eventEditedPriority,
+                        ),
                       ),
-                    ),
-                    _EditRow(
-                        title: localizeString("completed"),
-                        widget: TodoSwitch(
-                          state: model.completed,
-                          onChanged: _presenter.eventCompleted,
-                        ))
-                  ]),
-                ),
-              );
-            } else {
-              assert(false, "unknown event $data");
-              return Container(color: Colors.red);
-            }
-          }),
-    );
+                      _EditRow(
+                          title: localizeString("completed"),
+                          widget: TodoSwitch(
+                            state: model.completed,
+                            onChanged: _presenter.eventCompleted,
+                          ))
+                    ]),
+                  ),
+                );
+              });
+            }));
   }
 
   Widget _expandedRow(String title, Widget widget) {
     return _EditRow(title: title, widget: Expanded(child: widget));
   }
 
-  void _showEditCompleteByPopover(
-      BuildContext context, DateTime completeBy) {
+  void _showEditCompleteByPopover(BuildContext context, DateTime completeBy) {
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
       if (Platform.isIOS)
         CupertinoPopoverDatePicker().show(completeBy, context,
-        _presenter.eventEditedCompleteBy, localizeString("set"));
+            _presenter.eventEditedCompleteBy, localizeString("set"));
       else {
         final newCompleteBy = await showDatePicker(
             context: context,
@@ -151,7 +143,7 @@ class TodoItemEditScene extends StatelessWidget
     });
   }
 
-   void _showTitleIsEmpty(BuildContext context) {
+  void _showTitleIsEmpty(BuildContext context) {
     TodoOkDialog.show(context, localizeString("titleRequiredTitle"),
         localizeString("titleRequiredMessage"));
   }
@@ -200,7 +192,7 @@ class SaveButton extends StatelessWidget {
                 localizeString("save"),
                 style: TextStyle(fontSize: 18, color: Colors.white),
               ),
-              onPressed:  onPressed,
+              onPressed: onPressed,
             )
           : IconButton(
               icon: Icon(Icons.save),

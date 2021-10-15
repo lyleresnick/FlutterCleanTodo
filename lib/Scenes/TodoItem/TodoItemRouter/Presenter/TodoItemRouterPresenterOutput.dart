@@ -1,9 +1,12 @@
 //  Copyright (c) 2019 Lyle Resnick. All rights reserved.
 
-abstract class TodoItemRouterPresenterOutput  {}
+import 'package:freezed_annotation/freezed_annotation.dart';
+part "TodoItemRouterPresenterOutput.freezed.dart";
 
-class ShowViewReady extends TodoItemRouterPresenterOutput {}
-class ShowMessageView extends TodoItemRouterPresenterOutput { final String message; ShowMessageView(this.message); }
-class ShowDisplayView extends TodoItemRouterPresenterOutput {}
-class ShowEditView extends TodoItemRouterPresenterOutput {}
+@freezed
+class TodoItemRouterPresenterOutput with _$TodoItemRouterPresenterOutput  {
+  const factory TodoItemRouterPresenterOutput.showEditView() = _ShowEditView;
+  const factory TodoItemRouterPresenterOutput.showDisplayView() = _ShowDisplayView;
+  const factory TodoItemRouterPresenterOutput.showMessageView(String id) = _ShowMessageView;
+}
 

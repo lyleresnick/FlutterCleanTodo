@@ -61,7 +61,7 @@ class TodoItemEditUseCase with StarterBloc<TodoItemEditUseCaseOutput> {
   }
 
   _refreshPresentation({ErrorMessage? errorMessage, bool showEditCompleteBy = false}) {
-    streamAdd(PresentModel(
+    streamAdd(TodoItemEditUseCaseOutput.presentModel(
         TodoItemEditPresentationModel.fromEditingTodo(_editingTodo,
             errorMessage: errorMessage, showEditCompleteBy: showEditCompleteBy)));
   }
@@ -130,21 +130,21 @@ class TodoItemEditUseCase with StarterBloc<TodoItemEditUseCaseOutput> {
               break;
           }
           _appState.itemState.itemChanged = true;
-          streamAdd(PresentSaveCompleted());
+          streamAdd(TodoItemEditUseCaseOutput.presentSaveCompleted());
         },
         failure: (code, description) {
           assert(false, "Unresolved error: $description");
         },
         domainIssue: (reason) {
-          assert(false, "Unexpected Semantic error: reason $reason");
+          assert(false, "Unexpected Domain issue: reason $reason");
         });
   }
 
   void eventCancel() {
     if (_appState.itemStartMode is TodoItemStartModeCreate)
-      streamAdd(PresentCreateCancelled());
+      streamAdd(TodoItemEditUseCaseOutput.presentCreateCancelled());
     else
-      streamAdd(PresentEditingCancelled());
+      streamAdd(TodoItemEditUseCaseOutput.presentEditingCancelled());
   }
 
   @override

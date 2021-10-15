@@ -1,7 +1,10 @@
 //  Copyright (c) 2019 Lyle Resnick. All rights reserved.
 
-import '../Presenter/TodoListRowViewModel.dart';
+import 'TodoListRowViewModel.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+part "TodoListPresenterOutput.freezed.dart";
 
-abstract class TodoListPresenterOutput {}
-class ShowTodoListModel extends TodoListPresenterOutput { final List<TodoListRowViewModel> viewModelList; ShowTodoListModel(this.viewModelList); }
-
+@freezed
+class TodoListPresenterOutput with _$TodoListPresenterOutput {
+  const factory TodoListPresenterOutput.showModel(List<TodoListRowViewModel> model) = _ShowModel;
+}

@@ -5,22 +5,24 @@ import 'package:flutter_todo/Scenes/Common/BlocProvider.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/Assembly/TodoItemRouterAssembly.dart';
 import 'package:flutter_todo/Scenes/TodoList/Assembly/TodoListAssembly.dart';
 import 'package:flutter_todo/Scenes/TodoRootRouter/Presenter/TodoRootRouterPresenter.dart';
-import 'package:flutter_todo/Scenes/TodoRootRouter/Presenter/TodoRootRouterPresenterOutput.dart';
 
 class TodoRootRouterScene extends StatelessWidget {
   final TodoRootRouterPresenter _presenter;
   final navKey = GlobalKey<NavigatorState>();
 
-  static const routeTodoItem = '/todoItem';
-  static const routeTodoList = '/';
+  static const _routeTodoItem = '/todoItem';
+  static const _routeTodoList = '/';
 
   TodoRootRouterScene(this._presenter) {
     _presenter.stream.listen((event) {
-      if (event is ShowRowDetail) {
-        navKey.currentState!.pushNamed(routeTodoItem);
-      } else if (event is ShowPop) {
-        navKey.currentState!.pop();
-      }
+      event.when(
+        showRowDetail: () {
+          navKey.currentState!.pushNamed(_routeTodoItem);
+        },
+        showPop: () {
+          navKey.currentState!.pop();
+        },
+      );
     });
   }
 
@@ -30,20 +32,20 @@ class TodoRootRouterScene extends StatelessWidget {
         bloc: _presenter,
         child: Navigator(
           key: navKey,
-          initialRoute: routeTodoList,
-          onGenerateRoute: (RouteSettings settings) {
+          initialRoute: _routeTodoList,
+          onGenerateRoute: (settings) {
             late WidgetBuilder builder;
             switch (settings.name) {
-              case routeTodoList:
+              case _routeTodoList:
                 builder = (_) => TodoListAssembly(_presenter).scene;
                 break;
-              case routeTodoItem:
+              case _routeTodoItem:
                 builder = (_) => TodoItemRouterAssembly(_presenter).scene;
                 break;
               default:
                 assert(false, 'Invalid route: ${settings.name}');
             }
-            return MaterialPageRoute(builder: builder, settings: settings);
+            return MaterialPageRoute(builder: builder);
           },
         ));
   }

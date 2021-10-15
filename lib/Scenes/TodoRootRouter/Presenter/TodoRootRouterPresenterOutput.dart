@@ -1,6 +1,10 @@
 //  Copyright (c) 2019 Lyle Resnick. All rights reserved.
 
-abstract class TodoRootRouterPresenterOutput {}
+import 'package:freezed_annotation/freezed_annotation.dart';
+part "TodoRootRouterPresenterOutput.freezed.dart";
 
-class ShowPop extends TodoRootRouterPresenterOutput {}
-class ShowRowDetail extends TodoRootRouterPresenterOutput {}
+@freezed
+class TodoRootRouterPresenterOutput with _$TodoRootRouterPresenterOutput  {
+  const factory TodoRootRouterPresenterOutput.showPop() = _ShowPop;
+  const factory TodoRootRouterPresenterOutput.showRowDetail() = _ShowRowDetail;
+}
