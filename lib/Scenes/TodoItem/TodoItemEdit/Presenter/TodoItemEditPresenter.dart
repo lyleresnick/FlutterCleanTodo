@@ -4,7 +4,6 @@ import 'package:flutter_todo/Entities/Priority.dart';
 import 'package:flutter_todo/Scenes/Common/StarterBloc.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemEdit/Router/TodoItemEditRouter.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemEdit/UseCase/TodoItemEditUseCase.dart';
-import 'package:flutter_todo/Scenes/TodoItem/TodoItemEdit/UseCase/TodoItemEditUseCaseOutput.dart';
 
 import 'TodoItemEditViewModel.dart';
 import 'TodoItemEditPresenterOutput.dart';

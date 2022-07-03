@@ -3,13 +3,12 @@
 import 'package:flutter_todo/Entities/Priority.dart';
 import 'package:flutter_todo/EntityGateway/EntityGateway.dart';
 import 'package:flutter_todo/Managers/Result.dart';
-import 'package:flutter_todo/Managers/TodoValues.dart';
-import 'package:flutter_todo/Scenes/AppState/TodoAppState.dart';
+import 'package:flutter_todo/Managers/TodoManager.dart';
+import 'package:flutter_todo/Scenes/AppState/AppState.dart';
 import 'package:flutter_todo/Scenes/Common/ErrorMessages.dart';
 import 'package:flutter_todo/Scenes/Common/StarterBloc.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemEdit/UseCase/TodoItemEditPresentationModel.dart';
 import 'package:flutter_todo/Entities/Todo.dart';
-import 'package:flutter_todo/Scenes/TodoItem/TodoItemStartMode.dart';
 
 import 'TodoItemEditUseCaseOutput.dart';
 
@@ -42,21 +41,22 @@ class EditingTodo {
   }
 }
 
-class TodoItemEditUseCase with StarterBloc<TodoItemEditUseCaseOutput> {
+abstract class TodoItemEditUseCase with StarterBloc<TodoItemEditUseCaseOutput> {
 
   late EditingTodo _editingTodo;
 
   late final EntityGateway _entityGateway;
-  late final TodoAppState _appState;
+  late final AppState _appState;
 
   TodoItemEditUseCase(this._entityGateway, this._appState);
 
+  EditingTodo getInitialEditingTodo();
+  Future<Result<Todo, TodoDomainReason>> save(EditingTodo editingTodo);
+  void copyTodoToList(Todo todo);
+  void cancel();
+
   void eventViewReady() {
-    if (_appState.itemStartMode is TodoItemStartModeUpdate) {
-      _editingTodo = EditingTodo.fromTodo(_appState.itemState.currentTodo);
-    } else {
-      _editingTodo = EditingTodo();
-    }
+    _editingTodo = getInitialEditingTodo();
     _refreshPresentation();
   }
 
@@ -107,28 +107,11 @@ class TodoItemEditUseCase with StarterBloc<TodoItemEditUseCaseOutput> {
       _refreshPresentation(errorMessage: ErrorMessage.titleIsEmpty);
       return;
     }
-    late Result result;
-    switch (_appState.itemStartMode.runtimeType) {
-      case TodoItemStartModeCreate:
-        result = await _entityGateway.todoManager
-            .create(TodoValues.fromEditing(_editingTodo));
-        break;
-      case TodoItemStartModeUpdate:
-        result = await _entityGateway.todoManager.update( _editingTodo.id!, TodoValues.fromEditing(_editingTodo));
-        break;
-    }
+    final result = await save(_editingTodo);
     result.when(
         success: (todo) {
           _appState.itemState.currentTodo = todo;
-          switch (_appState.itemStartMode.runtimeType) {
-            case TodoItemStartModeCreate:
-              _appState.toDoList.add(todo);
-              break;
-            case TodoItemStartModeUpdate:
-              _appState.toDoList[
-              (_appState.itemStartMode as TodoItemStartModeUpdate).index] = todo;
-              break;
-          }
+          copyTodoToList(todo);
           _appState.itemState.itemChanged = true;
           streamAdd(TodoItemEditUseCaseOutput.presentSaveCompleted());
         },
@@ -141,10 +124,7 @@ class TodoItemEditUseCase with StarterBloc<TodoItemEditUseCaseOutput> {
   }
 
   void eventCancel() {
-    if (_appState.itemStartMode is TodoItemStartModeCreate)
-      streamAdd(TodoItemEditUseCaseOutput.presentCreateCancelled());
-    else
-      streamAdd(TodoItemEditUseCaseOutput.presentEditingCancelled());
+    cancel();
   }
 
   @override
