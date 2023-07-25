@@ -1,7 +1,6 @@
 # Todo in Flutter - Clean Architecture with BLoCs
 
-This Todo app is a full reference implementation for Clean Architecture written with Flutter. It demonstrates many of the tasks you would do on a daily basis in a project based on Clean Architecture, such as:
-
+This Todo app is a full reference implementation for a Flutter App based on Mobile Clean Architecture. It demonstrates many tasks you might do on a daily basis during a project, such as:
 - routing, 
 - data validation and capture, 
 - saving of captured data, 
