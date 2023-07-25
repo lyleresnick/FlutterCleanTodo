@@ -1,6 +1,6 @@
-# Todo in Flutter - VIPER Style with BLoCs
+# Todo in Flutter - Clean Architecture with BLoCs
 
-This Todo app is a full reference implementation for VIPER written with Flutter. It demonstrates many of the tasks you would do on a daily basis in a VIPER based project such as:
+This Todo app is a full reference implementation for Clean Architecture written with Flutter. It demonstrates many of the tasks you would do on a daily basis in a project based on Clean Architecture, such as:
 
 - routing, 
 - data validation and capture, 
