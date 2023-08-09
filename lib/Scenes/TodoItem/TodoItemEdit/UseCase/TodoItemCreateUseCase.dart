@@ -1,7 +1,6 @@
 import 'package:flutter_todo/Entities/Todo.dart';
 import 'package:flutter_todo/EntityGateway/EntityGateway.dart';
 import 'package:flutter_todo/Managers/Result.dart';
-import 'package:flutter_todo/Managers/TodoManager.dart';
 import 'package:flutter_todo/Managers/TodoValues.dart';
 import 'package:flutter_todo/Scenes/AppState/AppState.dart';
 
@@ -18,7 +17,7 @@ class TodoItemCreateUseCase extends TodoItemEditUseCase {
   getInitialEditingTodo() => EditingTodo();
 
   @override
-  Future<Result<Todo, TodoDomainReason>> save(EditingTodo editingTodo) async {
+  Future<Result<Todo>> save(EditingTodo editingTodo) async {
     return await _entityGateway.todoManager
         .create(TodoValues.fromEditing(editingTodo));
   }
@@ -30,6 +29,6 @@ class TodoItemCreateUseCase extends TodoItemEditUseCase {
 
   @override
   void cancel() {
-    streamAdd(TodoItemEditUseCaseOutput.presentCreateCancelled());
+    emit(presentCreateCancelled());
   }
 }

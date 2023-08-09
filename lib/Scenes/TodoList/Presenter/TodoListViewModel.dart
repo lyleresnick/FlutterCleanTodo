@@ -2,8 +2,20 @@
 
 import 'package:flutter_todo/Entities/Priority.dart';
 
-import '../UseCase/TodoListPresentationRowModel.dart';
+import '../UseCase/TodoListPresentationModel.dart';
 import 'package:flutter_todo/Scenes/Common/Localize.dart';
+
+
+class TodoListViewModel {
+    final List<TodoListRowViewModel> rows;
+
+    TodoListViewModel.fromPresentation(TodoListPresentationModel model)
+    : rows = model.rows
+        .map((row) => TodoListRowViewModel.fromPresentation(row))
+        .toList();
+}
+
+
 
 class TodoListRowViewModel {
 
@@ -13,11 +25,10 @@ class TodoListRowViewModel {
     final String priority;
     final bool completed;
 
-    TodoListRowViewModel(TodoListPresentationRowModel model) :
+    TodoListRowViewModel.fromPresentation(TodoListPresentationRowModel model) :
         id = model.id,
         title = model.title,
-        completeBy = (model.completeBy != null) ? localizeDate(model.completeBy!) : "",
+        completeBy = (model.completeBy != null) ? localizedDate(model.completeBy!) : "",
         priority = List<String>.generate(bangsFromPriority(model.priority) + 1, (index) => " " ).reduce((value, element) => "!$value" ),
         completed = model.completed ;
-
 }

@@ -11,7 +11,7 @@ enum _Implementation {
 abstract class EntityGateway {
     TodoManager get todoManager;
 
-    static final gatewayImplementation = _Implementation.test;
+    static final gatewayImplementation = _Implementation.db;
 
     static get entityGateway {
         switch(gatewayImplementation) {

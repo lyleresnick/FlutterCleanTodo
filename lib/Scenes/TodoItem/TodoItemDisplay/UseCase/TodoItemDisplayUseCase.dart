@@ -14,24 +14,24 @@ class TodoItemDisplayUseCase with StarterBloc<TodoItemDisplayUseCaseOutput> {
 
     void eventViewReady() {
         final todo = _appState.itemState.currentTodo;
-        streamAdd(TodoItemDisplayUseCaseOutput.presentBegin());
+        emit(presentBegin());
 
-        streamAdd(TodoItemDisplayUseCaseOutput.presentString(FieldName.title, todo.title));
+        emit(presentString(FieldName.title, todo.title));
         if( todo.note != "" ) {
-            streamAdd(TodoItemDisplayUseCaseOutput.presentString(FieldName.note, todo.note));
+            emit(presentString(FieldName.note, todo.note));
         }
         final completeBy = todo.completeBy;
         if (completeBy != null) {
-            streamAdd(TodoItemDisplayUseCaseOutput.presentDate(FieldName.completeBy, completeBy));
+            emit(presentDate(FieldName.completeBy, completeBy));
         }
         switch(todo.priority) {
             case Priority.none:
                 break;
             default:
-                streamAdd(TodoItemDisplayUseCaseOutput.presentPriority(FieldName.priority, todo.priority));
+                emit(presentPriority(FieldName.priority, todo.priority));
         }
-        streamAdd(TodoItemDisplayUseCaseOutput.presentBool(FieldName.completed, todo.completed));
-        streamAdd(TodoItemDisplayUseCaseOutput.presentEnd());
+        emit(presentBool(FieldName.completed, todo.completed));
+        emit(presentEnd());
     }
 
     @override

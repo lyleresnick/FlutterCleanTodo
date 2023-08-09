@@ -2,6 +2,6 @@
 
 import 'Localization/TodoLocalizationsDelegate.dart';
 
-String localizeString(String string) => TodoLocalizationsDelegate.localize(string);
-String localizeDate(DateTime date) => TodoLocalizationsDelegate.outboundDateFormatter.format(date);
+String localizedString(String string) => TodoLocalizationsDelegate.localize(string);
+String localizedDate(DateTime date) => TodoLocalizationsDelegate.outboundDateFormatter.format(date);
 

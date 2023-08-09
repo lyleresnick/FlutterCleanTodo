@@ -20,7 +20,7 @@ class TodoListScene extends StatelessWidget {
     final platform = Theme.of(context).platform;
     return Scaffold(
         appBar: AppBar(
-          title: Text(localizeString("todoList")),
+          title: Text(localizedString("todoList")),
           backgroundColor: Colors.lightGreen,
           elevation: platform == TargetPlatform.iOS ? 0.0 : 4.0,
           actions: _actions(platform),
@@ -34,12 +34,13 @@ class TodoListScene extends StatelessWidget {
                       if (!snapshot.hasData) {
                         return Text("Loading ...");
                       }
-                      return snapshot.data!.when(showModel: (viewModelList) {
-                        return ListView.builder(
-                            itemCount: viewModelList.length,
-                            itemBuilder: (context, index) => TodoListCell(
-                                row: viewModelList[index], index: index));
-                      });
+                      return switch(snapshot.data!) {
+                          showModel(:final model) =>
+                            ListView.builder(
+                              itemCount: model.rows.length,
+                              itemBuilder: (context, index) => TodoListCell(
+                                  row: model.rows[index], index: index))
+                      };
                     }))));
   }
 

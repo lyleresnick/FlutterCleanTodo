@@ -3,6 +3,14 @@
 import 'package:flutter_todo/Entities/Priority.dart';
 import 'package:flutter_todo/Entities/Todo.dart';
 
+class TodoListPresentationModel {
+    final List<TodoListPresentationRowModel> rows;
+    TodoListPresentationModel(this.rows);
+
+    TodoListPresentationModel.fromEntities(List<Todo> entities)
+      : rows = entities.map((entity) => TodoListPresentationRowModel(entity)).toList();
+}
+
 class TodoListPresentationRowModel {
 
     final String id;

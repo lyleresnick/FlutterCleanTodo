@@ -6,6 +6,8 @@ import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/Assembly/TodoItemRou
 import 'package:flutter_todo/Scenes/TodoList/Assembly/TodoListAssembly.dart';
 import 'package:flutter_todo/Scenes/TodoRootRouter/Presenter/TodoRootRouterPresenter.dart';
 
+import '../Presenter/TodoRootRouterPresenterOutput.dart';
+
 class TodoRootRouterScene extends StatelessWidget {
   final TodoRootRouterPresenter _presenter;
   final navKey = GlobalKey<NavigatorState>();
@@ -15,14 +17,12 @@ class TodoRootRouterScene extends StatelessWidget {
 
   TodoRootRouterScene(this._presenter) {
     _presenter.stream.listen((event) {
-      event.when(
-        showRowDetail: () {
+      switch (event) {
+        case TodoRootRouterPresenterOutput.showRowDetail:
           navKey.currentState!.pushNamed(_routeTodoItem);
-        },
-        showPop: () {
+        case TodoRootRouterPresenterOutput.showPop:
           navKey.currentState!.pop();
-        },
-      );
+      }
     });
   }
 

@@ -1,11 +1,11 @@
 //  Copyright (c) 2018 Lyle Resnick. All rights reserved.
 
 import 'package:flutter_todo/EntityGateway/EntityGateway.dart';
-import 'package:flutter_todo/Managers/TodoManager.dart';
 import 'package:flutter_todo/Scenes/AppState/TodoAppState.dart';
 import 'package:flutter_todo/Scenes/Common/StarterBloc.dart';
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemStartMode.dart';
 
+import '../../../../Managers/Result.dart';
 import 'TodoItemRouterUseCaseOutput.dart';
 import '../../TodoItemState.dart';
 
@@ -31,7 +31,7 @@ class TodoItemRouterUseCase with StarterBloc<TodoItemRouterUseCaseOutput> {
   }
 
   void _startCreate() {
-    streamAdd(TodoItemRouterUseCaseOutput.presentEditView());
+    emit(presentEditView());
   }
 
   void _startUpdate() async {
@@ -39,20 +39,15 @@ class TodoItemRouterUseCase with StarterBloc<TodoItemRouterUseCaseOutput> {
 
     final result = await _entityGateway.todoManager
         .fetch(_appState.toDoList[startMode.index].id);
-    result.when(success: (todo) {
-      _appState.itemState.currentTodo = todo;
-      streamAdd(TodoItemRouterUseCaseOutput.presentDisplayView());
-    }, failure: (code, description) {
-      assert(false, "Unresolved error: $description");
-    }, domainIssue: (reason) {
-      switch (reason) {
-        case TodoDomainReason.notFound:
-          streamAdd(TodoItemRouterUseCaseOutput.presentNotFound(_appState.toDoList[startMode.index].id));
-          break;
-        default:
-          assert(false, "Unexpected Domain issue: reason $reason");
-      }
-    });
+    switch (result) {
+      case success(:final data):
+        _appState.itemState.currentTodo = data;
+        emit(presentDisplayView());
+      case failure(:final description):
+        assert(false, "Unexpected error: $description");
+      case networkIssue(:final issue):
+        assert(false, "Unexpected Network issue: reason $issue");
+    }
   }
 
   void eventBack() {

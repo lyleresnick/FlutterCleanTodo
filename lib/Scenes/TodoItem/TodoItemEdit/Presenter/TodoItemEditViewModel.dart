@@ -21,7 +21,7 @@ class TodoItemEditViewModel {
         note = model.note,
         completeBy = model.completeBy,
         completeByString =
-            (model.completeBy != null) ? localizeDate(model.completeBy!) : "",
+            (model.completeBy != null) ? localizedDate(model.completeBy!) : "",
         completeBySwitchIsOn = (model.completeBy != null),
         priority = bangsFromPriority(model.priority),
         completed = model.completed,

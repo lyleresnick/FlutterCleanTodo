@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_todo/Scenes/Common/BlocProvider.dart';
 import 'package:flutter_todo/Scenes/TodoList/Presenter/TodoListPresenter.dart';
-import 'package:flutter_todo/Scenes/TodoList/Presenter/TodoListRowViewModel.dart';
+import 'package:flutter_todo/Scenes/TodoList/Presenter/TodoListViewModel.dart';
 import 'CheckBox.dart';
 
 

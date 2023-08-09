@@ -1,12 +1,10 @@
 //  Copyright (c) 2019 Lyle Resnick. All rights reserved.
 
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'TodoItemEditViewModel.dart';
-part "TodoItemEditPresenterOutput.freezed.dart";
 
-@freezed
-class TodoItemEditPresenterOutput with _$TodoItemEditPresenterOutput  {
-  const factory TodoItemEditPresenterOutput.showModel(TodoItemEditViewModel model) = _ShowModel;
+sealed class TodoItemEditPresenterOutput {}
+
+class showModel extends TodoItemEditPresenterOutput {
+  final TodoItemEditViewModel model;
+  showModel(this.model);
 }
-
-typedef Output = TodoItemEditPresenterOutput;

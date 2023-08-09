@@ -44,14 +44,14 @@ class TodoItemDisplayScene extends StatelessWidget
               if (!snapshot.hasData) {
                 return Text("Loading ...");
               }
-              return snapshot.data!.when(showFieldList: (model) {
-                return ListView.builder(
-                  itemCount: model.length,
-                  itemBuilder: (BuildContext context, int i) {
-                    return _Row(row: model[i]);
-                  },
-                );
-              });
+              return switch (snapshot.data!) {
+                showFieldList(:final model) => ListView.builder(
+                    itemCount: model.length,
+                    itemBuilder: (BuildContext context, int i) {
+                      return _Row(row: model[i]);
+                    },
+                  )
+              };
             }));
   }
 }
