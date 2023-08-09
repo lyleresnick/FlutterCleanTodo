@@ -54,7 +54,7 @@ class Todo {
         };
     }
 
-    static DateTime _convertSinceEpoch({date: int}) {
+    static DateTime _convertSinceEpoch({required int date}) {
         return DateTime.fromMillisecondsSinceEpoch(date);
     }
 }

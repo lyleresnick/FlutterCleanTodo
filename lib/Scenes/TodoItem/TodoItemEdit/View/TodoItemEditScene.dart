@@ -125,7 +125,7 @@ class TodoItemEditScene extends StatelessWidget
   }
 
   void _showEditCompleteByPopover(BuildContext context, DateTime completeBy) {
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       if (Platform.isIOS)
         CupertinoPopoverDatePicker().show(completeBy, context,
             _presenter.eventEditedCompleteBy, localizeString("set"));

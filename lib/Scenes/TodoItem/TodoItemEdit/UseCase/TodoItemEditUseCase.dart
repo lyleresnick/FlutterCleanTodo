@@ -1,7 +1,6 @@
 //  Copyright (c) 2019 Lyle Resnick. All rights reserved.
 
 import 'package:flutter_todo/Entities/Priority.dart';
-import 'package:flutter_todo/EntityGateway/EntityGateway.dart';
 import 'package:flutter_todo/Managers/Result.dart';
 import 'package:flutter_todo/Managers/TodoManager.dart';
 import 'package:flutter_todo/Scenes/AppState/AppState.dart';
@@ -45,10 +44,9 @@ abstract class TodoItemEditUseCase with StarterBloc<TodoItemEditUseCaseOutput> {
 
   late EditingTodo _editingTodo;
 
-  late final EntityGateway _entityGateway;
-  late final AppState _appState;
+  final AppState _appState;
 
-  TodoItemEditUseCase(this._entityGateway, this._appState);
+  TodoItemEditUseCase(this._appState);
 
   EditingTodo getInitialEditingTodo();
   Future<Result<Todo, TodoDomainReason>> save(EditingTodo editingTodo);
