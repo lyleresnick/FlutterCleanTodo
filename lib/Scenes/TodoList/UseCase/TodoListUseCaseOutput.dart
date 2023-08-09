@@ -1,11 +1,12 @@
 //  Copyright (c) 2019 Lyle Resnick. All rights reserved.
 
-import 'TodoListPresentationRowModel.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
-part "TodoListUseCaseOutput.freezed.dart";
+import 'TodoListPresentationModel.dart';
 
-@freezed
-class TodoListUseCaseOutput with _$TodoListUseCaseOutput {
-  const factory TodoListUseCaseOutput.presentModel(List<TodoListPresentationRowModel> model) = _PresentModel;
-  const factory TodoListUseCaseOutput.presentItemDetail() = _PresentItemDetail;
+sealed class TodoListUseCaseOutput {}
+
+class presentModel extends TodoListUseCaseOutput {
+  final TodoListPresentationModel model;
+  presentModel(this.model);
 }
+
+class presentItemDetail extends TodoListUseCaseOutput {}

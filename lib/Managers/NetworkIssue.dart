@@ -1,0 +1,1 @@
+enum NetworkIssue { noNetwork }

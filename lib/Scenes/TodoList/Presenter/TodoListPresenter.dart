@@ -4,7 +4,8 @@ import 'package:flutter_todo/Scenes/Common/StarterBloc.dart';
 import 'package:flutter_todo/Scenes/TodoList/Router/TodoListRouter.dart';
 import 'package:flutter_todo/Scenes/TodoList/UseCase/TodoListUseCase.dart';
 
-import 'TodoListRowViewModel.dart';
+import '../UseCase/TodoListUseCaseOutput.dart';
+import 'TodoListViewModel.dart';
 import 'TodoListPresenterOutput.dart';
 
 class TodoListPresenter with StarterBloc<TodoListPresenterOutput> {
@@ -13,12 +14,12 @@ class TodoListPresenter with StarterBloc<TodoListPresenterOutput> {
 
   TodoListPresenter(this._useCase, this._router) {
     _useCase.stream.listen((event) {
-      event.when(presentModel: (model) {
-        streamAdd(TodoListPresenterOutput.showModel(
-            model.map((row) => TodoListRowViewModel(row)).toList()));
-      }, presentItemDetail: () {
-        _router.routeShowItemDetail();
-      });
+      switch (event) {
+        case presentModel(:final model):
+          emit(showModel(TodoListViewModel.fromPresentation(model)));
+        case presentItemDetail():
+          _router.routeShowItemDetail();
+      }
     });
   }
 

@@ -2,7 +2,6 @@
 
 import 'package:flutter_todo/Entities/Priority.dart';
 import 'package:flutter_todo/Managers/Result.dart';
-import 'package:flutter_todo/Managers/TodoManager.dart';
 import 'package:flutter_todo/Scenes/AppState/AppState.dart';
 import 'package:flutter_todo/Scenes/Common/ErrorMessages.dart';
 import 'package:flutter_todo/Scenes/Common/StarterBloc.dart';
@@ -28,20 +27,17 @@ class EditingTodo {
       this.completed = false});
 
   factory EditingTodo.fromTodo(Todo todo) {
-
     return EditingTodo(
-      id: todo.id,
-      title: todo.title,
-      note: todo.note,
-      completeBy: todo.completeBy,
-      priority: todo.priority,
-      completed: todo.completed
-    );
+        id: todo.id,
+        title: todo.title,
+        note: todo.note,
+        completeBy: todo.completeBy,
+        priority: todo.priority,
+        completed: todo.completed);
   }
 }
 
 abstract class TodoItemEditUseCase with StarterBloc<TodoItemEditUseCaseOutput> {
-
   late EditingTodo _editingTodo;
 
   final AppState _appState;
@@ -49,7 +45,7 @@ abstract class TodoItemEditUseCase with StarterBloc<TodoItemEditUseCaseOutput> {
   TodoItemEditUseCase(this._appState);
 
   EditingTodo getInitialEditingTodo();
-  Future<Result<Todo, TodoDomainReason>> save(EditingTodo editingTodo);
+  Future<Result<Todo>> save(EditingTodo editingTodo);
   void copyTodoToList(Todo todo);
   void cancel();
 
@@ -58,10 +54,12 @@ abstract class TodoItemEditUseCase with StarterBloc<TodoItemEditUseCaseOutput> {
     _refreshPresentation();
   }
 
-  _refreshPresentation({ErrorMessage? errorMessage, bool showEditCompleteBy = false}) {
-    streamAdd(TodoItemEditUseCaseOutput.presentModel(
-        TodoItemEditPresentationModel.fromEditingTodo(_editingTodo,
-            errorMessage: errorMessage, showEditCompleteBy: showEditCompleteBy)));
+  _refreshPresentation(
+      {ErrorMessage? errorMessage, bool showEditCompleteBy = false}) {
+    emit(presentModel(TodoItemEditPresentationModel.fromEditingTodo(
+        _editingTodo,
+        errorMessage: errorMessage,
+        showEditCompleteBy: showEditCompleteBy)));
   }
 
   void eventEditedTitle(String title) {
@@ -100,25 +98,22 @@ abstract class TodoItemEditUseCase with StarterBloc<TodoItemEditUseCaseOutput> {
   }
 
   void eventSave() async {
-
     if (_editingTodo.title == "") {
       _refreshPresentation(errorMessage: ErrorMessage.titleIsEmpty);
       return;
     }
     final result = await save(_editingTodo);
-    result.when(
-        success: (todo) {
-          _appState.itemState.currentTodo = todo;
-          copyTodoToList(todo);
-          _appState.itemState.itemChanged = true;
-          streamAdd(TodoItemEditUseCaseOutput.presentSaveCompleted());
-        },
-        failure: (code, description) {
-          assert(false, "Unresolved error: $description");
-        },
-        domainIssue: (reason) {
-          assert(false, "Unexpected Domain issue: reason $reason");
-        });
+    switch (result) {
+      case success(:final data):
+        _appState.itemState.currentTodo = data;
+        copyTodoToList(data);
+        _appState.itemState.itemChanged = true;
+        emit(presentSaveCompleted());
+      case failure(:final description):
+        assert(false, "Unexpected error: $description");
+      case networkIssue(:final issue):
+        assert(false, "Unexpected Network issue: reason $issue");
+    }
   }
 
   void eventCancel() {

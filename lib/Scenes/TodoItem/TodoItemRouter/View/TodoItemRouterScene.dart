@@ -28,12 +28,12 @@ class TodoItemRouterScene extends StatelessWidget {
                   if (!snapshot.hasData) {
                     return Material(color: Colors.black);
                   }
-                  final body = snapshot.data!.when(
-                      showDisplayView: () =>
-                          TodoItemDisplayAssembly(_presenter).scene,
-                      showEditView: () =>
-                          TodoItemEditAssembly(_presenter).scene,
-                      showMessageView: (message) => Text(message));
+                  final body = switch (snapshot.data!) {
+                    showDisplayView() =>
+                      TodoItemDisplayAssembly(_presenter).scene,
+                    showEditView() => TodoItemEditAssembly(_presenter).scene,
+                    showMessageView(:final id) => Text(id)
+                  };
 
                   final decoratedScene = (body is ActionDecoratedScene)
                       ? body as ActionDecoratedScene

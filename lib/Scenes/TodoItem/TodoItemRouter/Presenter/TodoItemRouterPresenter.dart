@@ -10,6 +10,7 @@ import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/Router/TodoItemRoute
 import 'package:flutter_todo/Scenes/TodoItem/TodoItemRouter/UseCase/TodoItemRouterUseCase.dart';
 
 import 'TodoItemRouterPresenterOutput.dart';
+import '../UseCase/TodoItemRouterUseCaseOutput.dart';
 
 class TodoItemRouterPresenter
     with StarterBloc<TodoItemRouterPresenterOutput>
@@ -19,15 +20,16 @@ class TodoItemRouterPresenter
 
   TodoItemRouterPresenter(this._useCase, this.router) {
     _useCase.stream.listen((event) {
-      event.when(presentDisplayView: () {
-        streamAdd(TodoItemRouterPresenterOutput.showDisplayView());
-      }, presentEditView: () {
-        streamAdd(TodoItemRouterPresenterOutput.showEditView());
-      }, presentNotFound: (String id) {
-        final message = "todoNotFound"; //.localized
+      switch(event) {
+      case presentDisplayView():
+        emit(showDisplayView());
+      case presentEditView():
+        emit(showEditView());
+      case presentNotFound(:final id):
+        final message = localizedString("todoNotFound");
         //final message = String(format: messageFormat, id)
-        streamAdd(TodoItemRouterPresenterOutput.showMessageView(message));
-      });
+        emit(showMessageView(message + ' ' + id));
+    }
     });
   }
 
@@ -40,25 +42,25 @@ class TodoItemRouterPresenter
     return true;
   }
 
-  String get titleLabel => localizeString('todo');
+  String get titleLabel => localizedString('todo');
 
 //  TodoItemDisplayRouter
 
   @override
   void routeEditView() {
-    streamAdd(TodoItemRouterPresenterOutput.showEditView());
+    emit(showEditView());
   }
 
 //  TodoItemEditRouter
 
   @override
   void routeSaveCompleted() {
-    streamAdd(TodoItemRouterPresenterOutput.showDisplayView());
+    emit(showDisplayView());
   }
 
   @override
   void routeEditingCancelled() {
-    streamAdd(TodoItemRouterPresenterOutput.showDisplayView());
+    emit(showDisplayView());
   }
 
   @override

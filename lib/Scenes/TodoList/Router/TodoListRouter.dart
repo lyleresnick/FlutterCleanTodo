@@ -1,6 +1,6 @@
 //  Copyright (c) 2019 Lyle Resnick. All rights reserved.
 
-import '../UseCase/TodoListPresentationRowModel.dart';
+import '../UseCase/TodoListPresentationModel.dart';
 
 typedef void TodoListChangedItemCallback(TodoListPresentationRowModel model);
 

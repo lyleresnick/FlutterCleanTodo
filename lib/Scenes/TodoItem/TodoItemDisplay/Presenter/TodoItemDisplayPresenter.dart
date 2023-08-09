@@ -18,26 +18,28 @@ class TodoItemDisplayPresenter
 
   TodoItemDisplayPresenter(this._useCase, this._router) {
     _useCase.stream.listen((event) {
-      event.when(presentBegin: () {
-        _viewModelList = [];
-      }, presentString: (field, value) {
-        final fieldName = localizeString(fieldNameToString(field));
-        _viewModelList.add(TodoItemDisplayRowViewModel(fieldName, value));
-      }, presentBool: (field, value) {
-        final fieldName = localizeString(fieldNameToString(field));
-        _viewModelList.add(TodoItemDisplayRowViewModel(
-            fieldName, localizeString(value ? "yes" : "no")));
-      }, presentPriority: (field, value) {
-        final fieldName = localizeString(fieldNameToString(field));
-        _viewModelList.add(TodoItemDisplayRowViewModel(
-            fieldName, localizeString(priorityToString(value))));
-      }, presentDate: (field, value) {
-        final fieldName = localizeString(fieldNameToString(field));
-        _viewModelList
-            .add(TodoItemDisplayRowViewModel(fieldName, localizeDate(value)));
-      }, presentEnd: () {
-        streamAdd(TodoItemDisplayPresenterOutput.showFieldList(_viewModelList));
-      });
+      switch (event) {
+        case presentBegin():
+          _viewModelList = [];
+        case presentString(:final field, :final value):
+          final fieldName = localizedString(fieldNameToString(field));
+          _viewModelList.add(TodoItemDisplayRowViewModel(fieldName, value));
+        case presentBool(:final field, :final value):
+          final fieldName = localizedString(fieldNameToString(field));
+          _viewModelList.add(TodoItemDisplayRowViewModel(
+              fieldName, localizedString(value ? "yes" : "no")));
+        case presentPriority(:final field, :final value):
+          final fieldName = localizedString(fieldNameToString(field));
+          _viewModelList.add(TodoItemDisplayRowViewModel(
+              fieldName, localizedString(priorityToString(value))));
+        case presentDate(:final field, :final value):
+          final fieldName = localizedString(fieldNameToString(field));
+          _viewModelList
+              .add(TodoItemDisplayRowViewModel(fieldName, localizedDate(value)));
+        case presentEnd():
+          emit(showFieldList(_viewModelList));
+      }
+      ;
     });
   }
 
@@ -57,7 +59,7 @@ class TodoItemDisplayPresenter
     return _viewModelList.length;
   }
 
-  String get editLabel => localizeString("edit");
+  String get editLabel => localizedString("edit");
 
   @override
   void dispose() {

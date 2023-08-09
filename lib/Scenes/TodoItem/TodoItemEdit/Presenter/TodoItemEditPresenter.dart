@@ -7,6 +7,7 @@ import 'package:flutter_todo/Scenes/TodoItem/TodoItemEdit/UseCase/TodoItemEditUs
 
 import 'TodoItemEditViewModel.dart';
 import 'TodoItemEditPresenterOutput.dart';
+import '../UseCase/TodoItemEditUseCaseOutput.dart';
 
 class TodoItemEditPresenter with StarterBloc<TodoItemEditPresenterOutput> {
   final TodoItemEditUseCase _useCase;
@@ -14,14 +15,16 @@ class TodoItemEditPresenter with StarterBloc<TodoItemEditPresenterOutput> {
 
   TodoItemEditPresenter(this._useCase, this._router) {
     _useCase.stream.listen((event) {
-      event.when(
-          presentModel: (model) {
-            streamAdd(TodoItemEditPresenterOutput.showModel(
-                TodoItemEditViewModel.fromModel(model)));
-          },
-          presentSaveCompleted: _router.routeSaveCompleted,
-          presentCreateCancelled: _router.routeCreateCancelled,
-          presentEditingCancelled: _router.routeEditingCancelled);
+      switch(event) {
+        case presentModel(:final model):
+          emit(showModel(TodoItemEditViewModel.fromModel(model)));
+        case presentSaveCompleted():
+          _router.routeSaveCompleted();
+        case presentCreateCancelled():
+          _router.routeCreateCancelled();
+        case presentEditingCancelled():
+          _router.routeEditingCancelled();
+      }
     });
   }
 

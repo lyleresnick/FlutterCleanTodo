@@ -10,57 +10,57 @@ import 'Result.dart';
 
 class TestTodoManager extends TodoManager {
 
-    Future<Result<List<Todo>, TodoDomainReason>> all() => Future.value(Result.success(TodoTestData.data.map((testTodo) => testTodo.toTodo).toList()));
+    Future<Result<List<Todo>>> all() => Future.value(success(TodoTestData.data.map((testTodo) => testTodo.toTodo).toList()));
 
-    Future<Result<Todo, TodoDomainReason>> completed(String id, bool completed) {
+    Future<Result<Todo>> completed(String id, bool completed) {
         try {
             final todo = _findTodo(id);
             todo.completed = completed;
-            return Future.value(Result.success(todo.toTodo));
+            return Future.value(success(todo.toTodo));
         }
-        on TodoDomainReason catch (reason) {
-            return Future.value(Result.domainIssue(reason));
+        catch (reason) {
+            return Future.value(failure(reason.toString()));
         }
     }
 
-    Future<Result<Todo, TodoDomainReason>> create(TodoValues values) {
+    Future<Result<Todo>> create(TodoValues values) {
         final todo = TestTodo.fromTodoValues(Uuid().v1(), values);
         TodoTestData.data.add(todo);
-        return Future.value(Result.success(todo.toTodo));
+        return Future.value(success(todo.toTodo));
     }
 
-    Future<Result<Todo, TodoDomainReason>> update(String id, TodoValues values) {
+    Future<Result<Todo>> update(String id, TodoValues values) {
 
         try {
             final testTodo = _findTodo(id);
             testTodo.setValues(values);
-            return Future.value(Result.success(testTodo.toTodo));
+            return Future.value(success(testTodo.toTodo));
         }
-        on TodoDomainReason catch (reason) {
-            return Future.value(Result.domainIssue(reason));
+        catch (reason) {
+            return Future.value(failure(reason.toString()));
         }
     }
 
-    Future<Result<Todo, TodoDomainReason>> fetch(String id) {
+    Future<Result<Todo>> fetch(String id) {
         try {
             final testTodo = _findTodo(id);
-            return Future.value(Result.success(testTodo.toTodo));
+            return Future.value(success(testTodo.toTodo));
         }
-        on TodoDomainReason catch (reason) {
-            return Future.value(Result.domainIssue(reason));
+        catch (reason) {
+            return Future.value(failure(reason.toString()));
         }
     }
 
-    Future<Result<Todo, TodoDomainReason>> delete(String id) {
+    Future<Result<Todo>> delete(String id) {
 
         try {
             final index = _findTodoIndex(id);
             final testTodo = TodoTestData.data[index];
             TodoTestData.data.remove(index);
-            return Future.value(Result.success(testTodo.toTodo));
+            return Future.value(success(testTodo.toTodo));
         }
-        on TodoDomainReason catch (reason) {
-            return Future.value(Result.domainIssue(reason));
+        catch (reason) {
+            return Future.value(failure(reason.toString()));
         }
     }
 
@@ -71,7 +71,7 @@ class TestTodoManager extends TodoManager {
                 return entity;
             }
         }
-        throw TodoDomainReason.notFound;
+        throw "id $id not found";
     }
 
     int _findTodoIndex(String id) {
@@ -82,7 +82,7 @@ class TestTodoManager extends TodoManager {
             }
             index++;
         }
-        throw TodoDomainReason.notFound;
+        throw "id $id not found";
     }
 }
 

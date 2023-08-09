@@ -22,7 +22,6 @@ dependencies:
   uuid: ^3.0.7
   sqflite: ^2.3.0
   path: ^1.8.3
-  freezed_annotation:
 
   flutter_localizations:
     sdk: flutter
@@ -34,9 +33,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  freezed: ^2.4.2
-  build_runner:
-
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec

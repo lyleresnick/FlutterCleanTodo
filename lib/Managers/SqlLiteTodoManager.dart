@@ -12,17 +12,17 @@ class SqlLiteTodoManager implements TodoManager {
   SqlLiteTodoManager(this.db);
 
   @override
-  Future<Result<List<Todo>, TodoDomainReason>> all() async {
+  Future<Result<List<Todo>>> all() async {
     final database = await db.database;
     final todos = await database.query('todo');
 
     final all =
         todos.map((todo) => Todo.fromDynamicValueDictionary(todo)).toList();
-    return Result.success(all);
+    return success(all);
   }
 
   @override
-  Future<Result<Todo, TodoDomainReason>> completed(String id, bool completed) async {
+  Future<Result<Todo>> completed(String id, bool completed) async {
     try {
       final database = await db.database;
       final count = await database.update(
@@ -33,28 +33,34 @@ class SqlLiteTodoManager implements TodoManager {
         where: "id = ?",
         whereArgs: [id],
       );
-      if (count != 1) throw TodoDomainReason.updateFailure;
+      if (count != 1) return failure("id $id notFound");
       final todo = await _fetchBody(id);
-      return Result.success(todo);
-    } on TodoDomainReason catch (reason) {
-      return Result.domainIssue(reason);
+      return success(todo);
+    }
+    catch (reason) {
+      return failure(reason.toString());
     }
   }
 
   @override
-  Future<Result<Todo, TodoDomainReason>> create(TodoValues values) async {
-    final database = await db.database;
-    final todo = values.toTodo(id: Uuid().v1());
-    await database.insert(
-      'todo',
-      todo.toDynamicValueMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-    return Result.success(todo);
+  Future<Result<Todo>> create(TodoValues values) async {
+    try {
+      final database = await db.database;
+      final todo = values.toTodo(id: Uuid().v1());
+      await database.insert(
+        'todo',
+        todo.toDynamicValueMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+      return success(todo);
+    }
+    catch (reason) {
+      return failure(reason.toString());
+    }
   }
 
   @override
-  Future<Result<Todo, TodoDomainReason>> delete(String id) async {
+  Future<Result<Todo>> delete(String id) async {
     try {
       final todo = await _fetchBody(id);
       final database = await db.database;
@@ -63,24 +69,22 @@ class SqlLiteTodoManager implements TodoManager {
         where: "id = ?",
         whereArgs: [id],
       );
-      if (count != 1) throw TodoDomainReason.deleteFailure;
-      return Result.success(todo);
-    } on TodoDomainReason catch (reason) {
-      return Result.domainIssue(reason);
+      if (count != 1) return failure("id $id notFound");
+      return success(todo);
+    }
+    catch (reason) {
+      return failure(reason.toString());
     }
   }
 
   @override
-  Future<Result<Todo, TodoDomainReason>> fetch(String id) async {
+  Future<Result<Todo>> fetch(String id) async {
     try {
       final todo = await _fetchBody(id);
-      return Result.success(todo);
-    } on TodoDomainReason catch (reason) {
-      return Result.domainIssue(reason);
-    } catch (e) {
-      return Result.failure(0, e.toString());
+      return success(todo);
+    } catch (reason) {
+      return failure(reason.toString());
     }
-
   }
 
   Future<Todo> _fetchBody(String id) async {
@@ -94,11 +98,11 @@ class SqlLiteTodoManager implements TodoManager {
     if (todo.length == 1)
       return Todo.fromDynamicValueDictionary(todo[0]);
     else
-      throw TodoDomainReason.notFound;
+      throw "id $id notFound";
   }
 
   @override
-  Future<Result<Todo, TodoDomainReason>> update(String id, TodoValues values) async {
+  Future<Result<Todo>> update(String id, TodoValues values) async {
     var todo = Todo(
       id: id,
       title: values.title,
@@ -108,16 +112,19 @@ class SqlLiteTodoManager implements TodoManager {
       completed: values.completed,
     );
 
-    final database = await db.database;
-    final count = await database.update(
-      'todo',
-      todo.toDynamicValueMap(),
-      where: "id = ?",
-      whereArgs: [id],
-    );
-    if (count == 1)
-      return Result.success(todo);
-    else
-      return Result.domainIssue(TodoDomainReason.notFound);
+    try {
+      final database = await db.database;
+      final count = await database.update(
+        'todo',
+        todo.toDynamicValueMap(),
+        where: "id = ?",
+        whereArgs: [id],
+      );
+      if (count != 1) return failure("id $id notFound");
+      return success(todo);
+    }
+    catch (reason) {
+      return failure(reason.toString());
+    }
   }
 }

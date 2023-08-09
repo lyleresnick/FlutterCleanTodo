@@ -1,9 +1,18 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
-part "Result.freezed.dart";
+import 'NetworkIssue.dart';
 
-@freezed
-class Result<Entity, Issue> with _$Result<Entity, Issue> {
-  const factory Result.success(Entity data) = _Success<Entity,Issue>;
-  const factory Result.failure(int code, String description) = _Failure<Entity,Issue>;
-  const factory Result.domainIssue(Issue reason) = _DomainIssue<Entity,Issue>;
+sealed class Result<Entity> {}
+
+class success<Entity> extends Result<Entity> {
+  final Entity data;
+  success(this.data);
+}
+
+class failure<Entity> extends Result<Entity> {
+  final String description;
+  failure(this.description);
+}
+
+class networkIssue<Entity> extends Result<Entity> {
+  final NetworkIssue issue;
+  networkIssue(this.issue);
 }
