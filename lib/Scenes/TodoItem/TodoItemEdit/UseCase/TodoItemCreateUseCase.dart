@@ -12,7 +12,7 @@ class TodoItemCreateUseCase extends TodoItemEditUseCase {
   AppState _appState;
   EntityGateway _entityGateway;
   TodoItemCreateUseCase(this._entityGateway, this._appState)
-      : super(_entityGateway, _appState);
+      : super(_appState);
 
   @override
   getInitialEditingTodo() => EditingTodo();

@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart';
 
 
 class _CupertinoLocalizationsDelegate extends LocalizationsDelegate<CupertinoLocalizations> {
@@ -72,7 +71,7 @@ class FrenchCupertinoLocalizations implements CupertinoLocalizations {
     String datePickerMonth(int monthIndex) => _months[monthIndex - 1];
 
     @override
-    String datePickerDayOfMonth(int dayIndex) => dayIndex.toString();
+    String datePickerDayOfMonth(int dayIndex, [int? weekDay]) => dayIndex.toString();
 
     @override
     String datePickerHour(int hour) => hour.toString();
@@ -174,4 +173,8 @@ class FrenchCupertinoLocalizations implements CupertinoLocalizations {
   @override
   // TODO: implement timerPickerSecondLabels
   List<String> get timerPickerSecondLabels => throw UnimplementedError();
+
+  @override
+  // TODO: implement noSpellCheckReplacementsLabel
+  String get noSpellCheckReplacementsLabel => throw UnimplementedError();
 }

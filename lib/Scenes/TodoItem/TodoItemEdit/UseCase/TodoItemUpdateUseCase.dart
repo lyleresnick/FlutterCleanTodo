@@ -13,7 +13,7 @@ class TodoItemUpdateUseCase extends TodoItemEditUseCase {
   AppState _appState;
   EntityGateway _entityGateway;
   TodoItemUpdateUseCase(this._entityGateway, this._appState)
-      : super(_entityGateway, _appState);
+      : super(_appState);
   @override
   getInitialEditingTodo() => EditingTodo.fromTodo(_appState.itemState.currentTodo);
 
