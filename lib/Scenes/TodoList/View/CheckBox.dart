@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-
+part of '../TodoList.dart';
 
 typedef void CheckBoxOnPressed(bool checked);
 class CheckBox extends StatefulWidget {

@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_todo/Scenes/TodoRootRouter/Assembly/TodoRootRooterAssembly.dart';
+import 'package:flutter_todo/Scenes/TodoRootRouter/TodoRootRouter.dart' as TodoRootRouter;
 import 'Scenes/Common/Localization/TodoLocalizationsDelegate.dart';
 import 'Scenes/Common/Localization/FrenchCupertinoLocalizations.dart';
 
@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: TodoRootRouterAssembly().scene,
+      home: TodoRootRouter.Assembly().scene,
       localizationsDelegates: [
         const TodoLocalizationsDelegate(),
         GlobalMaterialLocalizations.delegate,
