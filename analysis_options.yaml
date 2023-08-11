@@ -9,9 +9,8 @@ analyzer:
 linter:
   rules:
     always_declare_return_types: true
-#    unawaited_futures: true
-#    avoid_relative_lib_imports: true
-#    avoid_void_async: true
-#    await_only_futures: true
-#    exhaustive_cases: true
+    unawaited_futures: true
+    avoid_void_async: true
+    await_only_futures: true
+    exhaustive_cases: true
 

@@ -46,17 +46,15 @@ abstract class UseCase with StarterBloc<UseCaseOutput> {
 
   final AppState _appState;
 
-  UseCase(this._appState);
-
-  EditingTodo getInitialEditingTodo();
-  Future<Result<Todo>> save(EditingTodo editingTodo);
-  void copyTodoToList(Todo todo);
-  void cancel();
-
-  void eventViewReady() {
-    _editingTodo = getInitialEditingTodo();
+  UseCase(this._appState) {
+    _editingTodo = initialEditingTodo;
     _refreshPresentation();
   }
+
+  EditingTodo get initialEditingTodo;
+  Future<Result<Todo>> save(EditingTodo editingTodo);
+  void updateAppStateDataReferences(Todo todo);
+  void cancel();
 
   void _refreshPresentation(
       {ErrorMessage? errorMessage, bool showEditCompleteBy = false}) {
@@ -101,7 +99,7 @@ abstract class UseCase with StarterBloc<UseCaseOutput> {
     _editingTodo.priority = priority;
   }
 
-  void eventSave() async {
+  Future<void> eventSave() async {
     if (_editingTodo.title == "") {
       _refreshPresentation(errorMessage: ErrorMessage.titleIsEmpty);
       return;
@@ -110,8 +108,8 @@ abstract class UseCase with StarterBloc<UseCaseOutput> {
     switch (result) {
       case success(:final data):
         _appState.itemState.currentTodo = data;
-        copyTodoToList(data);
         _appState.itemState.itemChanged = true;
+        updateAppStateDataReferences(data);
         emit(presentSaveCompleted());
       case failure(:final description):
         assert(false, "Unexpected error: $description");

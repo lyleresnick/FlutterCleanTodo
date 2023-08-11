@@ -5,9 +5,7 @@ part of '../TodoList.dart';
 class Scene extends StatelessWidget {
   final Presenter _presenter;
 
-  Scene(this._presenter) {
-    _presenter.eventViewReady();
-  }
+  Scene(this._presenter);
 
   @override
   Widget build(BuildContext context) {

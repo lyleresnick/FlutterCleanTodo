@@ -23,10 +23,6 @@ class Presenter
     });
   }
 
-  void eventViewReady() {
-    _useCase.eventViewReady();
-  }
-
   Future<bool> eventBack() async {
     _useCase.eventBack();
     return true;

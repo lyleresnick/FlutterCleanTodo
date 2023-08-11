@@ -2,7 +2,7 @@
 
 typedef  TodoListChangedItemCallback = void Function();
 
-abstract class TodoItemStartMode {
+sealed class TodoItemStartMode {
     TodoListChangedItemCallback todoListChangedItemCallback;
     TodoItemStartMode(this.todoListChangedItemCallback);
 }

@@ -6,9 +6,11 @@ class UseCase with StarterBloc<UseCaseOutput> {
   final EntityGateway _entityGateway;
   final TodoAppState _appState;
 
-  UseCase(this._entityGateway, this._appState);
+  UseCase(this._entityGateway, this._appState) {
+    unawaited(_initialize());
+  }
 
-  void eventViewReady() async {
+  Future<void> _initialize() async {
     final result = await _entityGateway.todoManager.all();
     switch (result) {
       case success(:final data):
@@ -26,7 +28,7 @@ class UseCase with StarterBloc<UseCaseOutput> {
         PresentationModel.fromEntities(_appState.toDoList)));
   }
 
-  void eventCompleted(bool completed, int index) async {
+  Future<void> eventCompleted(bool completed, int index) async {
     final result = await _entityGateway.todoManager
         .completed(_appState.toDoList[index].id, completed);
     switch (result) {
@@ -40,7 +42,7 @@ class UseCase with StarterBloc<UseCaseOutput> {
     }
   }
 
-  void eventDelete(int index) async {
+  Future<void> eventDelete(int index) async {
     final result =
         await _entityGateway.todoManager.delete(_appState.toDoList[index].id);
     switch (result) {

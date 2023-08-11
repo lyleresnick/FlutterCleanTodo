@@ -1,5 +1,7 @@
 //  Copyright (c) 2019 Lyle Resnick. All rights reserved.
 
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -8,7 +10,7 @@ class TodoOkDialog {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       final platform = Theme.of(context).platform;
       if (platform == TargetPlatform.iOS)
-        showCupertinoDialog(
+        unawaited(showCupertinoDialog(
             context: context,
             builder: (context) => CupertinoAlertDialog(
                     title: Text(alertTitle),
@@ -18,9 +20,9 @@ class TodoOkDialog {
                         child: Text("OK"),
                         onPressed: () => Navigator.of(context).pop(),
                       )
-                    ]));
+                    ])));
       else
-        showDialog(
+        unawaited(showDialog(
             context: context,
             builder: (context) => AlertDialog(
                     title: Text(alertTitle),
@@ -30,7 +32,7 @@ class TodoOkDialog {
                         child: Text("OK"),
                         onPressed: () => Navigator.of(context).pop(),
                       )
-                    ]));
+                    ])));
     });
   }
 }
