@@ -3,8 +3,8 @@ import 'TodoItemState.dart';
 import 'TodoItemStartMode.dart';
 
 abstract class AppState {
-  late List<Todo> toDoList;
-  late TodoItemStartMode itemStartMode;
-  late TodoItemState itemState;
+  List<Todo>? toDoList;
+  TodoItemStartMode? itemStartMode;
+  final itemState =  TodoItemState();
 }
 

@@ -7,7 +7,6 @@ class UseCase with StarterBloc<UseCaseOutput> {
   final TodoAppState _appState;
 
   UseCase(this._entityGateway, this._appState) {
-    _appState.itemState = TodoItemState();
     switch (_appState.itemStartMode.runtimeType) {
       case TodoItemStartModeCreate:
         _startCreate();
@@ -24,7 +23,7 @@ class UseCase with StarterBloc<UseCaseOutput> {
     final startMode = _appState.itemStartMode as TodoItemStartModeUpdate;
 
     final result = await _entityGateway.todoManager
-        .fetch(_appState.toDoList[startMode.index].id);
+        .fetch(_appState.toDoList![startMode.index].id);
     switch (result) {
       case success(:final data):
         _appState.itemState.currentTodo = data;
@@ -38,7 +37,7 @@ class UseCase with StarterBloc<UseCaseOutput> {
 
   void eventBack() {
     if (_appState.itemState.itemChanged) {
-      _appState.itemStartMode.todoListChangedItemCallback();
+      _appState.itemStartMode!.todoListChangedItemCallback();
     }
   }
 

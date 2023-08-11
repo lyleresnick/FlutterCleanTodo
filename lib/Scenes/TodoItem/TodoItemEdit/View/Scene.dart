@@ -2,11 +2,13 @@
 
 part of '../TodoItemEdit.dart';
 
-class Scene extends StatelessWidget
-    implements ActionDecoratedScene {
+class Scene extends StatefulWidget implements ActionDecoratedScene {
   final Presenter _presenter;
 
   Scene(this._presenter);
+
+  @override
+  State<Scene> createState() => _SceneState();
 
   @override
   List<Widget> actions() {
@@ -20,6 +22,16 @@ class Scene extends StatelessWidget
 
   @override
   bool get automaticallyImplyLeading => false;
+}
+
+class _SceneState extends State<Scene> {
+  late final Presenter _presenter;
+
+  @override
+  void initState() {
+    super.initState();
+    this._presenter = widget._presenter;
+  }
 
   @override
   Widget build(BuildContext context) {
