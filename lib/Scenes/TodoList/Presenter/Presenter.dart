@@ -17,10 +17,6 @@ class Presenter with StarterBloc<PresenterOutput> {
     });
   }
 
-  void eventViewReady() {
-    _useCase.eventViewReady();
-  }
-
   void eventCompleted(int index) {
     _useCase.eventCompleted(true, index);
   }

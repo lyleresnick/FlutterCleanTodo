@@ -7,7 +7,7 @@ class TodoItemCreateUseCase extends UseCase {
       : super(_appState);
 
   @override
-  EditingTodo getInitialEditingTodo() => EditingTodo();
+  EditingTodo get initialEditingTodo => EditingTodo();
 
   @override
   Future<Result<Todo>> save(EditingTodo editingTodo) async {
@@ -16,7 +16,7 @@ class TodoItemCreateUseCase extends UseCase {
   }
 
   @override
-  void copyTodoToList(Todo todo) {
+  void updateAppStateDataReferences(Todo todo) {
     _appState.itemStartMode = TodoItemStartModeUpdate(_appState.toDoList.length, (_appState.itemStartMode as TodoItemStartModeCreate).todoListChangedItemCallback);
     _appState.toDoList.add(todo);
   }

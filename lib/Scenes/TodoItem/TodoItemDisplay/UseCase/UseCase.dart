@@ -6,9 +6,7 @@ class UseCase with StarterBloc<UseCaseOutput> {
 
     TodoAppState _appState;
 
-    UseCase(this._appState);
-
-    void eventViewReady() {
+    UseCase(this._appState) {
         final todo = _appState.itemState.currentTodo;
         emit(presentBegin());
 

@@ -6,7 +6,7 @@ class TodoItemUpdateUseCase extends UseCase {
   TodoItemUpdateUseCase(this._entityGateway, this._appState)
       : super(_appState);
   @override
-  EditingTodo getInitialEditingTodo() => EditingTodo.fromTodo(_appState.itemState.currentTodo);
+  EditingTodo get initialEditingTodo => EditingTodo.fromTodo(_appState.itemState.currentTodo);
 
   @override
   Future<Result<Todo>> save(EditingTodo editingTodo) async {
@@ -14,7 +14,7 @@ class TodoItemUpdateUseCase extends UseCase {
   }
 
   @override
-  void copyTodoToList(Todo todo) {
+  void updateAppStateDataReferences(Todo todo) {
     _appState.toDoList[(_appState.itemStartMode as TodoItemStartModeUpdate).index] = todo;
   }
 

@@ -8,18 +8,11 @@ class UseCase with StarterBloc<UseCaseOutput> {
 
   UseCase(this._entityGateway, this._appState) {
     _appState.itemState = TodoItemState();
-  }
-
-  void eventViewReady() {
     switch (_appState.itemStartMode.runtimeType) {
       case TodoItemStartModeCreate:
         _startCreate();
-        break;
       case TodoItemStartModeUpdate:
         _startUpdate();
-        break;
-      default:
-        assert(false, "startMode.runtimeType is not defined");
     }
   }
 
@@ -27,7 +20,7 @@ class UseCase with StarterBloc<UseCaseOutput> {
     emit(presentEditView());
   }
 
-  void _startUpdate() async {
+  Future<void> _startUpdate() async {
     final startMode = _appState.itemStartMode as TodoItemStartModeUpdate;
 
     final result = await _entityGateway.todoManager

@@ -10,11 +10,9 @@ class Assembly {
       case TodoItemStartModeCreate:
         useCase = TodoItemCreateUseCase(
             EntityGateway.entityGateway, TodoAppState.instance);
-        break;
       case TodoItemStartModeUpdate:
         useCase = TodoItemUpdateUseCase(
             EntityGateway.entityGateway, TodoAppState.instance);
-        break;
     }
     final presenter = Presenter(useCase, router);
     final scene = Scene(presenter);

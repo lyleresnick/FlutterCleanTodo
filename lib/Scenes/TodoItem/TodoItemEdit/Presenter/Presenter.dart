@@ -21,10 +21,6 @@ class Presenter with StarterBloc<PresenterOutput> {
     });
   }
 
-  void eventViewReady() {
-    _useCase.eventViewReady();
-  }
-
   void eventEditedTitle(String title) {
     _useCase.eventEditedTitle(title);
   }

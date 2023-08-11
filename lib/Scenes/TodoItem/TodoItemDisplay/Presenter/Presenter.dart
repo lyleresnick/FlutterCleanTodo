@@ -35,10 +35,6 @@ class Presenter
     });
   }
 
-  void eventViewReady() {
-    _useCase.eventViewReady();
-  }
-
   void eventModeEdit() {
     _router.routeEditView();
   }

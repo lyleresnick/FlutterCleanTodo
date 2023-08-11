@@ -6,9 +6,7 @@ class Scene extends StatelessWidget
     implements ActionDecoratedScene {
   final Presenter _presenter;
 
-  Scene(this._presenter) {
-    _presenter.eventViewReady();
-  }
+  Scene(this._presenter);
 
   @override
   Widget? leading() {
