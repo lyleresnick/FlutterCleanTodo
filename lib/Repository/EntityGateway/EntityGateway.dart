@@ -12,7 +12,7 @@ abstract class EntityGateway {
 
     static final gatewayImplementation = _Implementation.db;
 
-    static get entityGateway {
+    static EntityGateway get entityGateway {
         switch(gatewayImplementation) {
         case _Implementation.test:
             return TestEntityGateway();
