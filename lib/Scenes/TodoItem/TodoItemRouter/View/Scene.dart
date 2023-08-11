@@ -2,10 +2,23 @@
 
 part of '../TodoItemRouter.dart';
 
-class Scene extends StatelessWidget {
+class Scene extends StatefulWidget {
   final Presenter _presenter;
 
   Scene(this._presenter);
+
+  @override
+  State<Scene> createState() => _SceneState();
+}
+
+class _SceneState extends State<Scene> {
+  late final Presenter _presenter;
+
+  @override
+  void initState() {
+    super.initState();
+    this._presenter = widget._presenter;
+  }
 
   @override
   Widget build(BuildContext context) {

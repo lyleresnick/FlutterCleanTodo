@@ -25,15 +25,15 @@ class UseCase with StarterBloc<UseCaseOutput> {
 
   void _refreshPresentation() {
     emit(presentModel(
-        PresentationModel.fromEntities(_appState.toDoList)));
+        PresentationModel.fromEntities(_appState.toDoList!)));
   }
 
   Future<void> eventCompleted(bool completed, int index) async {
     final result = await _entityGateway.todoManager
-        .completed(_appState.toDoList[index].id, completed);
+        .completed(_appState.toDoList![index].id, completed);
     switch (result) {
       case success(:final data):
-        _appState.toDoList[index] = data;
+        _appState.toDoList![index] = data;
         _refreshPresentation();
       case failure(:final description):
         assert(false, "Unexpected error: $description");
@@ -44,10 +44,10 @@ class UseCase with StarterBloc<UseCaseOutput> {
 
   Future<void> eventDelete(int index) async {
     final result =
-        await _entityGateway.todoManager.delete(_appState.toDoList[index].id);
+        await _entityGateway.todoManager.delete(_appState.toDoList![index].id);
     switch (result) {
       case success():
-        _appState.toDoList.removeAt(index);
+        _appState.toDoList!.removeAt(index);
         _refreshPresentation();
       case failure(:final description):
         assert(false, "Unexpected error: $description");
@@ -59,6 +59,7 @@ class UseCase with StarterBloc<UseCaseOutput> {
   void eventItemSelected(int index) {
     _appState.itemStartMode =
         TodoItemStartModeUpdate(index, _refreshPresentation);
+
     emit(presentItemDetail());
   }
 

@@ -2,20 +2,32 @@
 
 part of '../TodoRootRouter.dart';
 
-class Scene extends StatelessWidget {
+class Scene extends StatefulWidget {
   final Presenter _presenter;
+
+  Scene(this._presenter);
+
+  @override
+  State<Scene> createState() => _SceneState();
+}
+
+class _SceneState extends State<Scene> {
+  late final Presenter _presenter;
   final navKey = GlobalKey<NavigatorState>();
 
   static const _routeTodoItem = '/todoItem';
   static const _routeTodoList = '/';
 
-  Scene(this._presenter) {
+  @override
+  void initState() {
+    super.initState();
+    this._presenter = widget._presenter;
     _presenter.stream.listen((event) {
       switch (event) {
-        case PresenterOutput.showRowDetail:
-          navKey.currentState!.pushNamed(_routeTodoItem);
         case PresenterOutput.showPop:
           navKey.currentState!.pop();
+        default:
+          navKey.currentState!.pushNamed(event._route ?? event.toString());
       }
     });
   }
@@ -23,24 +35,30 @@ class Scene extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<Presenter>(
-        bloc: _presenter,
+        bloc: widget._presenter,
         child: Navigator(
           key: navKey,
           initialRoute: _routeTodoList,
           onGenerateRoute: (settings) {
-            late WidgetBuilder builder;
-            switch (settings.name) {
-              case _routeTodoList:
-                builder = (_) => TodoList.Assembly(_presenter).scene;
-                break;
-              case _routeTodoItem:
-                builder = (_) => TodoItemRouter.Assembly(_presenter).scene;
-                break;
-              default:
-                assert(false, 'Invalid route: ${settings.name}');
-            }
-            return MaterialPageRoute(builder: builder);
+            return MaterialPageRoute(builder: _builderFromRoute(settings.name));
           },
         ));
+  }
+
+  Widget Function(BuildContext) _builderFromRoute(String? routeName) {
+    return switch (routeName) {
+      _routeTodoList => (_) => TodoList.Assembly(_presenter).scene,
+      _routeTodoItem => (_) => TodoItemRouter.Assembly(_presenter).scene,
+      _ => (_) => ErrorScene(text: "Invalid route: '$routeName'")
+    };
+  }
+}
+
+extension on PresenterOutput {
+  String? get _route {
+    return switch (this) {
+      PresenterOutput.showRowDetail => _SceneState._routeTodoItem,
+      _ => null
+    };
   }
 }
