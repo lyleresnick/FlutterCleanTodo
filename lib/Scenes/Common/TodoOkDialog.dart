@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class TodoOkDialog {
-  static show(BuildContext context, String alertTitle, String message) {
+  static void show(BuildContext context, String alertTitle, String message) {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       final platform = Theme.of(context).platform;
       if (platform == TargetPlatform.iOS)

@@ -28,7 +28,7 @@ class EditingTodo {
         completed: todo.completed);
   }
 
-  toTodoValues() {
+  TodoValues toTodoValues() {
     return TodoValues(
       title: this.title,
       note: this.note,
@@ -58,7 +58,7 @@ abstract class UseCase with StarterBloc<UseCaseOutput> {
     _refreshPresentation();
   }
 
-  _refreshPresentation(
+  void _refreshPresentation(
       {ErrorMessage? errorMessage, bool showEditCompleteBy = false}) {
     emit(presentModel(PresentationModel.fromEditingTodo(
         _editingTodo,

@@ -8,7 +8,7 @@ analyzer:
 
 linter:
   rules:
-#    always_declare_return_types: true
+    always_declare_return_types: true
 #    unawaited_futures: true
 #    avoid_relative_lib_imports: true
 #    avoid_void_async: true
