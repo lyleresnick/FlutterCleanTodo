@@ -8,7 +8,7 @@ class UseCase with StarterBloc<_UseCaseOutput> {
     TodoAppState _appState;
 
     UseCase(this._appState) {
-        final todo = _appState.itemState.currentTodo;
+        final todo = _appState.currentTodo!;
         emit(presentBegin());
 
         emit(presentString(FieldName.title, todo.title));
