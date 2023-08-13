@@ -2,7 +2,7 @@
 
 part of '../TodoList.dart';
 
-
+@visibleForTesting
 class ViewModel {
     final List<RowViewModel> rows;
 
@@ -14,6 +14,7 @@ class ViewModel {
 
 
 
+@visibleForTesting
 class RowViewModel {
 
     final String id;

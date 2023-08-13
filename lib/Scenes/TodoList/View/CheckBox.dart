@@ -1,20 +1,20 @@
 part of '../TodoList.dart';
 
-typedef void CheckBoxOnPressed(bool checked);
-class CheckBox extends StatefulWidget {
+typedef void _CheckBoxOnPressed(bool checked);
+class _CheckBox extends StatefulWidget {
 
     final bool _checked;
-    final CheckBoxOnPressed _onPressed;
+    final _CheckBoxOnPressed _onPressed;
 
-    CheckBox({bool checked = false, required CheckBoxOnPressed onPressed})
+    _CheckBox({bool checked = false, required _CheckBoxOnPressed onPressed})
         : _checked = checked, _onPressed = onPressed;
 
   @override
-  State<StatefulWidget> createState() => CheckBoxState();
+  State<StatefulWidget> createState() => _CheckBoxState();
 
 }
 
-class CheckBoxState extends State<CheckBox> {
+class _CheckBoxState extends State<_CheckBox> {
 
   late bool _checked;
 

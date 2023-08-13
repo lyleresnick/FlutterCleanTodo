@@ -2,6 +2,7 @@
 
 part of '../TodoRootRouter.dart';
 
+@visibleForTesting
 enum PresenterOutput {
   showRowDetail,
   showPop

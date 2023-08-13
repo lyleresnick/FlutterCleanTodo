@@ -2,8 +2,8 @@
 
 part of '../TodoItemDisplay.dart';
 
-class Presenter
-    with StarterBloc<PresenterOutput> {
+@visibleForTesting
+class Presenter with StarterBloc<_PresenterOutput> {
   final UseCase _useCase;
   final Router _router;
   late List<RowViewModel> _viewModelList;
@@ -14,20 +14,19 @@ class Presenter
         case presentBegin():
           _viewModelList = [];
         case presentString(:final field, :final value):
-          final fieldName = localizedString(fieldNameToString(field));
+          final fieldName = localizedString(field.name);
           _viewModelList.add(RowViewModel(fieldName, value));
         case presentBool(:final field, :final value):
-          final fieldName = localizedString(fieldNameToString(field));
-          _viewModelList.add(RowViewModel(
-              fieldName, localizedString(value ? "yes" : "no")));
+          final fieldName = localizedString(field.name);
+          _viewModelList.add(
+              RowViewModel(fieldName, localizedString(value ? "yes" : "no")));
         case presentPriority(:final field, :final value):
-          final fieldName = localizedString(fieldNameToString(field));
+          final fieldName = localizedString(field.name);
           _viewModelList.add(RowViewModel(
               fieldName, localizedString(priorityToString(value))));
         case presentDate(:final field, :final value):
-          final fieldName = localizedString(fieldNameToString(field));
-          _viewModelList
-              .add(RowViewModel(fieldName, localizedDate(value)));
+          final fieldName = localizedString(field.name);
+          _viewModelList.add(RowViewModel(fieldName, localizedDate(value)));
         case presentEnd():
           emit(showFieldList(_viewModelList));
       }

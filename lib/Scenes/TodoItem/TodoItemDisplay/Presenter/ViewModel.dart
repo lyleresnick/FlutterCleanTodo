@@ -2,6 +2,7 @@
 
 part of '../TodoItemDisplay.dart';
 
+@visibleForTesting
 class RowViewModel {
 
     final String fieldName;

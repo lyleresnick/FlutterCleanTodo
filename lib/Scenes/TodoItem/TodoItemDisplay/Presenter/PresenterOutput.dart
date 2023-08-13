@@ -2,9 +2,10 @@
 
 part of '../TodoItemDisplay.dart';
 
-sealed class PresenterOutput {}
+sealed class _PresenterOutput {}
 
-class showFieldList extends PresenterOutput {
+@visibleForTesting
+class showFieldList extends _PresenterOutput {
   final List<RowViewModel> model;
   showFieldList(this.model);
 }

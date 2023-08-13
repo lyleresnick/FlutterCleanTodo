@@ -2,6 +2,7 @@
 
 part of '../TodoItemRouter.dart';
 
+@visibleForTesting
 class Scene extends StatefulWidget {
   final Presenter _presenter;
 
@@ -25,7 +26,7 @@ class _SceneState extends State<Scene> {
     final platform = Theme.of(context).platform;
     return BlocProvider<Presenter>(
         bloc: _presenter,
-        child: StreamBuilder<PresenterOutput>(
+        child: StreamBuilder<_PresenterOutput>(
             stream: _presenter.stream,
             builder: (context, snapshot) {
               if (!snapshot.hasData) {

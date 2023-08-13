@@ -2,13 +2,16 @@
 
 part of '../TodoItemRouter.dart';
 
-sealed class UseCaseOutput {}
+sealed class _UseCaseOutput {}
 
-class presentEditView extends UseCaseOutput {}
+@visibleForTesting
+class presentEditView extends _UseCaseOutput {}
 
-class presentDisplayView extends UseCaseOutput {}
+@visibleForTesting
+class presentDisplayView extends _UseCaseOutput {}
 
-class presentNotFound extends UseCaseOutput {
+@visibleForTesting
+class presentNotFound extends _UseCaseOutput {
   final String id;
   presentNotFound(this.id);
 }

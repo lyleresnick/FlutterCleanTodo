@@ -2,6 +2,7 @@
 
 part of '../TodoRootRouter.dart';
 
+@visibleForTesting
 class Scene extends StatefulWidget {
   final Presenter _presenter;
 

@@ -2,6 +2,7 @@
 
 part of '../TodoItemEdit.dart';
 
+@visibleForTesting
 class ViewModel {
   final String title;
   final String note;

@@ -2,6 +2,7 @@
 
 part of '../TodoList.dart';
 
+@visibleForTesting
 class Scene extends StatefulWidget {
   final Presenter _presenter;
   Scene(this._presenter);
@@ -32,7 +33,7 @@ class _SceneState extends State<Scene> {
         body: BlocProvider<Presenter>(
             bloc: _presenter,
             child: SafeArea(
-                child: StreamBuilder<PresenterOutput>(
+                child: StreamBuilder<_PresenterOutput>(
                     stream: _presenter.stream,
                     builder: (context, snapshot) {
                       if (!snapshot.hasData) {
@@ -42,7 +43,7 @@ class _SceneState extends State<Scene> {
                           showModel(:final model) =>
                             ListView.builder(
                               itemCount: model.rows.length,
-                              itemBuilder: (context, index) => Cell(
+                              itemBuilder: (context, index) => _Cell(
                                   row: model.rows[index], index: index))
                       };
                     }))));
