@@ -7,11 +7,11 @@ class UseCase with StarterBloc<UseCaseOutput> {
   final TodoAppState _appState;
 
   UseCase(this._entityGateway, this._appState) {
-    switch (_appState.itemStartMode.runtimeType) {
-      case TodoItemStartModeCreate:
+    switch (_appState.itemStartMode!) {
+      case TodoItemStartModeCreate():
         _startCreate();
-      case TodoItemStartModeUpdate:
-        _startUpdate();
+      case TodoItemStartModeUpdate(:final itemId):
+        _startUpdate(itemId);
     }
   }
 
@@ -19,11 +19,8 @@ class UseCase with StarterBloc<UseCaseOutput> {
     emit(presentEditView());
   }
 
-  Future<void> _startUpdate() async {
-    final startMode = _appState.itemStartMode as TodoItemStartModeUpdate;
-
-    final result = await _entityGateway.todoManager
-        .fetch(_appState.toDoList![startMode.index].id);
+  Future<void> _startUpdate(String itemId) async {
+    final result = await _entityGateway.todoManager.fetch(itemId);
     switch (result) {
       case success(:final data):
         _appState.itemState.currentTodo = data;
@@ -32,12 +29,6 @@ class UseCase with StarterBloc<UseCaseOutput> {
         assert(false, "Unexpected error: $description");
       case networkIssue(:final issue):
         assert(false, "Unexpected Network issue: reason $issue");
-    }
-  }
-
-  void eventBack() {
-    if (_appState.itemState.itemChanged) {
-      _appState.itemStartMode!.todoListChangedItemCallback();
     }
   }
 
