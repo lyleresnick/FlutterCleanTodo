@@ -1,5 +1,6 @@
 part of '../TodoItemEdit.dart';
 
+@visibleForTesting
 class TodoItemUpdateUseCase extends UseCase {
   AppState _appState;
   EntityGateway _entityGateway;

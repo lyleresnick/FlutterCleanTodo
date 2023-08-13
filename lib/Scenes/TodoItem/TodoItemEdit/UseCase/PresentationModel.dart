@@ -2,6 +2,7 @@
 
 part of '../TodoItemEdit.dart';
 
+@visibleForTesting
 class PresentationModel {
   final String title;
   final String note;

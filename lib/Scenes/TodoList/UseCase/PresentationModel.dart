@@ -2,6 +2,7 @@
 
 part of '../TodoList.dart';
 
+@visibleForTesting
 class PresentationModel {
     final List<PresentationRowModel> rows;
     PresentationModel(this.rows);
@@ -10,6 +11,7 @@ class PresentationModel {
       : rows = entities.map((entity) => PresentationRowModel(entity)).toList();
 }
 
+@visibleForTesting
 class PresentationRowModel {
 
     final String id;

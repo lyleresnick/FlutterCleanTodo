@@ -2,7 +2,8 @@
 
 part of '../TodoItemEdit.dart';
 
-class Presenter with StarterBloc<PresenterOutput> {
+@visibleForTesting
+class Presenter with StarterBloc<_PresenterOutput> {
   final UseCase _useCase;
   final Router _router;
 

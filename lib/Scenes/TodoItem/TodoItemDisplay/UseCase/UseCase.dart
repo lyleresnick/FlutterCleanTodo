@@ -2,7 +2,8 @@
 
 part of '../TodoItemDisplay.dart';
 
-class UseCase with StarterBloc<UseCaseOutput> {
+@visibleForTesting
+class UseCase with StarterBloc<_UseCaseOutput> {
 
     TodoAppState _appState;
 

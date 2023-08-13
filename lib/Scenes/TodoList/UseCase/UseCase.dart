@@ -2,7 +2,8 @@
 
 part of '../TodoList.dart';
 
-class UseCase with StarterBloc<UseCaseOutput> {
+@visibleForTesting
+class UseCase with StarterBloc<_UseCaseOutput> {
   final EntityGateway _entityGateway;
   final TodoAppState _appState;
 

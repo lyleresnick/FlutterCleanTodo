@@ -1,11 +1,11 @@
 part of '../TodoList.dart';
 
-class Cell extends StatelessWidget {
+class _Cell extends StatelessWidget {
 
     final RowViewModel row;
     final int index;
 
-    Cell({required this.row, required this.index});
+    _Cell({required this.row, required this.index});
 
     @override
     Widget build(BuildContext context) {
@@ -62,7 +62,7 @@ class Cell extends StatelessWidget {
 
         return Container(
             padding: EdgeInsets.all(4),
-            child: CheckBox(
+            child: _CheckBox(
                 checked: row.completed,
                 onPressed: (checked) {
                     final presenter = BlocProvider.of<Presenter>(context)!;

@@ -2,14 +2,14 @@
 
 part of '../TodoItemEdit.dart';
 
-sealed class UseCaseOutput {}
+sealed class _UseCaseOutput {}
 
-class presentModel extends UseCaseOutput {
+class presentModel extends _UseCaseOutput {
   final PresentationModel model;
   presentModel(this.model);
 }
 
-class presentSaveCompleted extends UseCaseOutput {}
-class presentEditingCancelled extends UseCaseOutput {}
-class presentCreateCancelled extends UseCaseOutput {}
+class presentSaveCompleted extends _UseCaseOutput {}
+class presentEditingCancelled extends _UseCaseOutput {}
+class presentCreateCancelled extends _UseCaseOutput {}
 

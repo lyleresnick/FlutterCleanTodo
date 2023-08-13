@@ -2,6 +2,7 @@
 
 part of '../TodoRootRouter.dart';
 
+@visibleForTesting
 class Presenter with StarterBloc<PresenterOutput>
     implements TodoItemRouter.Router, TodoList.Router {
 

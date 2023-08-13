@@ -2,9 +2,10 @@
 
 part of '../TodoList.dart';
 
-sealed class PresenterOutput {}
+sealed class _PresenterOutput {}
 
-class showModel extends PresenterOutput {
+@visibleForTesting
+class showModel extends _PresenterOutput {
   final ViewModel model;
   showModel(this.model);
 }

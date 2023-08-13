@@ -2,8 +2,9 @@
 
 part of '../TodoItemRouter.dart';
 
+@visibleForTesting
 class Presenter
-    with StarterBloc<PresenterOutput>
+    with StarterBloc<_PresenterOutput>
     implements TodoItemDisplay.Router, TodoItemEdit.Router {
   final UseCase _useCase;
   final Router router;

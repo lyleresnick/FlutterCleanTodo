@@ -2,11 +2,13 @@
 
 part of '../TodoList.dart';
 
-sealed class UseCaseOutput {}
+sealed class _UseCaseOutput {}
 
-class presentModel extends UseCaseOutput {
+@visibleForTesting
+class presentModel extends _UseCaseOutput {
   final PresentationModel model;
   presentModel(this.model);
 }
 
-class presentItemDetail extends UseCaseOutput {}
+@visibleForTesting
+class presentItemDetail extends _UseCaseOutput {}

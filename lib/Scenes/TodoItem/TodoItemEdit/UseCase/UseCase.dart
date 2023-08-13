@@ -41,7 +41,7 @@ class EditingTodo {
 
 }
 
-abstract class UseCase with StarterBloc<UseCaseOutput> {
+abstract class UseCase with StarterBloc<_UseCaseOutput> {
   late EditingTodo _editingTodo;
 
   final AppState _appState;

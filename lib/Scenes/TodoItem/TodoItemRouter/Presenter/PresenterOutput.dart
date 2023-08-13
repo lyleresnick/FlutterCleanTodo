@@ -2,13 +2,16 @@
 
 part of '../TodoItemRouter.dart';
 
-sealed class PresenterOutput {}
+sealed class _PresenterOutput {}
 
-class showEditView extends PresenterOutput {}
+@visibleForTesting
+class showEditView extends _PresenterOutput {}
 
-class showDisplayView extends PresenterOutput {}
+@visibleForTesting
+class showDisplayView extends _PresenterOutput {}
 
-class showMessageView extends PresenterOutput {
+@visibleForTesting
+class showMessageView extends _PresenterOutput {
   final String id;
   showMessageView(this.id);
 }

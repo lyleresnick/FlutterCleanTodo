@@ -2,6 +2,7 @@
 
 part of '../TodoItemEdit.dart';
 
+@visibleForTesting
 class Scene extends StatefulWidget implements ActionDecoratedScene {
   final Presenter _presenter;
 
@@ -37,7 +38,7 @@ class _SceneState extends State<Scene> {
   Widget build(BuildContext context) {
     return BlocProvider<Presenter>(
         bloc: _presenter,
-        child: StreamBuilder<PresenterOutput>(
+        child: StreamBuilder<_PresenterOutput>(
             stream: _presenter.stream,
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
