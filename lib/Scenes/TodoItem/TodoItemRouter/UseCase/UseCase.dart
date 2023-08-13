@@ -16,6 +16,7 @@ class UseCase with StarterBloc<_UseCaseOutput> {
   }
 
   void _startCreate() {
+    _appState.currentTodo = null;
     emit(presentEditView());
   }
 
@@ -23,7 +24,7 @@ class UseCase with StarterBloc<_UseCaseOutput> {
     final result = await _entityGateway.todoManager.fetch(itemId);
     switch (result) {
       case success(:final data):
-        _appState.itemState.currentTodo = data;
+        _appState.currentTodo = data;
         emit(presentDisplayView());
       case failure(:final description):
         assert(false, "Unexpected error: $description");

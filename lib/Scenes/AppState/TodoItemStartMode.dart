@@ -2,8 +2,6 @@
 
 import '../../Repository/Entities/Todo.dart';
 
-typedef  TodoListChangedItemCallback = void Function();
-
 sealed class TodoItemStartMode {}
 
 class TodoItemStartModeCreate extends TodoItemStartMode {

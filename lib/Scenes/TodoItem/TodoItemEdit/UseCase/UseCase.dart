@@ -107,8 +107,7 @@ abstract class UseCase with StarterBloc<_UseCaseOutput> {
     final result = await save(_editingTodo);
     switch (result) {
       case success(:final data):
-        _appState.itemState.currentTodo = data;
-        _appState.itemState.itemChanged = true;
+        _appState.currentTodo = data;
         updateAppStateDataReferences(data);
         emit(presentSaveCompleted());
       case failure(:final description):
