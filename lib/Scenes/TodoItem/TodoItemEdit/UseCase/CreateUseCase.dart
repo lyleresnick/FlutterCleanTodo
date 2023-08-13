@@ -17,8 +17,9 @@ class TodoItemCreateUseCase extends UseCase {
 
   @override
   void updateAppStateDataReferences(Todo todo) {
-    _appState.itemStartMode = TodoItemStartModeUpdate(_appState.toDoList!.length, (_appState.itemStartMode as TodoItemStartModeCreate).todoListChangedItemCallback);
-    _appState.toDoList!.add(todo);
+    final callback = (_appState.itemStartMode as TodoItemStartModeCreate).createCallback;
+    final updateCallback = callback(todo);
+    _appState.itemStartMode = TodoItemStartModeUpdate(todo.id, updateCallback);
   }
 
   @override

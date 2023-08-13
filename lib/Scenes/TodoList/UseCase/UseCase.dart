@@ -24,8 +24,7 @@ class UseCase with StarterBloc<UseCaseOutput> {
   }
 
   void _refreshPresentation() {
-    emit(presentModel(
-        PresentationModel.fromEntities(_appState.toDoList!)));
+    emit(presentModel(PresentationModel.fromEntities(_appState.toDoList!)));
   }
 
   Future<void> eventCompleted(bool completed, int index) async {
@@ -58,13 +57,24 @@ class UseCase with StarterBloc<UseCaseOutput> {
 
   void eventItemSelected(int index) {
     _appState.itemStartMode =
-        TodoItemStartModeUpdate(index, _refreshPresentation);
-
+        TodoItemStartModeUpdate(_appState.toDoList![index].id, _makeUpdateCallback(index));
     emit(presentItemDetail());
   }
 
+  void Function(Todo) _makeUpdateCallback(int index) {
+    return (todo) {
+      _appState.toDoList![index] = todo;
+      _refreshPresentation();
+    };
+  }
+
   void eventCreate() {
-    _appState.itemStartMode = TodoItemStartModeCreate(_refreshPresentation);
+    _appState.itemStartMode = TodoItemStartModeCreate((todo) {
+      final index = _appState.toDoList!.length;
+      _appState.toDoList!.add(todo);
+      _refreshPresentation();
+      return _makeUpdateCallback(index);
+    });
     emit(presentItemDetail());
   }
 

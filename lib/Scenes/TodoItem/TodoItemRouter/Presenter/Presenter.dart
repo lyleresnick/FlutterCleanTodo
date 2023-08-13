@@ -23,11 +23,6 @@ class Presenter
     });
   }
 
-  Future<bool> eventBack() async {
-    _useCase.eventBack();
-    return true;
-  }
-
   String get titleLabel => localizedString('todo');
 
 //  TodoItemDisplayRouter

@@ -1,18 +1,19 @@
 //  Copyright (c) 2019 Lyle Resnick. All rights reserved.
 
+import '../../Repository/Entities/Todo.dart';
+
 typedef  TodoListChangedItemCallback = void Function();
 
-sealed class TodoItemStartMode {
-    TodoListChangedItemCallback todoListChangedItemCallback;
-    TodoItemStartMode(this.todoListChangedItemCallback);
-}
+sealed class TodoItemStartMode {}
 
 class TodoItemStartModeCreate extends TodoItemStartMode {
-    TodoItemStartModeCreate(todoListChangedItemCallback) : super(todoListChangedItemCallback);
+    void Function(Todo) Function(Todo) createCallback;
+    TodoItemStartModeCreate(this.createCallback) ;
 }
 
 class TodoItemStartModeUpdate extends TodoItemStartMode {
-    int index;
-    TodoItemStartModeUpdate(this.index, todoListChangedItemCallback) : super(todoListChangedItemCallback);
+    String itemId;
+    void Function(Todo) updateCallback;
+    TodoItemStartModeUpdate(this.itemId, this.updateCallback);
 }
 

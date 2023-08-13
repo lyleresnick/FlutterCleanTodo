@@ -23,38 +23,36 @@ class _SceneState extends State<Scene> {
   @override
   Widget build(BuildContext context) {
     final platform = Theme.of(context).platform;
-    return WillPopScope(
-        onWillPop: _presenter.eventBack,
-        child: BlocProvider<Presenter>(
-            bloc: _presenter,
-            child: StreamBuilder<PresenterOutput>(
-                stream: _presenter.stream,
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return Material(color: Colors.black);
-                  }
-                  final body = switch (snapshot.data!) {
-                    showDisplayView() =>
-                      TodoItemDisplay.Assembly(_presenter).scene,
-                    showEditView() => TodoItemEdit.Assembly(_presenter).scene,
-                    showMessageView(:final id) => Text(id)
-                  };
+    return BlocProvider<Presenter>(
+        bloc: _presenter,
+        child: StreamBuilder<PresenterOutput>(
+            stream: _presenter.stream,
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return Material(color: Colors.black);
+              }
+              final body = switch (snapshot.data!) {
+                showDisplayView() =>
+                  TodoItemDisplay.Assembly(_presenter).scene,
+                showEditView() => TodoItemEdit.Assembly(_presenter).scene,
+                showMessageView(:final id) => Text(id)
+              };
 
-                  final decoratedScene = (body is ActionDecoratedScene)
-                      ? body as ActionDecoratedScene
-                      : null;
-                  return Scaffold(
-                    appBar: AppBar(
-                      title: Text(_presenter.titleLabel),
-                      backgroundColor: Colors.lightGreen,
-                      elevation: platform == TargetPlatform.iOS ? 0.0 : 4.0,
-                      actions: decoratedScene?.actions(),
-                      leading: decoratedScene?.leading(),
-                      automaticallyImplyLeading:
-                          decoratedScene?.automaticallyImplyLeading ?? false,
-                    ),
-                    body: body,
-                  );
-                })));
+              final decoratedScene = (body is ActionDecoratedScene)
+                  ? body as ActionDecoratedScene
+                  : null;
+              return Scaffold(
+                appBar: AppBar(
+                  title: Text(_presenter.titleLabel),
+                  backgroundColor: Colors.lightGreen,
+                  elevation: platform == TargetPlatform.iOS ? 0.0 : 4.0,
+                  actions: decoratedScene?.actions(),
+                  leading: decoratedScene?.leading(),
+                  automaticallyImplyLeading:
+                      decoratedScene?.automaticallyImplyLeading ?? false,
+                ),
+                body: body,
+              );
+            }));
   }
 }
