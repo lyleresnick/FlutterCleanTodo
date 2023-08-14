@@ -57,8 +57,9 @@ class UseCase with StarterBloc<_UseCaseOutput> {
   }
 
   void eventItemSelected(int index) {
-    _appState.itemStartMode =
-        TodoItemStartModeUpdate(_appState.toDoList![index].id, _makeUpdateCallback(index));
+    _appState.todoListCallback = _makeUpdateCallback(index);
+    final id = _appState.toDoList![index].id;
+    _appState.itemStartMode = TodoItemStartModeUpdate(id);
     emit(presentItemDetail());
   }
 
@@ -70,12 +71,14 @@ class UseCase with StarterBloc<_UseCaseOutput> {
   }
 
   void eventCreate() {
-    _appState.itemStartMode = TodoItemStartModeCreate((todo) {
-      final index = _appState.toDoList!.length;
+    _appState.todoListCallback = (todo) {
+      final index = _appState.toDoList!.length; // need index of added todo
       _appState.toDoList!.add(todo);
       _refreshPresentation();
-      return _makeUpdateCallback(index);
-    });
+      _appState.todoListCallback = _makeUpdateCallback(index);
+      _appState.itemStartMode = TodoItemStartModeUpdate(todo.id);
+    };
+    _appState.itemStartMode = TodoItemStartModeCreate();
     emit(presentItemDetail());
   }
 
