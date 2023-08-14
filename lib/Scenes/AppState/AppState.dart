@@ -3,6 +3,7 @@ import 'TodoItemStartMode.dart';
 
 abstract class AppState {
   List<Todo>? toDoList;
+  void Function(Todo)? todoListCallback;
   TodoItemStartMode? itemStartMode;
   Todo? currentTodo;
 }

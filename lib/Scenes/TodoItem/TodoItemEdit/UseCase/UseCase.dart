@@ -53,7 +53,6 @@ abstract class UseCase with StarterBloc<_UseCaseOutput> {
 
   EditingTodo get initialEditingTodo;
   Future<Result<Todo>> save(EditingTodo editingTodo);
-  void updateAppStateDataReferences(Todo todo);
   void cancel();
 
   void _refreshPresentation(
@@ -108,7 +107,7 @@ abstract class UseCase with StarterBloc<_UseCaseOutput> {
     switch (result) {
       case success(:final data):
         _appState.currentTodo = data;
-        updateAppStateDataReferences(data);
+        _appState.todoListCallback!(data);
         emit(presentSaveCompleted());
       case failure(:final description):
         assert(false, "Unexpected error: $description");

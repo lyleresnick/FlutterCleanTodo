@@ -6,11 +6,11 @@ class Assembly {
 
   factory Assembly(Router router) {
     late UseCase useCase;
-    switch (TodoAppState.instance.itemStartMode.runtimeType) {
-      case TodoItemStartModeCreate:
+    switch (TodoAppState.instance.itemStartMode!) {
+      case TodoItemStartModeCreate():
         useCase = TodoItemCreateUseCase(
             EntityGateway.entityGateway, TodoAppState.instance);
-      case TodoItemStartModeUpdate:
+      case TodoItemStartModeUpdate():
         useCase = TodoItemUpdateUseCase(
             EntityGateway.entityGateway, TodoAppState.instance);
     }

@@ -15,12 +15,6 @@ class TodoItemUpdateUseCase extends UseCase {
   }
 
   @override
-  void updateAppStateDataReferences(Todo todo) {
-    final callback = (_appState.itemStartMode as TodoItemStartModeUpdate).updateCallback;
-    callback(todo);
-  }
-
-  @override
   void cancel() {
     emit(presentEditingCancelled());
   }
