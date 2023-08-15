@@ -9,7 +9,7 @@ class Assembly {
     Assembly._(this.scene);
 
     factory Assembly(Router router) {
-        final useCase = UseCase(TodoAppState.instance);
+        final useCase = UseCase(TodoAppState.instance.currentTodoSubject);
         final presenter = Presenter(useCase, router);
         final scene = Scene(presenter);
 

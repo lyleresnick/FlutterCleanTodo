@@ -1,10 +1,11 @@
 import 'package:flutter_todo/Repository/Entities/Todo.dart';
+import 'package:rxdart/rxdart.dart';
 import 'TodoItemStartMode.dart';
 
 abstract class AppState {
-  List<Todo>? toDoList;
-  void Function(Todo)? todoListCallback;
-  TodoItemStartMode? itemStartMode;
-  Todo? currentTodo;
+  final toDoListSubject = BehaviorSubject<List<Todo>>();
+  final toDoListCallbackSubject = BehaviorSubject<Todo>();
+  final itemStartModeSubject = BehaviorSubject<TodoItemStartMode>();
+  final currentTodoSubject = BehaviorSubject<Todo?>.seeded(null);
 }
 

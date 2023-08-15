@@ -44,9 +44,10 @@ class EditingTodo {
 abstract class UseCase with StarterBloc<_UseCaseOutput> {
   late EditingTodo _editingTodo;
 
-  final AppState _appState;
+  final BehaviorSubject<Todo> _toDoListCallbackSubject;
+  final BehaviorSubject<Todo?> _currentTodoSubject;
 
-  UseCase(this._appState) {
+  UseCase(this._toDoListCallbackSubject, this._currentTodoSubject) {
     _editingTodo = initialEditingTodo;
     _refreshPresentation();
   }
@@ -106,8 +107,8 @@ abstract class UseCase with StarterBloc<_UseCaseOutput> {
     final result = await save(_editingTodo);
     switch (result) {
       case success(:final data):
-        _appState.currentTodo = data;
-        _appState.todoListCallback!(data);
+        _currentTodoSubject.value = data;
+        _toDoListCallbackSubject.value = data;
         emit(presentSaveCompleted());
       case failure(:final description):
         assert(false, "Unexpected error: $description");

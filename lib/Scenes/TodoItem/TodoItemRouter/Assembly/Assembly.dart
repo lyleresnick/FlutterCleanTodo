@@ -3,16 +3,17 @@
 part of '../TodoItemRouter.dart';
 
 class Assembly {
+  final Scene scene;
+  Assembly._(this.scene);
 
-    final Scene scene;
-    Assembly._(this.scene);
+  factory Assembly(Router router) {
+    final useCase = UseCase(
+        EntityGateway.entityGateway,
+        TodoAppState.instance.itemStartModeSubject.value,
+        TodoAppState.instance.currentTodoSubject);
+    final presenter = Presenter(useCase, router);
+    final scene = Scene(presenter);
 
-    factory Assembly(Router router) {
-
-        final useCase = UseCase(EntityGateway.entityGateway, TodoAppState.instance);
-        final presenter = Presenter(useCase, router);
-        final scene = Scene(presenter);
-
-        return Assembly._(scene);
-    }
+    return Assembly._(scene);
+  }
 }
