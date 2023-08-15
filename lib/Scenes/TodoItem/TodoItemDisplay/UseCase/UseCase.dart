@@ -5,10 +5,10 @@ part of '../TodoItemDisplay.dart';
 @visibleForTesting
 class UseCase with StarterBloc<_UseCaseOutput> {
 
-    TodoAppState _appState;
+    final BehaviorSubject<Todo?> _currentTodoSubject;
 
-    UseCase(this._appState) {
-        final todo = _appState.currentTodo!;
+    UseCase(this._currentTodoSubject) {
+        final todo = _currentTodoSubject.value!;
         emit(presentBegin());
 
         emit(presentString(FieldName.title, todo.title));

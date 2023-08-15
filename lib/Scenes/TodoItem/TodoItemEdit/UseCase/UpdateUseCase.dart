@@ -2,12 +2,10 @@ part of '../TodoItemEdit.dart';
 
 @visibleForTesting
 class TodoItemUpdateUseCase extends UseCase {
-  AppState _appState;
   EntityGateway _entityGateway;
-  TodoItemUpdateUseCase(this._entityGateway, this._appState)
-      : super(_appState);
+  TodoItemUpdateUseCase(this._entityGateway, super._toDoListCallbackSubject, super._currentTodoSubject);
   @override
-  EditingTodo get initialEditingTodo => EditingTodo.fromTodo(_appState.currentTodo!);
+  EditingTodo get initialEditingTodo => EditingTodo.fromTodo(_currentTodoSubject.value!);
 
   @override
   Future<Result<Todo>> save(EditingTodo editingTodo) async {

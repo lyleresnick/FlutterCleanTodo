@@ -2,10 +2,8 @@ part of '../TodoItemEdit.dart';
 
 @visibleForTesting
 class TodoItemCreateUseCase extends UseCase {
-  AppState _appState;
   EntityGateway _entityGateway;
-  TodoItemCreateUseCase(this._entityGateway, this._appState)
-      : super(_appState);
+  TodoItemCreateUseCase(this._entityGateway, super._toDoListCallbackSubject, super._currentTodoSubject);
 
   @override
   EditingTodo get initialEditingTodo => EditingTodo();

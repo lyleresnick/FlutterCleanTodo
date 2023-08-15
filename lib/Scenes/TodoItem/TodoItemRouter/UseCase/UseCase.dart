@@ -4,10 +4,12 @@ part of '../TodoItemRouter.dart';
 
 class UseCase with StarterBloc<_UseCaseOutput> {
   final EntityGateway _entityGateway;
-  final TodoAppState _appState;
 
-  UseCase(this._entityGateway, this._appState) {
-    switch (_appState.itemStartMode!) {
+  final TodoItemStartMode _itemStartMode;
+  final BehaviorSubject<Todo?> _currentTodoSubject;
+
+  UseCase(this._entityGateway, this._itemStartMode, this._currentTodoSubject) {
+    switch (_itemStartMode) {
       case TodoItemStartModeCreate():
         _startCreate();
       case TodoItemStartModeUpdate(:final itemId):
@@ -16,7 +18,7 @@ class UseCase with StarterBloc<_UseCaseOutput> {
   }
 
   void _startCreate() {
-    _appState.currentTodo = null;
+    _currentTodoSubject.value = null;
     emit(presentEditView());
   }
 
@@ -24,7 +26,7 @@ class UseCase with StarterBloc<_UseCaseOutput> {
     final result = await _entityGateway.todoManager.fetch(itemId);
     switch (result) {
       case success(:final data):
-        _appState.currentTodo = data;
+        _currentTodoSubject.value = data;
         emit(presentDisplayView());
       case failure(:final description):
         assert(false, "Unexpected error: $description");
