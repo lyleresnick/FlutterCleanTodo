@@ -6,15 +6,16 @@ class Assembly {
 
   factory Assembly(Router router) {
     late UseCase useCase;
-    final toDoListCallbackSubject = TodoAppState.instance.toDoListCallbackSubject;
+    final toDoSceneRefreshSubject = TodoAppState.instance.toDoSceneRefreshSubject;
     final currentTodoSubject = TodoAppState.instance.currentTodoSubject;
+    final itemStartModeSubject = TodoAppState.instance.itemStartModeSubject;
     switch (TodoAppState.instance.itemStartModeSubject.value) {
       case TodoItemStartModeCreate():
         useCase = TodoItemCreateUseCase(
-            EntityGateway.entityGateway, toDoListCallbackSubject, currentTodoSubject);
+            EntityGateway.entityGateway, toDoSceneRefreshSubject, currentTodoSubject, itemStartModeSubject);
       case TodoItemStartModeUpdate():
         useCase = TodoItemUpdateUseCase(
-            EntityGateway.entityGateway, toDoListCallbackSubject, currentTodoSubject);
+            EntityGateway.entityGateway, toDoSceneRefreshSubject, currentTodoSubject, itemStartModeSubject);
     }
     final presenter = Presenter(useCase, router);
     final scene = Scene(presenter);

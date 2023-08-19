@@ -10,7 +10,7 @@ class Assembly {
     final useCase = UseCase(
         EntityGateway.entityGateway,
         TodoAppState.instance.toDoListSubject,
-        TodoAppState.instance.toDoListCallbackSubject,
+        TodoAppState.instance.toDoSceneRefreshSubject,
         TodoAppState.instance.itemStartModeSubject);
     final presenter = Presenter(useCase, router);
     final scene = Scene(presenter);
