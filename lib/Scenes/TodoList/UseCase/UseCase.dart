@@ -7,18 +7,20 @@ class UseCase with StarterBloc<_UseCaseOutput> {
   final EntityGateway _entityGateway;
 
   final BehaviorSubject<List<Todo>> _toDoListSubject;
-  final BehaviorSubject<Todo> _toDoListCallbackSubject;
+  final BehaviorSubject<Refresh> _toDoSceneRefreshSubject;
   final BehaviorSubject<TodoItemStartMode> _itemStartModeSubject;
 
-  late StreamSubscription<Todo> subscription;
-
   UseCase(this._entityGateway, this._toDoListSubject,
-      this._toDoListCallbackSubject, this._itemStartModeSubject) {
+      this._toDoSceneRefreshSubject, this._itemStartModeSubject) {
     unawaited(_initialize());
   }
 
   Future<void> _initialize() async {
-    subscription = _toDoListCallbackSubject.listen(null);
+    _toDoSceneRefreshSubject.listen(_refresh);
+    await _refresh(Refresh.yes);
+  }
+
+  Future<void> _refresh(_) async {
     final result = await _entityGateway.todoManager.all();
     switch (result) {
       case success(:final data):
@@ -68,37 +70,18 @@ class UseCase with StarterBloc<_UseCaseOutput> {
   }
 
   void eventItemSelected(int index) {
-    subscription.onData(_updateCallback(index));
     final id = _toDoListSubject.value[index].id;
     _itemStartModeSubject.value = TodoItemStartModeUpdate(id);
     emit(presentItemDetail());
   }
 
-  void Function(Todo) _updateCallback(int index) {
-    return (todo) {
-      final todoList = _toDoListSubject.value;
-      todoList[index] = todo;
-      _toDoListSubject.value = todoList;
-      _refreshPresentation();
-    };
-  }
-
   void eventCreate() {
-    subscription.onData((todo) {
-      final index = _toDoListSubject.value.length; // need index of added todo
-      final todoList = _toDoListSubject.value..add(todo);
-      _toDoListSubject.value = todoList;
-      _refreshPresentation();
-      subscription.onData(_updateCallback(index));
-      _itemStartModeSubject.value = TodoItemStartModeUpdate(todo.id);
-    });
     _itemStartModeSubject.value = TodoItemStartModeCreate();
     emit(presentItemDetail());
   }
 
   @override
   void dispose() {
-    subscription.cancel();
     super.dispose();
   }
 }
