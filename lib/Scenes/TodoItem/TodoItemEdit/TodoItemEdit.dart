@@ -1,3 +1,5 @@
+//  Copyright © 2023 Lyle Resnick. All rights reserved.
+
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -6,9 +8,9 @@ import 'package:rxdart/rxdart.dart';
 
 import 'package:flutter_todo/Repository/Entities/Priority.dart';
 import 'package:flutter_todo/Repository/Entities/Todo.dart';
-import 'package:flutter_todo/Repository/EntityGateway/EntityGateway.dart';
-import 'package:flutter_todo/Repository/Managers/Result.dart';
-import 'package:flutter_todo/Repository/Managers/TodoValues.dart';
+import 'package:flutter_todo/Repository/Abstraction/EntityGateway.dart';
+import 'package:flutter_todo/Repository/Abstraction/Result.dart';
+import 'package:flutter_todo/Repository/Abstraction/TodoValues.dart';
 import '../../AppState/AppState.dart';
 import '../../AppState/TodoAppState.dart';
 import '../../AppState/TodoItemStartMode.dart';

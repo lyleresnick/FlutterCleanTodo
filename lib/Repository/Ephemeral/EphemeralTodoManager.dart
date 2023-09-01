@@ -1,16 +1,18 @@
+//  Copyright © 2019 Lyle Resnick. All rights reserved.
 
-import 'TestTodo.dart';
-import 'TodoManager.dart';
-import '../Entities/Todo.dart';
-import 'TodoValues.dart';
-import 'TodoTestData.dart';
 import 'package:uuid/uuid.dart';
-import 'Result.dart';
+
+import '../Abstraction/TodoManager.dart';
+import '../Abstraction/Result.dart';
+import '../Abstraction/TodoValues.dart';
+import '../Entities/Todo.dart';
+import 'EphemeralData.dart';
+import 'EphemeralTodo.dart';
 
 
-class TestTodoManager extends TodoManager {
+class EphemeralTodoManager extends TodoManager {
 
-    Future<Result<List<Todo>>> all() => Future.value(success(TodoTestData.data.map((testTodo) => testTodo.toTodo).toList()));
+    Future<Result<List<Todo>>> all() => Future.value(success(TodoEphemeralData.data.map((testTodo) => testTodo.toTodo).toList()));
 
     Future<Result<Todo>> completed(String id, bool completed) {
         try {
@@ -24,8 +26,8 @@ class TestTodoManager extends TodoManager {
     }
 
     Future<Result<Todo>> create(TodoValues values) {
-        final todo = TestTodo.fromTodoValues(Uuid().v1(), values);
-        TodoTestData.data.add(todo);
+        final todo = EphemeralTodo.fromTodoValues(Uuid().v1(), values);
+        TodoEphemeralData.data.add(todo);
         return Future.value(success(todo.toTodo));
     }
 
@@ -33,7 +35,7 @@ class TestTodoManager extends TodoManager {
 
         try {
             final testTodo = _findTodo(id);
-            testTodo.setValues(values);
+            testTodo.fromValues(values);
             return Future.value(success(testTodo.toTodo));
         }
         catch (reason) {
@@ -55,8 +57,8 @@ class TestTodoManager extends TodoManager {
 
         try {
             final index = _findTodoIndex(id);
-            final testTodo = TodoTestData.data[index];
-            TodoTestData.data.remove(index);
+            final testTodo = TodoEphemeralData.data[index];
+            TodoEphemeralData.data.remove(index);
             return Future.value(success(testTodo.toTodo));
         }
         catch (reason) {
@@ -65,8 +67,8 @@ class TestTodoManager extends TodoManager {
     }
 
 
-    TestTodo _findTodo(String id) {
-        for(final entity in TodoTestData.data) {
+    EphemeralTodo _findTodo(String id) {
+        for(final entity in TodoEphemeralData.data) {
             if(entity.id == id) {
                 return entity;
             }
@@ -76,7 +78,7 @@ class TestTodoManager extends TodoManager {
 
     int _findTodoIndex(String id) {
         int index = 0;
-        for (final entity in TodoTestData.data) {
+        for (final entity in TodoEphemeralData.data) {
             if(entity.id == id) {
                 return index;
             }

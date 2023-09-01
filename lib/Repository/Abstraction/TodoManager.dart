@@ -1,9 +1,9 @@
+//  Copyright © 2019 Lyle Resnick. All rights reserved.
 
 import '../Entities/Todo.dart';
 
 import 'Result.dart';
 import 'TodoValues.dart';
-
 
 abstract class TodoManager {
 

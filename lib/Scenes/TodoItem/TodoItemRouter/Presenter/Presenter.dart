@@ -12,8 +12,10 @@ class Presenter
   Presenter(this._useCase, this.router) {
     _useCase.stream.listen((event) {
       switch(event) {
-      case presentDisplayView():
-        emit(showDisplayView());
+        case presentLoading():
+          emit(showLoading());
+        case presentDisplayView():
+          emit(showDisplayView());
       case presentEditView():
         emit(showEditView());
       case presentNotFound(:final id):

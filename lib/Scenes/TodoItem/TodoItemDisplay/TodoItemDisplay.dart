@@ -1,3 +1,5 @@
+//  Copyright © 2023 Lyle Resnick. All rights reserved.
+
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';

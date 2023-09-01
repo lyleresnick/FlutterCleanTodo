@@ -23,6 +23,7 @@ class UseCase with StarterBloc<_UseCaseOutput> {
   }
 
   Future<void> _startUpdate(String itemId) async {
+    emit(presentLoading());
     final result = await _entityGateway.todoManager.fetch(itemId);
     switch (result) {
       case success(:final data):

@@ -1,0 +1,208 @@
+openapi: 3.0.3
+info:
+  title: Swagger Todo - OpenAPI 3.0
+  description: |-
+    This is the Todo Server based on the OpenAPI 3.0 specification.  
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: lyle@cellarpoint.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.11
+externalDocs:
+  description: Find out more about Clean Architecture
+  url: http://lyleresnick.com
+servers:
+  - url: https://todo-backend-lyle.fly.dev/api
+tags:
+  - name: todo
+    description: Basic Todo
+    externalDocs:
+      description: Find out more
+      url: https://github.com/lyleresnick/FlutterViperTodo
+paths:
+  /todo:
+    get:
+      tags:
+        - todo
+      summary: get all todos
+      description: get all todos
+      operationId: getAllTodos
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TodoResponse'
+    post:
+      tags:
+        - todo
+      summary: Add a new todo
+      description: Create a new todo
+      operationId: createTodo
+      requestBody:
+        description: Create a new todo
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TodoParams'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TodoResponse'
+        '405':
+          description: Invalid input
+
+  /todo/{todoId}:
+    get:
+      tags:
+        - todo
+      summary: Find todo by ID
+      description: Returns a single todo by id
+      operationId: getTodoById
+      parameters:
+        - name: todoId
+          in: path
+          description: ID of todo to return
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TodoResponse'
+        '404':
+          description: Todo with todoId not found
+    put:
+      tags:
+        - todo
+      summary: Updates a todo
+      description: ''
+      operationId: updateTodo
+      parameters:
+        - name: todoId
+          in: path
+          description: ID of todo
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Create a new todo
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TodoParams'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TodoResponse'
+        '405':
+          description: Invalid input
+        '400':
+          description: Todo with todoId not found
+
+    delete:
+      tags:
+        - todo
+      summary: Deletes a todo
+      description: delete a todo
+      operationId: deleteTodo
+      parameters:
+        - name: todoId
+          in: path
+          description: Todo id to delete
+          required: true
+          schema:
+            type: string
+            format: uid
+      responses:
+        '400':
+          description: Todo with todoId not found
+components:
+  schemas:
+    TodoResponse:
+      required:
+        - id
+        - title
+        - priority
+        - completed
+      type: object
+      properties:
+        id:
+          type: string
+          format: uid
+          example: 123d12d31-123d123d123d-012d12d
+        title:
+          type: string
+          example: doggie
+        note:
+          type: string
+          nullable: true
+          example: This is a note
+          description: multiline note
+        priority:
+          $ref: '#/components/schemas/PriorityEnum'
+        completeBy:
+          type: string
+          format: date
+          nullable: true
+          description: todo must be completed by this date
+        completed:
+          type: boolean
+          description: todo is completed
+    TodoParams:
+      required:
+        - title
+        - priority
+        - completed
+      type: object
+      properties:
+        title:
+          type: string
+          example: doggie
+        note:
+          type: string
+          nullable: true
+          example: This is a note
+          description: multiline note
+        priority:
+          $ref: '#/components/schemas/PriorityEnum'
+        completeBy:
+          type: string
+          format: date
+          nullable: true
+          description: todo must be completed by this date
+        completed:
+          type: boolean
+          description: todo is completed
+    PriorityEnum:
+      type: string
+      description: high, medium, low or none
+      enum:
+        - high
+        - medium
+        - low
+        - none
+
+  requestBodies:
+    Todo:
+      description: Todo object that needs to be added
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TodoParams'

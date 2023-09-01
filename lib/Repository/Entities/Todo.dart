@@ -1,5 +1,8 @@
 //  Copyright © 2019 Lyle Resnick. All rights reserved.
 
+import 'package:todo_api/api.dart';
+
+import '../Abstraction/TodoValues.dart';
 import 'Priority.dart';
 import 'Entity.dart';
 
@@ -57,4 +60,23 @@ class Todo {
     static DateTime _convertSinceEpoch({required int date}) {
         return DateTime.fromMillisecondsSinceEpoch(date);
     }
+
+
+    factory Todo.fromTodoResponse(TodoResponse response) => Todo(
+        id: response.id,
+        title: response.title,
+        note: response.note ?? "",
+        completeBy: response.completeBy,
+        priority: priorityFromPriorityEnum(response.priority),
+        completed: response.completed
+    );
+
+    TodoValues toTodoValues() => TodoValues(
+        title: this.title,
+        note: this.note,
+        completeBy: this.completeBy,
+        priority: this.priority,
+        completed: this.completed
+    );
+
 }

@@ -1,3 +1,5 @@
+//  Copyright © 2019 Lyle Resnick. All rights reserved.
+
 import 'NetworkIssue.dart';
 
 sealed class Result<Entity> {}

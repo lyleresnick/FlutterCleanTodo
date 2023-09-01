@@ -1,3 +1,5 @@
+//  Copyright © 2019 Lyle Resnick. All rights reserved.
+
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 

@@ -1,4 +1,6 @@
+//  Copyright © 2019 Lyle Resnick. All rights reserved.
 
+import 'package:todo_api/api.dart';
 
 enum Priority {
     high,
@@ -62,4 +64,32 @@ String priorityToString(Priority rawValue) {
     final nameWithPrefix = rawValue.toString();
     return nameWithPrefix.split('.').last;
 }
+
+Priority priorityFromPriorityEnum(PriorityEnum rawValue) {
+
+    switch(rawValue) {
+        case PriorityEnum.high:
+            return Priority.high;
+        case PriorityEnum.medium:
+            return Priority.medium;
+        case PriorityEnum.low:
+            return Priority.low;
+        case PriorityEnum.none:
+            return Priority.none;
+        default:
+            assert(false, "rawValue must be high, medium, low or none");
+    }
+    return Priority.none;
+}
+
+PriorityEnum priorityEnumFromPriority(Priority priority) {
+
+    return switch(priority) {
+        Priority.high => PriorityEnum.high,
+        Priority.medium => PriorityEnum.medium,
+        Priority.low => PriorityEnum.low,
+        Priority.none => PriorityEnum.none
+    };
+}
+
 
