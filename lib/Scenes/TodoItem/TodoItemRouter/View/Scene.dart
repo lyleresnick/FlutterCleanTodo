@@ -30,9 +30,10 @@ class _SceneState extends State<Scene> {
             stream: _presenter.stream,
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
-                return Material(color: Colors.black);
+                return Material(color: Colors.white);
               }
               final body = switch (snapshot.data!) {
+                showLoading() => Container(color: Colors.white,),
                 showDisplayView() =>
                   TodoItemDisplay.Assembly(_presenter).scene,
                 showEditView() => TodoItemEdit.Assembly(_presenter).scene,

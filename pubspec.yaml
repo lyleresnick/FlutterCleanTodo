@@ -1,5 +1,5 @@
 name: flutter_todo
-description: Todo VIPER Style
+description: Todo in Clean Style
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -12,6 +12,7 @@ description: Todo VIPER Style
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 version: 1.0.0+1
+publish_to: none
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
@@ -23,6 +24,10 @@ dependencies:
   rxdart: ^0.27.7
   sqflite: ^2.3.0
   uuid: ^3.0.7
+
+  todo_api:
+    path: gen/todo_api
+
 
   flutter_localizations:
     sdk: flutter

@@ -8,6 +8,9 @@ sealed class _UseCaseOutput {}
 class presentEditView extends _UseCaseOutput {}
 
 @visibleForTesting
+class presentLoading extends _UseCaseOutput {}
+
+@visibleForTesting
 class presentDisplayView extends _UseCaseOutput {}
 
 @visibleForTesting

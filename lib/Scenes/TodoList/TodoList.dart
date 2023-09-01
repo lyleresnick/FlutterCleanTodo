@@ -1,13 +1,15 @@
+//  Copyright © 2023 Lyle Resnick. All rights reserved.
+
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 
+import '../../Repository/Abstraction/EntityGateway.dart';
+import '../../Repository/Abstraction/Result.dart';
 import '../../Repository/Entities/Priority.dart';
 import '../../Repository/Entities/Todo.dart';
-import '../../Repository/EntityGateway/EntityGateway.dart';
-import '../../Repository/Managers/Result.dart';
 import '../AppState/AppState.dart';
 import '../AppState/TodoAppState.dart';
 import '../AppState/TodoItemStartMode.dart';

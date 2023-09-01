@@ -1,10 +1,11 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:uuid/uuid.dart';
 import '../Entities/Todo.dart';
-import '../Managers/Result.dart';
-import '../Managers/TodoManager.dart';
-import '../Managers/TodoValues.dart';
-import '../SqlLite/SqlLiteManager.dart';
+import '../Abstraction/Result.dart';
+import '../Abstraction/TodoManager.dart';
+//  Copyright © 2019 Lyle Resnick. All rights reserved.
+import '../Abstraction/TodoValues.dart';
+import 'SqlLiteManager.dart';
 
 class SqlLiteTodoManager implements TodoManager {
   final SqlLiteManager db;

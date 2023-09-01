@@ -8,6 +8,9 @@ sealed class _PresenterOutput {}
 class showEditView extends _PresenterOutput {}
 
 @visibleForTesting
+class showLoading extends _PresenterOutput {}
+
+@visibleForTesting
 class showDisplayView extends _PresenterOutput {}
 
 @visibleForTesting
