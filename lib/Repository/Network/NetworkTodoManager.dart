@@ -1,5 +1,7 @@
 //  Copyright © 2023 Lyle Resnick. All rights reserved.
 
+import 'package:flutter_todo/Repository/Network/PriorityEnumExt.dart';
+
 import '../Abstraction/TodoManager.dart';
 import '../Abstraction/TodoValues.dart';
 import '../Abstraction/Result.dart';

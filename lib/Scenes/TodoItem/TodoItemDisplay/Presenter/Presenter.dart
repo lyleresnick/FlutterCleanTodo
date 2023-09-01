@@ -23,7 +23,7 @@ class Presenter with StarterBloc<_PresenterOutput> {
         case presentPriority(:final field, :final value):
           final fieldName = localizedString(field.name);
           _viewModelList.add(RowViewModel(
-              fieldName, localizedString(priorityToString(value))));
+              fieldName, localizedString(value.name)));
         case presentDate(:final field, :final value):
           final fieldName = localizedString(field.name);
           _viewModelList.add(RowViewModel(fieldName, localizedDate(value)));

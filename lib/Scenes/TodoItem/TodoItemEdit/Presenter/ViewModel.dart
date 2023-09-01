@@ -21,7 +21,7 @@ class ViewModel {
         completeByString =
             (model.completeBy != null) ? localizedDate(model.completeBy!) : "",
         completeBySwitchIsOn = (model.completeBy != null),
-        priority = bangsFromPriority(model.priority),
+        priority = model.priority.bangs,
         completed = model.completed,
         errorMessage = model.errorMessage,
         showEditCompleteBy = model.showEditCompleteBy;
