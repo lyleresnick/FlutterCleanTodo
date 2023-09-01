@@ -1,5 +1,4 @@
 //  Copyright © 2019 Lyle Resnick. All rights reserved.
-import 'package:todo_api/api.dart';
 
 import '../Entities/Priority.dart';
 
@@ -16,13 +15,4 @@ class TodoValues {
       required this.completeBy,
       required this.priority,
       required this.completed});
-
-  TodoParams toTodoParams() {
-    return TodoParams(
-        title: this.title,
-        note: this.note,
-        priority: priorityEnumFromPriority(this.priority),
-        completeBy: this.completeBy,
-        completed: this.completed);
-  }
 }

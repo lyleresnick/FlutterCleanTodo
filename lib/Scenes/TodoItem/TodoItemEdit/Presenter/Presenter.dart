@@ -51,7 +51,7 @@ class Presenter with StarterBloc<_PresenterOutput> {
   }
 
   void eventEditedPriority(int? index) {
-    final priority = priorityFromBangs(index!);
+    final priority = PriorityExt.fromBangs(index!);
     _useCase.eventEditedPriority(priority);
   }
 
