@@ -1,6 +1,8 @@
-import 'package:flutter/material.dart';
+//  Copyright (c) 2020 Lyle Resnick. All rights reserved.
 
-import 'bloc.dart';
+import 'package:flutter/material.dart';
+import 'Bloc.dart';
+
 
 class BlocProvider<T extends Bloc> extends StatefulWidget {
   final Widget child;

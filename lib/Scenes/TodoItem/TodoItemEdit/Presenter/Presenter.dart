@@ -10,6 +10,8 @@ class Presenter with StarterBloc<_PresenterOutput> {
   Presenter(this._useCase, this._router) {
     _useCase.stream.listen((event) {
       switch(event) {
+        case presentLoading():
+          emit(showLoading());
         case presentModel(:final model):
           emit(showModel(ViewModel.fromModel(model)));
         case presentSaveCompleted():

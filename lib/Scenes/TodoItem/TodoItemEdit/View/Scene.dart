@@ -36,87 +36,83 @@ class _SceneState extends State<Scene> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<Presenter>(
+    return BlocBuilderData<Presenter, _PresenterOutput>(
         bloc: _presenter,
-        child: StreamBuilder<_PresenterOutput>(
-            stream: _presenter.stream,
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return Text("Loading ...");
+        builder: (context, data) {
+          switch (data) {
+            case showLoading():
+              return FullScreenLoadingIndicator();
+            case showModel(:final model):
+              if (model.errorMessage != null) {
+                _showTitleIsEmpty(context);
+              } else if (model.showEditCompleteBy) {
+                _showEditCompleteByPopover(context, model.completeBy!);
               }
 
-              switch (snapshot.data!) {
-                case showModel(:final model):
-                  if (model.errorMessage != null) {
-                    _showTitleIsEmpty(context);
-                  } else if (model.showEditCompleteBy) {
-                    _showEditCompleteByPopover(context, model.completeBy!);
-                  }
-
-                  return SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Column(children: <Widget>[
-                        _expandedRow(
-                          localizedString("title"),
-                          TodoTextField(
-                            value: model.title,
-                            placeholder: localizedString("enterATitle"),
-                            onChanged: _presenter.eventEditedTitle,
-                          ),
-                        ),
-                        _expandedRow(
-                          localizedString("note"),
-                          TodoTextField(
-                            value: model.note,
-                            minLines: 9,
-                            maxLines: 9,
-                            onChanged: _presenter.eventEditedNote,
-                          ),
-                        ),
-                        _EditRow(
-                            title: localizedString("completeBy"),
-                            widget: Row(
-                              children: <Widget>[
-                                TodoSwitch(
-                                  state: model.completeBySwitchIsOn,
-                                  onChanged: (isOn) {
-                                    if (isOn)
-                                      _presenter.eventCompleteByToday();
-                                    else
-                                      _presenter.eventCompleteByClear();
-                                  },
-                                ),
-                                Container(width: 6),
-                                GestureDetector(
-                                    onTap: !model.completeBySwitchIsOn
-                                        ? null
-                                        : _presenter.eventEnableEditCompleteBy,
-                                    child: Text(model.completeByString,
-                                        style: TextStyle(fontSize: 17))),
-                              ],
-                            )),
-                        _expandedRow(
-                          localizedString("priority"),
-                          TodoExclusive(
-                            value: model.priority,
-                            itemNames: ["none", "low", "medium", "high"]
-                                .map((value) => localizedString(value))
-                                .toList(),
-                            onValueChanged: _presenter.eventEditedPriority,
-                          ),
-                        ),
-                        _EditRow(
-                            title: localizedString("completed"),
-                            widget: TodoSwitch(
-                              state: model.completed,
-                              onChanged: _presenter.eventCompleted,
-                            ))
-                      ]),
+              return SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Column(children: <Widget>[
+                    _expandedRow(
+                      localizedString("title"),
+                      TodoTextField(
+                        value: model.title,
+                        placeholder: localizedString("enterATitle"),
+                        onChanged: _presenter.eventEditedTitle,
+                      ),
                     ),
-                  );
-              }
-            }));
+                    _expandedRow(
+                      localizedString("note"),
+                      TodoTextField(
+                        value: model.note,
+                        minLines: 9,
+                        maxLines: 9,
+                        onChanged: _presenter.eventEditedNote,
+                      ),
+                    ),
+                    _EditRow(
+                        title: localizedString("completeBy"),
+                        widget: Row(
+                          children: <Widget>[
+                            TodoSwitch(
+                              state: model.completeBySwitchIsOn,
+                              onChanged: (isOn) {
+                                if (isOn)
+                                  _presenter.eventCompleteByToday();
+                                else
+                                  _presenter.eventCompleteByClear();
+                              },
+                            ),
+                            Container(width: 6),
+                            GestureDetector(
+                                onTap: !model.completeBySwitchIsOn
+                                    ? null
+                                    : _presenter.eventEnableEditCompleteBy,
+                                child: Text(model.completeByString,
+                                    style: TextStyle(fontSize: 17))),
+                          ],
+                        )),
+                    _expandedRow(
+                      localizedString("priority"),
+                      TodoExclusive(
+                        value: model.priority,
+                        itemNames: ["none", "low", "medium", "high"]
+                            .map((value) => localizedString(value))
+                            .toList(),
+                        onValueChanged: _presenter.eventEditedPriority,
+                      ),
+                    ),
+                    _EditRow(
+                        title: localizedString("completed"),
+                        widget: TodoSwitch(
+                          state: model.completed,
+                          onChanged: _presenter.eventCompleted,
+                        ))
+                  ]),
+                ),
+              );
+          }
+        });
   }
 
   Widget _expandedRow(String title, Widget widget) {

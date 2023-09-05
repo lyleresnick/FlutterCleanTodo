@@ -105,6 +105,7 @@ abstract class UseCase with StarterBloc<_UseCaseOutput> {
       _refreshPresentation(errorMessage: ErrorMessage.titleIsEmpty);
       return;
     }
+    emit(presentLoading());
     final result = await save(_editingTodo);
     switch (result) {
       case success(:final data):

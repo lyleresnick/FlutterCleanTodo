@@ -5,6 +5,9 @@ part of '../TodoList.dart';
 sealed class _UseCaseOutput {}
 
 @visibleForTesting
+class presentLoading extends _UseCaseOutput {}
+
+@visibleForTesting
 class presentModel extends _UseCaseOutput {
   final PresentationModel model;
   presentModel(this.model);

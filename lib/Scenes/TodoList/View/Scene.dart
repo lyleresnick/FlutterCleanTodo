@@ -30,23 +30,20 @@ class _SceneState extends State<Scene> {
           elevation: platform == TargetPlatform.iOS ? 0.0 : 4.0,
           actions: _actions(platform),
         ),
-        body: BlocProvider<Presenter>(
+        body: SafeArea(
+          child: BlocBuilderData<Presenter, _PresenterOutput>(
             bloc: _presenter,
-            child: SafeArea(
-                child: StreamBuilder<_PresenterOutput>(
-                    stream: _presenter.stream,
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return Text("Loading ...");
-                      }
-                      return switch(snapshot.data!) {
-                          showModel(:final model) =>
-                            ListView.builder(
-                              itemCount: model.rows.length,
-                              itemBuilder: (context, index) => _Cell(
-                                  row: model.rows[index], index: index))
-                      };
-                    }))));
+            builder: (context, data) {
+              return switch (data) {
+                showLoading() => FullScreenLoadingIndicator(),
+                showModel(:final model) => ListView.builder(
+                    itemCount: model.rows.length,
+                    itemBuilder: (context, index) =>
+                        _Cell(row: model.rows[index], index: index))
+              };
+            },
+          ),
+        ));
   }
 
   List<Widget> _actions(TargetPlatform platform) {
