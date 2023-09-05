@@ -1,9 +1,12 @@
+//  Copyright © 2019 Lyle Resnick. All rights reserved.
+
 import 'package:sqflite/sqflite.dart';
 import 'package:uuid/uuid.dart';
+import '../Entities/Entity.dart';
+import '../Entities/Priority.dart';
 import '../Entities/Todo.dart';
 import '../Abstraction/Result.dart';
 import '../Abstraction/TodoManager.dart';
-//  Copyright © 2019 Lyle Resnick. All rights reserved.
 import '../Abstraction/TodoValues.dart';
 import 'SqlLiteManager.dart';
 
@@ -18,7 +21,7 @@ class SqlLiteTodoManager implements TodoManager {
     final todos = await database.query('todo');
 
     final all =
-        todos.map((todo) => Todo.fromDynamicValueDictionary(todo)).toList();
+        todos.map((todoResponse) => todoResponse._todo).toList();
     return success(all);
   }
 
@@ -37,8 +40,7 @@ class SqlLiteTodoManager implements TodoManager {
       if (count != 1) return failure("id $id notFound");
       final todo = await _fetchBody(id);
       return success(todo);
-    }
-    catch (reason) {
+    } catch (reason) {
       return failure(reason.toString());
     }
   }
@@ -50,12 +52,11 @@ class SqlLiteTodoManager implements TodoManager {
       final todo = values._toTodo(id: Uuid().v1());
       await database.insert(
         'todo',
-        todo.toDynamicValueMap(),
+        todo._dynamicValueMap,
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
       return success(todo);
-    }
-    catch (reason) {
+    } catch (reason) {
       return failure(reason.toString());
     }
   }
@@ -72,8 +73,7 @@ class SqlLiteTodoManager implements TodoManager {
       );
       if (count != 1) return failure("id $id notFound");
       return success(todo);
-    }
-    catch (reason) {
+    } catch (reason) {
       return failure(reason.toString());
     }
   }
@@ -90,14 +90,14 @@ class SqlLiteTodoManager implements TodoManager {
 
   Future<Todo> _fetchBody(String id) async {
     final database = await db.database;
-    final todo = await database.query(
+    final todoMap = await database.query(
       'todo',
       distinct: true,
       where: "id = ?",
       whereArgs: [id],
     );
-    if (todo.length == 1)
-      return Todo.fromDynamicValueDictionary(todo[0]);
+    if (todoMap.length == 1)
+      return todoMap[0]._todo;
     else
       throw "id $id notFound";
   }
@@ -117,16 +117,45 @@ class SqlLiteTodoManager implements TodoManager {
       final database = await db.database;
       final count = await database.update(
         'todo',
-        todo.toDynamicValueMap(),
+        todo._dynamicValueMap,
         where: "id = ?",
         whereArgs: [id],
       );
       if (count != 1) return failure("id $id notFound");
       return success(todo);
-    }
-    catch (reason) {
+    } catch (reason) {
       return failure(reason.toString());
     }
+  }
+}
+
+extension on Map<String, dynamic> {
+  static const _idProp = "id";
+  static const _titleProp = "title";
+  static const _noteProp = "note";
+  static const _completeByProp = "completeBy";
+  static const _priorityProp = "priority";
+  static const _completedProp = "completed";
+
+  Todo get _todo {
+    jsonNullCheck(this, [_idProp, _titleProp, _noteProp, _completedProp],
+        "Todo.fromStringValueDictionary");
+    final id = this[_idProp] as String;
+    final title = this[_titleProp] as String;
+    final note = this[_noteProp] as String;
+    final completeBy = this[_completeByProp] as int?;
+    final priority = this[_priorityProp] ?? "none";
+    final completed = this[_completedProp] as int;
+
+    return Todo(
+        id: id,
+        title: title,
+        note: note,
+        completeBy: (completeBy != null)
+            ? DateTime.fromMillisecondsSinceEpoch(completeBy)
+            : null,
+        priority: PriorityExt.fromString(priority),
+        completed: (completed == 1));
   }
 }
 
@@ -138,9 +167,19 @@ extension on TodoValues {
         note: this.note,
         completeBy: this.completeBy,
         priority: this.priority,
-        completed: this.completed
-    );
+        completed: this.completed);
   }
+}
 
-
+extension on Todo {
+  Map<String, dynamic> get _dynamicValueMap {
+    return {
+      'id': id,
+      'title': title,
+      'note': note,
+      'completeBy': completeBy?.millisecondsSinceEpoch,
+      'priority': (priority == Priority.none) ? null : priority.name,
+      'completed': completed ? 1 : 0,
+    };
+  }
 }
