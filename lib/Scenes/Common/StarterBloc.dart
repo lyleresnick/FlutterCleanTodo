@@ -1,6 +1,8 @@
+//  Copyright (c) 2021 Lyle Resnick. All rights reserved.
+
 import 'dart:async';
 
-import 'bloc.dart';
+import 'Bloc.dart';
 
 mixin StarterBloc<Output> implements Bloc<Output> {
   final _controller = StreamController<Output>();

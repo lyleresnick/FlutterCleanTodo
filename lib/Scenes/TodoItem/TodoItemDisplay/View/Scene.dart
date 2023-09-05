@@ -3,8 +3,7 @@
 part of '../TodoItemDisplay.dart';
 
 @visibleForTesting
-class Scene extends StatefulWidget
-    implements ActionDecoratedScene {
+class Scene extends StatefulWidget implements ActionDecoratedScene {
   final Presenter _presenter;
 
   Scene(this._presenter);
@@ -40,23 +39,18 @@ class _SceneState extends State<Scene> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<Presenter>(
+    return BlocBuilderData<Presenter, _PresenterOutput>(
         bloc: _presenter,
-        child: StreamBuilder<_PresenterOutput>(
-            stream: _presenter.stream,
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return Text("Loading ...");
-              }
-              return switch (snapshot.data!) {
-                showFieldList(:final model) => ListView.builder(
-                    itemCount: model.length,
-                    itemBuilder: (BuildContext context, int i) {
-                      return _Row(row: model[i]);
-                    },
-                  )
-              };
-            }));
+        builder: (context, data) {
+          return switch (data) {
+            showFieldList(:final model) => ListView.builder(
+                itemCount: model.length,
+                itemBuilder: (BuildContext context, int i) {
+                  return _Row(row: model[i]);
+                },
+              )
+          };
+        });
   }
 }
 
