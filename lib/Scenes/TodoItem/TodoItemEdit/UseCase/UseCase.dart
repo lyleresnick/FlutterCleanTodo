@@ -37,8 +37,6 @@ class EditingTodo {
       completed: this.completed,
     );
   }
-
-
 }
 
 abstract class UseCase with StarterBloc<_UseCaseOutput> {
@@ -48,7 +46,8 @@ abstract class UseCase with StarterBloc<_UseCaseOutput> {
   final BehaviorSubject<Todo?> _currentTodoSubject;
   final BehaviorSubject<TodoItemStartMode> _itemStartModeSubject;
 
-  UseCase(this._toDoSceneRefreshSubject, this._currentTodoSubject, this._itemStartModeSubject) {
+  UseCase(this._toDoSceneRefreshSubject, this._currentTodoSubject,
+      this._itemStartModeSubject) {
     _editingTodo = initialEditingTodo;
     _refreshPresentation();
   }
@@ -58,11 +57,9 @@ abstract class UseCase with StarterBloc<_UseCaseOutput> {
   void cancel();
 
   void _refreshPresentation(
-      {ErrorMessage? errorMessage, bool showEditCompleteBy = false}) {
-    emit(presentModel(PresentationModel.fromEditingTodo(
-        _editingTodo,
-        errorMessage: errorMessage,
-        showEditCompleteBy: showEditCompleteBy)));
+      {ErrorMessage? errorMessage, bool isWaiting = false}) {
+    emit(presentModel(PresentationModel.fromEditingTodo(_editingTodo,
+        errorMessage: errorMessage, isWaiting: isWaiting)));
   }
 
   void eventEditedTitle(String title) {
@@ -83,10 +80,6 @@ abstract class UseCase with StarterBloc<_UseCaseOutput> {
     _refreshPresentation();
   }
 
-  void eventEnableEditCompleteBy() {
-    _refreshPresentation(showEditCompleteBy: true);
-  }
-
   void eventEditedCompleteBy(DateTime completeBy) {
     _editingTodo.completeBy = completeBy;
     _refreshPresentation();
@@ -105,7 +98,8 @@ abstract class UseCase with StarterBloc<_UseCaseOutput> {
       _refreshPresentation(errorMessage: ErrorMessage.titleIsEmpty);
       return;
     }
-    emit(presentLoading());
+    _refreshPresentation(isWaiting: true);
+    await Future.delayed(Duration(milliseconds: 1000));
     final result = await save(_editingTodo);
     switch (result) {
       case success(:final data):

@@ -10,7 +10,7 @@ class PresentationModel {
   final Priority priority;
   bool completed;
   ErrorMessage? errorMessage;
-  bool showEditCompleteBy;
+  bool isWaiting;
 
   PresentationModel(
       {required this.title,
@@ -19,13 +19,13 @@ class PresentationModel {
       required this.priority,
       required this.completed,
       this.errorMessage,
-      this.showEditCompleteBy = false})
+      this.isWaiting = false})
       : _completeBy = completeBy;
 
   DateTime? get completeBy => _completeBy;
 
   factory PresentationModel.fromEditingTodo(EditingTodo editingTodo,
-      {ErrorMessage? errorMessage, bool showEditCompleteBy = false}) {
+      {ErrorMessage? errorMessage, bool isWaiting = false}) {
     return PresentationModel(
         title: editingTodo.title,
         note: editingTodo.note,
@@ -33,6 +33,6 @@ class PresentationModel {
         priority: editingTodo.priority,
         completed: editingTodo.completed,
         errorMessage: errorMessage,
-        showEditCompleteBy: showEditCompleteBy);
+        isWaiting: isWaiting);
   }
 }
