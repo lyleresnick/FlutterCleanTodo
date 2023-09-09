@@ -16,19 +16,27 @@ class _SceneState extends State<Scene> {
   late final Presenter _presenter;
   final navKey = GlobalKey<NavigatorState>();
 
-  static const _routeTodoItem = '/todoItem';
-  static const _routeTodoList = '/';
+  var _pages = <MaterialPage>[];
 
   @override
   void initState() {
     super.initState();
     this._presenter = widget._presenter;
+    _pages = [
+      MaterialPage(
+          key: ValueKey("TodoList"),
+          child: TodoList.Assembly(_presenter).scene),
+    ];
+
     _presenter.stream.listen((event) {
       switch (event) {
         case PresenterOutput.showPop:
           navKey.currentState!.pop();
         default:
-          navKey.currentState!.pushNamed(event._route ?? event.toString());
+          _pages.add(event._page(_presenter));
+          setState(() {
+            _pages = _pages.toList();
+          });
       }
     });
   }
@@ -39,27 +47,30 @@ class _SceneState extends State<Scene> {
         bloc: _presenter,
         child: Navigator(
           key: navKey,
-          initialRoute: _routeTodoList,
-          onGenerateRoute: (settings) {
-            return MaterialPageRoute(builder: _builderFromRoute(settings.name));
+          pages: _pages,
+          onPopPage: (route, result) {
+            if (!route.didPop(result)) {
+              return false;
+            }
+            _pages.removeLast();
+            setState(() {
+              _pages = _pages.toList();
+            });
+            return true;
           },
         ));
-  }
-
-  Widget Function(BuildContext) _builderFromRoute(String? routeName) {
-    return switch (routeName) {
-      _routeTodoList => (_) => TodoList.Assembly(_presenter).scene,
-      _routeTodoItem => (_) => TodoItemRouter.Assembly(_presenter).scene,
-      _ => (_) => ErrorScene(text: "Invalid route: '$routeName'")
-    };
   }
 }
 
 extension on PresenterOutput {
-  String? get _route {
+  MaterialPage _page(Presenter presenter) {
     return switch (this) {
-      PresenterOutput.showRowDetail => _SceneState._routeTodoItem,
-      _ => null
+      PresenterOutput.showRowDetail => MaterialPage(
+          key: ValueKey("TodoItemRouter"),
+          child: TodoItemRouter.Assembly(presenter).scene),
+      _ => MaterialPage(
+          key: ValueKey("ErrorScene"),
+          child: ErrorScene(text: "Output not handled: '$this'"))
     };
   }
 }
