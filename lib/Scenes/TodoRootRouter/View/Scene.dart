@@ -36,7 +36,7 @@ class _SceneState extends State<Scene> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<Presenter>(
-        bloc: widget._presenter,
+        bloc: _presenter,
         child: Navigator(
           key: navKey,
           initialRoute: _routeTodoList,
