@@ -13,7 +13,7 @@ class Presenter with StarterBloc<_PresenterOutput> {
         case presentLoading():
           emit(showLoading());
         case presentModel(:final model):
-          emit(showModel(ViewModel.fromPresentation(model)));
+          emit(showModel(model.viewModel));
         case presentItemDetail():
           _router.routeShowItemDetail();
       }

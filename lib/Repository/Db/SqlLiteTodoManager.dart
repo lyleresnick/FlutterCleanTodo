@@ -104,7 +104,7 @@ class SqlLiteTodoManager implements TodoManager {
 
   @override
   Future<Result<Todo>> update(String id, TodoValues values) async {
-    var todo = Todo(
+    Todo todo = (
       id: id,
       title: values.title,
       note: values.note,
@@ -147,7 +147,7 @@ extension on Map<String, dynamic> {
     final priority = this[_priorityProp] ?? "none";
     final completed = this[_completedProp] as int;
 
-    return Todo(
+    return (
         id: id,
         title: title,
         note: note,
@@ -161,7 +161,7 @@ extension on Map<String, dynamic> {
 
 extension on TodoValues {
   Todo _toTodo({required String id}) {
-    return Todo(
+    return (
         id: id,
         title: this.title,
         note: this.note,

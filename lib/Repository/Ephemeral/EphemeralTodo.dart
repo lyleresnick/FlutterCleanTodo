@@ -45,7 +45,7 @@ class EphemeralTodo {
     completed = values.completed;
   }
 
-  Todo get toTodo => Todo(
+  Todo get toTodo => (
       id: this.id,
       title: this.title,
       note: this.note,

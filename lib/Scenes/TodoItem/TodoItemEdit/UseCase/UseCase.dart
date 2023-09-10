@@ -29,7 +29,7 @@ class EditingTodo {
   }
 
   TodoValues toTodoValues() {
-    return TodoValues(
+    return (
       title: this.title,
       note: this.note,
       completeBy: this.completeBy,
@@ -63,7 +63,7 @@ class UseCase with StarterBloc<_UseCaseOutput> {
 
   void _refreshPresentation(
       {ErrorMessage? errorMessage, bool showEditCompleteBy = false, bool isWaiting = false}) {
-    emit(presentModel(PresentationModel.fromEditingTodo(_editingTodo,
+    emit(presentModel(_editingTodo.presentationModel(
         modeTitle: switch (_itemStartModeSubject.value) {
           TodoItemStartModeCreate() => 'create',
           TodoItemStartModeUpdate() => 'edit',

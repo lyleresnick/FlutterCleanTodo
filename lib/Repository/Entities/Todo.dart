@@ -3,27 +3,21 @@
 import '../Abstraction/TodoValues.dart';
 import 'Priority.dart';
 
-class Todo {
-  final String id;
-  final String title;
-  final String note;
-  final DateTime? completeBy;
-  final Priority priority;
-  final bool completed;
+typedef Todo = ({
+  String id,
+  String title,
+  String note,
+  DateTime? completeBy,
+  Priority priority,
+  bool completed
+});
 
-  Todo(
-      {required this.id,
-      required this.title,
-      this.note = "",
-      this.completeBy,
-      this.priority = Priority.none,
-      this.completed = false});
+extension TodoExt on Todo {
 
-  TodoValues get todoValues => TodoValues(
+  TodoValues get todoValues => (
       title: this.title,
       note: this.note,
       completeBy: this.completeBy,
       priority: this.priority,
       completed: this.completed);
 }
-
