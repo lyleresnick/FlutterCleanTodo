@@ -3,32 +3,35 @@
 part of '../TodoList.dart';
 
 @visibleForTesting
-class ViewModel {
-  final List<RowViewModel> rows;
+typedef ViewModel = ({EquatableList<RowViewModel> rows});
 
-  ViewModel.fromPresentation(PresentationModel model)
-      : rows = model.rows
-            .map((row) => RowViewModel.fromPresentation(row))
-            .toList();
+extension on PresentationModel {
+  ViewModel get viewModel {
+    return (rows: this.rows.map((row) => row._rowViewModel).toEquatableList());
+  }
 }
 
 @visibleForTesting
-class RowViewModel {
-  final int index;
-  final String id;
-  final String title;
-  final String completeBy;
-  final String priority;
-  final bool completed;
+typedef RowViewModel = ({
+  int index,
+  String id,
+  String title,
+  String completeBy,
+  String priority,
+  bool completed,
+});
 
-  RowViewModel.fromPresentation(PresentationRowModel model)
-      : index = model.index,
-        id = model.id,
-        title = model.title,
-        completeBy =
-            (model.completeBy != null) ? localizedDate(model.completeBy!) : "",
-        priority =
-            List<String>.generate(model.priority.bangs + 1, (index) => " ")
-                .reduce((value, element) => "!$value"),
-        completed = model.completed;
+extension on RowPresentationModel {
+  RowViewModel get _rowViewModel {
+    return (
+      index: this.index,
+      id: this.id,
+      title: this.title,
+      completeBy:
+          (this.completeBy != null) ? localizedDate(this.completeBy!) : "",
+      priority: List<String>.generate(this.priority.bangs + 1, (index) => " ")
+          .reduce((value, element) => "!$value"),
+      completed: this.completed,
+    );
+  }
 }

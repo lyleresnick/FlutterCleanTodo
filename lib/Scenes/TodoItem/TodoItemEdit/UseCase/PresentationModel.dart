@@ -3,45 +3,34 @@
 part of '../TodoItemEdit.dart';
 
 @visibleForTesting
-class PresentationModel {
-  final String title;
-  final String note;
-  final DateTime? _completeBy;
-  final Priority priority;
-  final bool completed;
-  final String modeTitle;
-  final ErrorMessage? errorMessage;
-  final bool showEditCompleteBy;
-  final bool isWaiting;
+typedef PresentationModel = ({
+  String title,
+  String note,
+  DateTime? completeBy,
+  Priority priority,
+  bool completed,
+  String modeTitle,
+  bool showEditCompleteBy,
+  ErrorMessage? errorMessage,
+  bool isWaiting
+});
 
-  PresentationModel({
-    required this.title,
-    required this.note,
-    DateTime? completeBy,
-    required this.priority,
-    required this.completed,
-    required this.modeTitle,
-    this.errorMessage,
-    this.showEditCompleteBy = false,
-    this.isWaiting = false,
-  }) : _completeBy = completeBy;
-
-  DateTime? get completeBy => _completeBy;
-
-  factory PresentationModel.fromEditingTodo(EditingTodo editingTodo,
+extension on EditingTodo {
+  PresentationModel presentationModel(
       {required String modeTitle,
-        ErrorMessage? errorMessage,
+      ErrorMessage? errorMessage,
       bool showEditCompleteBy = false,
-      bool isWaiting = false}) {
-    return PresentationModel(
-        title: editingTodo.title,
-        note: editingTodo.note,
-        completeBy: editingTodo.completeBy,
-        priority: editingTodo.priority,
-        completed: editingTodo.completed,
-        modeTitle: modeTitle,
-        errorMessage: errorMessage,
-        isWaiting: isWaiting,
-        showEditCompleteBy: showEditCompleteBy);
+      isWaiting = false}) {
+    return (
+      title: this.title,
+      note: this.note,
+      completeBy: this.completeBy,
+      priority: this.priority,
+      completed: this.completed,
+      modeTitle: modeTitle,
+      errorMessage: errorMessage,
+      isWaiting: isWaiting,
+      showEditCompleteBy: showEditCompleteBy
+    );
   }
 }

@@ -32,7 +32,7 @@ class UseCase with StarterBloc<_UseCaseOutput> {
   }
 
   void _refreshPresentation() {
-    emit(presentModel(PresentationModel.fromEntities(_todoList, _showCompleted)));
+    emit(presentModel(_todoList.presentationModel(_showCompleted)));
   }
 
   Future<void> eventCompleted(bool completed, int index) async {

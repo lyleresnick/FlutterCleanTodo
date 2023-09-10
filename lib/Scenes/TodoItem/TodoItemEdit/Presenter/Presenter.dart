@@ -11,7 +11,7 @@ class Presenter with StarterBloc<_PresenterOutput> {
     _useCase.stream.listen((event) {
       switch(event) {
         case presentModel(:final model):
-          emit(showModel(ViewModel.fromModel(model)));
+          emit(showModel(model.viewModel));
         case presentSaveCompleted():
           _router.routeSaveCompleted();
         case presentCreateCancelled():

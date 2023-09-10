@@ -2,7 +2,7 @@
 
 part of '../TodoList.dart';
 
-typedef void ChangedItemCallback(PresentationRowModel model);
+typedef void ChangedItemCallback(RowPresentationModel model);
 
 abstract interface class Router  {
     void routeShowItemDetail();
