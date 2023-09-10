@@ -26,7 +26,7 @@ class NetworkTodoManager extends TodoManager with ExceptionGuard {
         final getResponse = await apiClient.getTodo(id);
         if (getResponse == null) throw "No Content";
         final values = getResponse._todo.todoValues;
-        final newValues = TodoValues(
+        final TodoValues newValues = (
           title: values.title,
           note: values.note,
           completeBy: values.completeBy,
@@ -96,7 +96,7 @@ extension on Priority {
 
 extension on TodoResponse {
   Todo get _todo {
-    return Todo(
+    return (
         id: this.id,
         title: this.title,
         note: this.note ?? "",

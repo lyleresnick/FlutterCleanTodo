@@ -3,30 +3,34 @@
 part of '../TodoItemEdit.dart';
 
 @visibleForTesting
-class ViewModel {
-  final String title;
-  final String note;
-  final DateTime? completeBy;
-  final bool completeBySwitchIsOn;
-  final String completeByString;
-  final int priority;
-  final bool completed;
-  final String modeTitle;
-  final ErrorMessage? errorMessage;
-  final bool showEditCompleteBy;
-  final bool isWaiting;
+typedef ViewModel = ({
+  String title,
+  String note,
+  DateTime? completeBy,
+  bool completeBySwitchIsOn,
+  String completeByString,
+  int priority,
+  bool completed,
+  String modeTitle,
+  ErrorMessage? errorMessage,
+  bool showEditCompleteBy,
+  bool isWaiting,
+});
 
-  ViewModel.fromModel(PresentationModel model)
-      : title = model.title,
-        note = model.note,
-        completeBy = model.completeBy,
-        completeByString =
-            (model.completeBy != null) ? localizedDate(model.completeBy!) : "",
-        completeBySwitchIsOn = (model.completeBy != null),
-        priority = model.priority.bangs,
-        completed = model.completed,
-        modeTitle = model.modeTitle,
-        errorMessage = model.errorMessage,
-        showEditCompleteBy = model.showEditCompleteBy,
-        isWaiting = model.isWaiting;
+extension on PresentationModel {
+  ViewModel get viewModel {
+    return (
+      title: this.title,
+      note: this.note,
+      completeBy: this.completeBy,
+      completeByString: (this.completeBy != null) ? localizedDate(this.completeBy!) : "",
+      completeBySwitchIsOn: (this.completeBy != null),
+      priority: this.priority.bangs,
+      completed: this.completed,
+      modeTitle: this.modeTitle,
+      errorMessage: this.errorMessage,
+      isWaiting: this.isWaiting,
+      showEditCompleteBy: this.showEditCompleteBy,
+    );
+  }
 }

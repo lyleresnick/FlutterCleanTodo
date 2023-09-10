@@ -3,41 +3,48 @@
 part of '../TodoList.dart';
 
 @visibleForTesting
-class PresentationModel {
-  final List<PresentationRowModel> rows;
-  PresentationModel(this.rows);
+typedef PresentationModel = ({EquatableList<RowPresentationModel> rows});
 
-  PresentationModel.fromEntities(List<Todo> entities, bool showCompleted)
-      : rows = entities.indexed
-            .map((indexedPair) =>
-                PresentationRowModel(indexedPair.$2, indexedPair.$1))
-            .where((model) => showCompleted || model.completed == false)
-            .toList() {
-    rows.sort((a, b) {
-      return switch ((a.completeBy, b.completeBy)) {
-        (null, null) => 0,
-        (null, _) => 1,
-        (_, null) => -1,
-        _ => a.completeBy!.compareTo(b.completeBy!)
-      };
-    });
+extension on List<Todo> {
+  PresentationModel presentationModel(bool showCompleted) {
+    return (
+      rows: this
+          .indexed
+          .map((indexedPair) =>
+              indexedPair.$2._rowPresentationModel(indexedPair.$1))
+          .where((model) => showCompleted || model.completed == false)
+          .toEquatableList()
+        ..sort((a, b) {
+          return switch ((a.completeBy, b.completeBy)) {
+            (null, null) => 0,
+            (null, _) => 1,
+            (_, null) => -1,
+            _ => a.completeBy!.compareTo(b.completeBy!)
+          };
+        })
+    );
   }
 }
 
 @visibleForTesting
-class PresentationRowModel {
-  final int index;
-  final String id;
-  final String title;
-  final DateTime? completeBy;
-  final Priority priority;
-  final bool completed;
+typedef RowPresentationModel = ({
+  int index,
+  String id,
+  String title,
+  DateTime? completeBy,
+  Priority priority,
+  bool completed
+});
 
-  PresentationRowModel(Todo entity, int index)
-      : index = index,
-        id = entity.id,
-        title = entity.title,
-        completeBy = entity.completeBy,
-        priority = entity.priority,
-        completed = entity.completed;
+extension on Todo {
+  RowPresentationModel _rowPresentationModel(int index) {
+    return (
+      index: index,
+      id: this.id,
+      title: this.title,
+      completeBy: this.completeBy,
+      priority: this.priority,
+      completed: this.completed
+    );
+  }
 }
