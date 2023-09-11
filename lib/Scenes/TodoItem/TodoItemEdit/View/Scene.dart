@@ -44,7 +44,7 @@ class _SceneState extends State<Scene> {
               return FullScreenLoadingIndicator();
             case showModel(:final model):
               if (model.errorMessage != null) {
-                _showTitleIsEmpty(context);
+                _showDialog(context, model.errorMessage!);
               } else if (model.showEditCompleteBy) {
                 _showEditCompleteByPopover(context, model.completeBy!);
               }
@@ -141,9 +141,9 @@ class _SceneState extends State<Scene> {
     });
   }
 
-  void _showTitleIsEmpty(BuildContext context) {
-    TodoOkDialog.show(context, localizedString("titleRequiredTitle"),
-        localizedString("titleRequiredMessage"));
+  void _showDialog(BuildContext context, ErrorMessage errorMessage) {
+    TodoOkDialog.show(context, localizedString(errorMessage.titleToken),
+        localizedString(errorMessage.messageToken));
   }
 }
 

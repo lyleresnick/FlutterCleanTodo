@@ -57,9 +57,13 @@ abstract class UseCase with StarterBloc<_UseCaseOutput> {
   void cancel();
 
   void _refreshPresentation(
-      {ErrorMessage? errorMessage, bool isWaiting = false}) {
+      {ErrorMessage? errorMessage,
+      bool showEditCompleteBy = false,
+      bool isWaiting = false}) {
     emit(presentModel(PresentationModel.fromEditingTodo(_editingTodo,
-        errorMessage: errorMessage, isWaiting: isWaiting)));
+        errorMessage: errorMessage,
+        showEditCompleteBy: showEditCompleteBy,
+        isWaiting: isWaiting)));
   }
 
   void eventEditedTitle(String title) {
@@ -78,6 +82,10 @@ abstract class UseCase with StarterBloc<_UseCaseOutput> {
   void eventCompleteByToday() {
     _editingTodo.completeBy = DateTime.now();
     _refreshPresentation();
+  }
+
+  void eventEnableEditCompleteBy() {
+    _refreshPresentation(showEditCompleteBy: true);
   }
 
   void eventEditedCompleteBy(DateTime completeBy) {
@@ -99,7 +107,7 @@ abstract class UseCase with StarterBloc<_UseCaseOutput> {
       return;
     }
     _refreshPresentation(isWaiting: true);
-    await Future.delayed(Duration(milliseconds: 1000));
+    await Future.delayed(Duration(milliseconds: 500));
     final result = await save(_editingTodo);
     switch (result) {
       case success(:final data):

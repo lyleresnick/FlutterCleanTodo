@@ -7,16 +7,13 @@ class Presenter with StarterBloc<_PresenterOutput> {
   final UseCase _useCase;
   final Router _router;
 
-  PresentationModel? currentPresentationModel;
-
   Presenter(this._useCase, this._router) {
     _useCase.stream.listen((event) {
       switch(event) {
         case presentLoading():
           emit(showLoading());
         case presentModel(:final model):
-          currentPresentationModel = model;
-          emit(showModel(ViewModel.fromModel(currentPresentationModel!)));
+          emit(showModel(ViewModel.fromModel(model)));
         case presentSaveCompleted():
           _router.routeSaveCompleted();
         case presentCreateCancelled():
@@ -44,7 +41,7 @@ class Presenter with StarterBloc<_PresenterOutput> {
   }
 
   void eventEnableEditCompleteBy() {
-    emit(showModel(ViewModel.fromModel(currentPresentationModel!, showEditCompleteBy: true)));
+    _useCase.eventEnableEditCompleteBy();
   }
 
   void eventEditedCompleteBy(DateTime completeBy) {

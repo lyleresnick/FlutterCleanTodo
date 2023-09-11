@@ -15,8 +15,7 @@ class ViewModel {
   bool showEditCompleteBy;
   bool isWaiting;
 
-  ViewModel.fromModel(PresentationModel model,
-      {bool showEditCompleteBy = false})
+  ViewModel.fromModel(PresentationModel model)
       : title = model.title,
         note = model.note,
         completeBy = model.completeBy,
@@ -26,6 +25,6 @@ class ViewModel {
         priority = model.priority.bangs,
         completed = model.completed,
         errorMessage = model.errorMessage,
-        isWaiting = model.isWaiting,
-        showEditCompleteBy = showEditCompleteBy;
+        showEditCompleteBy = model.showEditCompleteBy,
+        isWaiting = model.isWaiting;
 }
