@@ -20,5 +20,6 @@ part 'Router/Router.dart';
 part 'Presenter/Presenter.dart';
 part 'Presenter/PresenterOutput.dart';
 part 'Presenter/ViewModel.dart';
+part 'UseCase/PresentationModel.dart';
 part 'UseCase/UseCase.dart';
 part 'UseCase/UseCaseOutput.dart';
