@@ -11,26 +11,30 @@ class Presenter with StarterBloc<_PresenterOutput> {
   Presenter(this._useCase, this._router) {
     _useCase.stream.listen((event) {
       switch (event) {
-        case presentBegin():
+        case presentModel(:final modelList):
           _viewModelList = [];
-        case presentString(:final field, :final value):
-          final fieldName = localizedString(field.name);
-          _viewModelList.add(RowViewModel(fieldName, value));
-        case presentBool(:final field, :final value):
-          final fieldName = localizedString(field.name);
-          _viewModelList.add(
-              RowViewModel(fieldName, localizedString(value ? "yes" : "no")));
-        case presentPriority(:final field, :final value):
-          final fieldName = localizedString(field.name);
-          _viewModelList.add(RowViewModel(
-              fieldName, localizedString(value.name)));
-        case presentDate(:final field, :final value):
-          final fieldName = localizedString(field.name);
-          _viewModelList.add(RowViewModel(fieldName, localizedDate(value)));
-        case presentEnd():
+          for (final model in modelList) {
+            switch (model) {
+              case stringRow(:final field, :final value):
+                final fieldName = localizedString(field.name);
+                _viewModelList.add(RowViewModel(fieldName, value));
+              case boolRow(:final field, :final value):
+                final fieldName = localizedString(field.name);
+                _viewModelList.add(RowViewModel(
+                    fieldName, localizedString(value == true ? "yes" : "no")));
+              case priorityRow(:final field, :final value):
+                final fieldName = localizedString(field.name);
+                _viewModelList
+                    .add(RowViewModel(fieldName, localizedString(value.name)));
+              case dateRow(:final field, :final value):
+                final fieldName = localizedString(field.name);
+                _viewModelList
+                    .add(RowViewModel(fieldName, localizedDate(value)));
+            }
+          }
           emit(showFieldList(_viewModelList));
+          break;
       }
-      ;
     });
   }
 

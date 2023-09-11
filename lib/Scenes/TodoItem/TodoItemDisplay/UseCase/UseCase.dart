@@ -4,34 +4,33 @@ part of '../TodoItemDisplay.dart';
 
 @visibleForTesting
 class UseCase with StarterBloc<_UseCaseOutput> {
+  List<_RowPresentationModel> rowList = [];
 
-    final BehaviorSubject<Todo?> _currentTodoSubject;
+  final BehaviorSubject<Todo?> _currentTodoSubject;
 
-    UseCase(this._currentTodoSubject) {
-        final todo = _currentTodoSubject.value!;
-        emit(presentBegin());
+  UseCase(this._currentTodoSubject) {
+    final todo = _currentTodoSubject.value!;
 
-        emit(presentString(FieldName.title, todo.title));
-        if( todo.note != "" ) {
-            emit(presentString(FieldName.note, todo.note));
-        }
-        final completeBy = todo.completeBy;
-        if (completeBy != null) {
-            emit(presentDate(FieldName.completeBy, completeBy));
-        }
-        switch(todo.priority) {
-            case Priority.none:
-                break;
-            default:
-                emit(presentPriority(FieldName.priority, todo.priority));
-        }
-        emit(presentBool(FieldName.completed, todo.completed));
-        emit(presentEnd());
+    rowList.add(stringRow(FieldName.title, todo.title));
+    if (todo.note != "") {
+      rowList.add(stringRow(FieldName.note, todo.note));
     }
-
-    @override
-    void dispose() {
-        super.dispose();
+    final completeBy = todo.completeBy;
+    if (completeBy != null) {
+      rowList.add(dateRow(FieldName.completeBy, completeBy));
     }
+    switch (todo.priority) {
+      case Priority.none:
+        break;
+      default:
+        rowList.add(priorityRow(FieldName.priority, todo.priority));
+    }
+    rowList.add(boolRow(FieldName.completed, todo.completed));
+    emit(presentModel(rowList));
+  }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
 }
