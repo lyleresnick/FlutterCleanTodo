@@ -74,13 +74,11 @@ abstract class UseCase with StarterBloc<_UseCaseOutput> {
     _editingTodo.note = note;
   }
 
-  void eventCompleteByClear() {
-    _editingTodo.completeBy = null;
-    _refreshPresentation();
-  }
-
-  void eventCompleteByToday() {
-    _editingTodo.completeBy = DateTime.now();
+  void eventCompleteBy(bool isOn) {
+    if (isOn)
+      _editingTodo.completeBy = DateTime.now();
+    else
+      _editingTodo.completeBy = null;
     _refreshPresentation();
   }
 

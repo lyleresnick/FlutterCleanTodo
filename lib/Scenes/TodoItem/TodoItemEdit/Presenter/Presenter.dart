@@ -32,12 +32,8 @@ class Presenter with StarterBloc<_PresenterOutput> {
     _useCase.eventEditedNote(note);
   }
 
-  void eventCompleteByClear() {
-    _useCase.eventCompleteByClear();
-  }
-
-  void eventCompleteByToday() {
-    _useCase.eventCompleteByToday();
+  void eventCompleteBy(bool isOn) {
+    _useCase.eventCompleteBy(isOn);
   }
 
   void eventEnableEditCompleteBy() {

@@ -78,12 +78,7 @@ class _SceneState extends State<Scene> {
                             children: <Widget>[
                               TodoSwitch(
                                 state: model.completeBySwitchIsOn,
-                                onChanged: (isOn) {
-                                  if (isOn)
-                                    _presenter.eventCompleteByToday();
-                                  else
-                                    _presenter.eventCompleteByClear();
-                                },
+                                onChanged: _presenter.eventCompleteBy,
                               ),
                               Container(width: 6),
                               GestureDetector(
