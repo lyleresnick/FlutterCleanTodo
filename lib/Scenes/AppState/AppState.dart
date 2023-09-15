@@ -7,7 +7,6 @@ enum Refresh {
 }
 
 abstract class AppState {
-  final toDoListSubject = BehaviorSubject<List<Todo>>();
   final toDoSceneRefreshSubject = BehaviorSubject<Refresh>();
   final itemStartModeSubject = BehaviorSubject<TodoItemStartMode>();
   final currentTodoSubject = BehaviorSubject<Todo?>();

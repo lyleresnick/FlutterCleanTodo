@@ -6,11 +6,11 @@ part of '../TodoList.dart';
 class UseCase with StarterBloc<_UseCaseOutput> {
   final EntityGateway _entityGateway;
 
-  final BehaviorSubject<List<Todo>> _toDoListSubject;
+  List<Todo> _todoList = [];
   final BehaviorSubject<Refresh> _toDoSceneRefreshSubject;
   final BehaviorSubject<TodoItemStartMode> _itemStartModeSubject;
 
-  UseCase(this._entityGateway, this._toDoListSubject,
+  UseCase(this._entityGateway,
       this._toDoSceneRefreshSubject, this._itemStartModeSubject) {
     unawaited(_initialize());
   }
@@ -25,7 +25,7 @@ class UseCase with StarterBloc<_UseCaseOutput> {
     final result = await _entityGateway.todoManager.all();
     switch (result) {
       case success(:final data):
-        _toDoListSubject.value = data;
+        _todoList = data;
         _refreshPresentation();
       case failure(:final description):
         assert(false, "Unexpected error: $description");
@@ -35,17 +35,15 @@ class UseCase with StarterBloc<_UseCaseOutput> {
   }
 
   void _refreshPresentation() {
-    emit(presentModel(PresentationModel.fromEntities(_toDoListSubject.value)));
+    emit(presentModel(PresentationModel.fromEntities(_todoList)));
   }
 
   Future<void> eventCompleted(bool completed, int index) async {
     final result = await _entityGateway.todoManager
-        .completed(_toDoListSubject.value[index].id, completed);
+        .completed(_todoList[index].id, completed);
     switch (result) {
       case success(:final data):
-        final todoList = _toDoListSubject.value;
-        todoList[index] = data;
-        _toDoListSubject.value = todoList;
+        _todoList[index] = data;
         _refreshPresentation();
       case failure(:final description):
         assert(false, "Unexpected error: $description");
@@ -56,12 +54,10 @@ class UseCase with StarterBloc<_UseCaseOutput> {
 
   Future<void> eventDelete(int index) async {
     final result = await _entityGateway.todoManager
-        .delete(_toDoListSubject.value[index].id);
+        .delete(_todoList[index].id);
     switch (result) {
       case success():
-        final todoList = _toDoListSubject.value;
-        todoList.removeAt(index);
-        _toDoListSubject.value = todoList;
+        _todoList.removeAt(index);
         _refreshPresentation();
       case failure(:final description):
         assert(false, "Unexpected error: $description");
@@ -71,7 +67,7 @@ class UseCase with StarterBloc<_UseCaseOutput> {
   }
 
   void eventItemSelected(int index) {
-    final id = _toDoListSubject.value[index].id;
+    final id = _todoList[index].id;
     _itemStartModeSubject.value = TodoItemStartModeUpdate(id);
     emit(presentItemDetail());
   }

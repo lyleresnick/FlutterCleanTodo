@@ -9,7 +9,6 @@ class Assembly {
   factory Assembly(Router router) {
     final useCase = UseCase(
         EntityGateway.entityGateway,
-        TodoAppState.instance.toDoListSubject,
         TodoAppState.instance.toDoSceneRefreshSubject,
         TodoAppState.instance.itemStartModeSubject);
     final presenter = Presenter(useCase, router);
