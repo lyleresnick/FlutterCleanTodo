@@ -10,7 +10,6 @@ import '../../Repository/Abstraction/EntityGateway.dart';
 import '../../Repository/Abstraction/Result.dart';
 import '../../Repository/Entities/Priority.dart';
 import '../../Repository/Entities/Todo.dart';
-import '../AppState/AppState.dart';
 import '../AppState/TodoAppState.dart';
 import '../AppState/TodoItemStartMode.dart';
 import '../Common/BlocBuilderData.dart';

@@ -42,7 +42,7 @@ class EditingTodo {
 abstract class UseCase with StarterBloc<_UseCaseOutput> {
   late EditingTodo _editingTodo;
 
-  final BehaviorSubject<Refresh> _toDoSceneRefreshSubject;
+  final PublishSubject<void> _toDoSceneRefreshSubject;
   final BehaviorSubject<Todo?> _currentTodoSubject;
   final BehaviorSubject<TodoItemStartMode> _itemStartModeSubject;
 
@@ -110,7 +110,7 @@ abstract class UseCase with StarterBloc<_UseCaseOutput> {
     switch (result) {
       case success(:final data):
         _currentTodoSubject.value = data;
-        _toDoSceneRefreshSubject.value = Refresh.yes;
+        _toDoSceneRefreshSubject.add(null);
         _itemStartModeSubject.value = TodoItemStartModeUpdate(data.id);
         emit(presentSaveCompleted());
       case failure(:final description):

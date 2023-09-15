@@ -7,20 +7,16 @@ class UseCase with StarterBloc<_UseCaseOutput> {
   final EntityGateway _entityGateway;
 
   List<Todo> _todoList = [];
-  final BehaviorSubject<Refresh> _toDoSceneRefreshSubject;
+  final PublishSubject<void> _toDoSceneRefreshSubject;
   final BehaviorSubject<TodoItemStartMode> _itemStartModeSubject;
 
-  UseCase(this._entityGateway,
-      this._toDoSceneRefreshSubject, this._itemStartModeSubject) {
-    unawaited(_initialize());
+  UseCase(this._entityGateway, this._toDoSceneRefreshSubject,
+      this._itemStartModeSubject) {
+    _toDoSceneRefreshSubject.listen((_) async => await _refresh());
+    unawaited(_refresh());
   }
 
-  Future<void> _initialize() async {
-    _toDoSceneRefreshSubject.listen(_refresh);
-    await _refresh(Refresh.yes);
-  }
-
-  Future<void> _refresh(_) async {
+  Future<void> _refresh() async {
     emit(presentLoading());
     final result = await _entityGateway.todoManager.all();
     switch (result) {
@@ -53,8 +49,7 @@ class UseCase with StarterBloc<_UseCaseOutput> {
   }
 
   Future<void> eventDelete(int index) async {
-    final result = await _entityGateway.todoManager
-        .delete(_todoList[index].id);
+    final result = await _entityGateway.todoManager.delete(_todoList[index].id);
     switch (result) {
       case success():
         _todoList.removeAt(index);
