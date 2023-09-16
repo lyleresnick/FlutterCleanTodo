@@ -11,8 +11,6 @@ class presentModel extends _UseCaseOutput {
 }
 
 @visibleForTesting
-class presentLoading extends _UseCaseOutput {}
-@visibleForTesting
 class presentSaveCompleted extends _UseCaseOutput {}
 @visibleForTesting
 class presentEditingCancelled extends _UseCaseOutput {}

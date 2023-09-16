@@ -5,6 +5,8 @@ part of '../TodoItemEdit.dart';
 @visibleForTesting
 class Scene extends StatefulWidget implements ActionDecoratedScene {
   final Presenter _presenter;
+  final _saveKey = GlobalKey<StateFullyEnabledState>();
+  final _cancelKey = GlobalKey<StateFullyEnabledState>();
 
   Scene(this._presenter);
 
@@ -13,12 +15,25 @@ class Scene extends StatefulWidget implements ActionDecoratedScene {
 
   @override
   List<Widget> actions() {
-    return [SaveButton(onPressed: _presenter.eventSave)];
+    return [
+      StateFullyEnabled(
+        key: _saveKey,
+        builder: (context, enabled) => _SaveButton(
+          enabled: enabled,
+          onPressed: _presenter.eventSave,
+        ),
+      )
+    ];
   }
 
   @override
   Widget leading() {
-    return CancelButton(onPressed: _presenter.eventCancel);
+    return StateFullyEnabled(
+        key: _cancelKey,
+        builder: (context, enabled) => _CancelButton(
+              enabled: enabled,
+              onPressed: _presenter.eventCancel,
+            ));
   }
 
   @override
@@ -40,14 +55,17 @@ class _SceneState extends State<Scene> {
         bloc: _presenter,
         builder: (context, data) {
           switch (data) {
-            case showLoading():
-              return FullScreenLoadingIndicator();
             case showModel(:final model):
-              if (model.errorMessage != null) {
-                _showDialog(context, model.errorMessage!);
-              } else if (model.showEditCompleteBy) {
+              if (model.showEditCompleteBy)
                 _showEditCompleteByPopover(context, model.completeBy!);
-              }
+
+              if (model.errorMessage != null)
+                _showDialog(context, model.errorMessage!);
+
+              StateFullyEnabled.show(
+                  key: widget._saveKey, enabled: !model.isWaiting);
+              StateFullyEnabled.show(
+                  key: widget._cancelKey, enabled: !model.isWaiting);
 
               return Waiting(
                 isWaiting: model.isWaiting,
@@ -55,23 +73,23 @@ class _SceneState extends State<Scene> {
                   child: Padding(
                     padding: const EdgeInsets.all(12.0),
                     child: Column(children: <Widget>[
-                      _expandedRow(
-                        localizedString("title"),
-                        TodoTextField(
-                          value: model.title,
-                          placeholder: localizedString("enterATitle"),
-                          onChanged: _presenter.eventEditedTitle,
-                        ),
-                      ),
-                      _expandedRow(
-                        localizedString("note"),
-                        TodoTextField(
-                          value: model.note,
-                          minLines: 9,
-                          maxLines: 9,
-                          onChanged: _presenter.eventEditedNote,
-                        ),
-                      ),
+                      _EditRow(
+                          title: localizedString("title"),
+                          widget: Expanded(
+                              child: TodoTextField(
+                                value: model.title,
+                                placeholder: localizedString("enterATitle"),
+                                onChanged: _presenter.eventEditedTitle,
+                              ))),
+                      _EditRow(
+                          title: localizedString("note"),
+                          widget: Expanded(
+                              child: TodoTextField(
+                                value: model.note,
+                                minLines: 9,
+                                maxLines: 9,
+                                onChanged: _presenter.eventEditedNote,
+                              ))),
                       _EditRow(
                           title: localizedString("completeBy"),
                           widget: Row(
@@ -89,16 +107,16 @@ class _SceneState extends State<Scene> {
                                       style: TextStyle(fontSize: 17))),
                             ],
                           )),
-                      _expandedRow(
-                        localizedString("priority"),
-                        TodoExclusive(
-                          value: model.priority,
-                          itemNames: ["none", "low", "medium", "high"]
-                              .map((value) => localizedString(value))
-                              .toList(),
-                          onValueChanged: _presenter.eventEditedPriority,
-                        ),
-                      ),
+                      _EditRow(
+                          title: localizedString("priority"),
+                          widget: Expanded(
+                              child: TodoExclusive(
+                                value: model.priority,
+                                itemNames: ["none", "low", "medium", "high"]
+                                    .map((value) => localizedString(value))
+                                    .toList(),
+                                onValueChanged: _presenter.eventEditedPriority,
+                              ))),
                       _EditRow(
                           title: localizedString("completed"),
                           widget: TodoSwitch(
@@ -111,10 +129,6 @@ class _SceneState extends State<Scene> {
               );
           }
         });
-  }
-
-  Widget _expandedRow(String title, Widget widget) {
-    return _EditRow(title: title, widget: Expanded(child: widget));
   }
 
   void _showEditCompleteByPopover(BuildContext context, DateTime completeBy) {
@@ -172,39 +186,46 @@ class _EditRow extends StatelessWidget {
   }
 }
 
-class SaveButton extends StatelessWidget {
-  final void Function()? onPressed;
-  const SaveButton({this.onPressed});
+class _SaveButton extends StatelessWidget {
+  final void Function() onPressed;
+  final bool enabled;
+  const _SaveButton({required this.onPressed, required this.enabled});
 
   @override
   Widget build(BuildContext context) {
     return Builder(builder: (context) {
+      final onPressed = (enabled) ? this.onPressed : null;
+      final disabledColor = Colors.white60;
       return (Platform.isIOS)
           ? CupertinoButton(
               child: Text(
                 localizedString("save"),
-                style: TextStyle(fontSize: 18, color: Colors.white),
+                style: TextStyle(
+                    fontSize: 18,
+                    color: enabled ? Colors.white : disabledColor),
               ),
               onPressed: onPressed,
             )
           : IconButton(
               icon: Icon(Icons.save),
+              disabledColor: disabledColor,
               onPressed: onPressed,
             );
     });
   }
 }
 
-class CancelButton extends StatelessWidget {
-  final void Function()? onPressed;
-  const CancelButton({this.onPressed});
+class _CancelButton extends StatelessWidget {
+  final void Function() onPressed;
+  final bool enabled;
+  const _CancelButton({required this.onPressed, required this.enabled});
 
   @override
   Widget build(BuildContext context) {
-    final icon = (Platform.isIOS) ? Icons.clear : Icons.cancel;
     return IconButton(
-      icon: Icon(icon),
-      onPressed: onPressed,
+      icon: Icon((Platform.isIOS) ? Icons.clear : Icons.cancel),
+      onPressed: (enabled) ? this.onPressed : null,
+      disabledColor: Colors.white60,
     );
   }
 }
