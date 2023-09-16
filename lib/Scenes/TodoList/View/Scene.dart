@@ -13,6 +13,7 @@ class Scene extends StatefulWidget {
 
 class _SceneState extends State<Scene> {
   late final Presenter _presenter;
+  final _plusKey = GlobalKey<StatefullyEnabledState>();
 
   @override
   void initState() {
@@ -28,36 +29,61 @@ class _SceneState extends State<Scene> {
           title: Text(localizedString("todoList")),
           backgroundColor: Colors.lightGreen,
           elevation: platform == TargetPlatform.iOS ? 0.0 : 4.0,
-          actions: _actions(platform),
+          actions: [
+            StatefullyEnabled(
+              key: _plusKey,
+              builder: (context, enabled) => _AddTodoButton(
+                enabled: enabled,
+                onPressed: _presenter.eventCreate,
+              ),
+            )
+          ],
         ),
         body: SafeArea(
           child: BlocBuilderData<Presenter, _PresenterOutput>(
             bloc: _presenter,
             builder: (context, data) {
-              return switch (data) {
-                showLoading() => FullScreenLoadingIndicator(),
-                showModel(:final model) => ListView.builder(
-                    itemCount: model.rows.length,
-                    itemBuilder: (context, index) =>
-                        _Cell(row: model.rows[index], index: index))
-              };
+              switch (data) {
+                case showLoading():
+                  StatefullyEnabled.set(key: _plusKey, enabled: false);
+                  return FullScreenLoadingIndicator();
+                case showModel(:final model):
+                  StatefullyEnabled.set(key: _plusKey, enabled: true);
+                  return ListView.builder(
+                      itemCount: model.rows.length,
+                      itemBuilder: (context, index) =>
+                          _Cell(row: model.rows[index], index: index));
+              }
             },
           ),
         ));
   }
+}
 
-  List<Widget> _actions(TargetPlatform platform) {
-    return [
-      (platform == TargetPlatform.iOS)
-          ? IconButton(
-              iconSize: 34,
-              icon: Icon(CupertinoIcons.add),
-              onPressed: _presenter.eventCreate,
-            )
-          : IconButton(
-              icon: Icon(Icons.add),
-              onPressed: _presenter.eventCreate,
-            )
-    ];
+class _AddTodoButton extends StatelessWidget {
+  final VoidCallback onPressed;
+  final bool enabled;
+
+  const _AddTodoButton({
+    required this.enabled,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final onPressed = (enabled) ? this.onPressed : null;
+    final disabledColor = Colors.white60;
+    return (Theme.of(context).platform == TargetPlatform.iOS)
+        ? IconButton(
+            iconSize: 34,
+            icon: Icon(CupertinoIcons.add),
+            disabledColor: disabledColor,
+            onPressed: onPressed,
+          )
+        : IconButton(
+            icon: Icon(Icons.add),
+            disabledColor: disabledColor,
+            onPressed: onPressed,
+          );
   }
 }

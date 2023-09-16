@@ -17,6 +17,7 @@ import '../Common/BlocProvider.dart';
 import '../Common/FullScreenLoadingIndicator.dart';
 import '../Common/Localize.dart';
 import '../Common/StarterBloc.dart';
+import '../Common/StatefullyEnabled.dart';
 
 part 'Assembly/Assembly.dart';
 part 'View/Scene.dart';
