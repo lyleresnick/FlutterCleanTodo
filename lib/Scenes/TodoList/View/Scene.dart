@@ -52,7 +52,7 @@ class _SceneState extends State<Scene> {
                   return ListView.builder(
                       itemCount: model.rows.length,
                       itemBuilder: (context, index) =>
-                          _Cell(row: model.rows[index], index: index));
+                          _Cell(row: model.rows[index]));
               }
             },
           ),
