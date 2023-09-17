@@ -46,16 +46,14 @@ class _SceneState extends State<Scene> {
               switch (data) {
                 case showLoading():
                   StatefullyEnabled.show(key: _plusKey, enabled: false);
-                case showModel():
+                  return FullScreenLoadingIndicator();
+                case showModel(:final model):
                   StatefullyEnabled.show(key: _plusKey, enabled: true);
+                  return ListView.builder(
+                      itemCount: model.rows.length,
+                      itemBuilder: (context, index) =>
+                          _Cell(row: model.rows[index], index: index));
               }
-              return switch (data) {
-                showLoading() => FullScreenLoadingIndicator(),
-                showModel(:final model) => ListView.builder(
-                    itemCount: model.rows.length,
-                    itemBuilder: (context, index) =>
-                        _Cell(row: model.rows[index], index: index))
-              };
             },
           ),
         ));
