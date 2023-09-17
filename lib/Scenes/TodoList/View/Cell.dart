@@ -29,7 +29,15 @@ class _Cell extends StatelessWidget {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                          _pictureBox(context),
+                        Container(
+                          padding: EdgeInsets.all(4),
+                          child: _CheckBox(
+                            checked: row.completed,
+                            onPressed: (checked) {
+                              presenter.eventCompleted(checked, index);
+                            },
+                          ),
+                        ),
                           Container(
                               padding: EdgeInsets.only(right: 4),
                               width: 30,
@@ -56,23 +64,6 @@ class _Cell extends StatelessWidget {
           },
           background: _dismissReveal(context),
       );
-    }
-
-    Widget _pictureBox(BuildContext context) {
-
-        return Container(
-            padding: EdgeInsets.all(4),
-            child: _CheckBox(
-                checked: row.completed,
-                onPressed: (checked) {
-                    final presenter = BlocProvider.of<Presenter>(context)!;
-                    if(checked)
-                        presenter.eventCompleted(index);
-                    else
-                        presenter.eventNotCompleted(index);
-                },
-            ),
-        );
     }
 
     TextStyle _textStylePriority() {
