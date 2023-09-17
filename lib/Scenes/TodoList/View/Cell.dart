@@ -3,9 +3,8 @@ part of '../TodoList.dart';
 class _Cell extends StatelessWidget {
 
     final RowViewModel row;
-    final int index;
 
-    _Cell({required this.row, required this.index});
+    _Cell({required this.row});
 
     @override
     Widget build(BuildContext context) {
@@ -16,7 +15,7 @@ class _Cell extends StatelessWidget {
             key: UniqueKey(),
             child: GestureDetector(
                 onTap: () {
-                    presenter.eventItemSelected(index);
+                    presenter.eventItemSelected(row.index);
                 },
               child: Container(
                 height: 56,
@@ -34,7 +33,7 @@ class _Cell extends StatelessWidget {
                           child: _CheckBox(
                             checked: row.completed,
                             onPressed: (checked) {
-                              presenter.eventCompleted(checked, index);
+                              presenter.eventCompleted(checked, row.index);
                             },
                           ),
                         ),
@@ -60,7 +59,7 @@ class _Cell extends StatelessWidget {
             ),
             ),
           onDismissed: (direction) {
-              presenter.eventDelete(index);
+              presenter.eventDelete(row.index);
           },
           background: _dismissReveal(context),
       );
