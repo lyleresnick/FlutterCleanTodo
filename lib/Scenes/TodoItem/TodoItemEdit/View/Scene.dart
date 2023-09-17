@@ -5,8 +5,8 @@ part of '../TodoItemEdit.dart';
 @visibleForTesting
 class Scene extends StatefulWidget implements ActionDecoratedScene {
   final Presenter _presenter;
-  final _saveKey = GlobalKey<StateFullyEnabledState>();
-  final _cancelKey = GlobalKey<StateFullyEnabledState>();
+  final _saveKey = GlobalKey<StatefullyEnabledState>();
+  final _cancelKey = GlobalKey<StatefullyEnabledState>();
 
   Scene(this._presenter);
 
@@ -16,7 +16,7 @@ class Scene extends StatefulWidget implements ActionDecoratedScene {
   @override
   List<Widget> actions() {
     return [
-      StateFullyEnabled(
+      StatefullyEnabled(
         key: _saveKey,
         builder: (context, enabled) => _SaveButton(
           enabled: enabled,
@@ -28,7 +28,7 @@ class Scene extends StatefulWidget implements ActionDecoratedScene {
 
   @override
   Widget leading() {
-    return StateFullyEnabled(
+    return StatefullyEnabled(
         key: _cancelKey,
         builder: (context, enabled) => _CancelButton(
               enabled: enabled,
@@ -62,9 +62,9 @@ class _SceneState extends State<Scene> {
               if (model.errorMessage != null)
                 _showDialog(context, model.errorMessage!);
 
-              StateFullyEnabled.show(
+              StatefullyEnabled.show(
                   key: widget._saveKey, enabled: !model.isWaiting);
-              StateFullyEnabled.show(
+              StatefullyEnabled.show(
                   key: widget._cancelKey, enabled: !model.isWaiting);
 
               return Waiting(

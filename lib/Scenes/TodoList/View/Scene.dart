@@ -13,7 +13,7 @@ class Scene extends StatefulWidget {
 
 class _SceneState extends State<Scene> {
   late final Presenter _presenter;
-  final _plusKey = GlobalKey<StateFullyEnabledState>();
+  final _plusKey = GlobalKey<StatefullyEnabledState>();
 
   @override
   void initState() {
@@ -30,7 +30,7 @@ class _SceneState extends State<Scene> {
           backgroundColor: Colors.lightGreen,
           elevation: platform == TargetPlatform.iOS ? 0.0 : 4.0,
           actions: [
-            StateFullyEnabled(
+            StatefullyEnabled(
               key: _plusKey,
               builder: (context, enabled) => _AddTodoButton(
                 enabled: enabled,
@@ -45,9 +45,9 @@ class _SceneState extends State<Scene> {
             builder: (context, data) {
               switch (data) {
                 case showLoading():
-                  StateFullyEnabled.show(key: _plusKey, enabled: false);
+                  StatefullyEnabled.show(key: _plusKey, enabled: false);
                 case showModel():
-                  StateFullyEnabled.show(key: _plusKey, enabled: true);
+                  StatefullyEnabled.show(key: _plusKey, enabled: true);
               }
               return switch (data) {
                 showLoading() => FullScreenLoadingIndicator(),
