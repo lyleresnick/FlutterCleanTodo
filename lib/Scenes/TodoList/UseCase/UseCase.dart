@@ -7,6 +7,7 @@ class UseCase with StarterBloc<_UseCaseOutput> {
   final EntityGateway _entityGateway;
 
   List<Todo> _todoList = [];
+  bool _showCompleted = false;
   final PublishSubject<void> _toDoSceneRefreshSubject;
   final BehaviorSubject<TodoItemStartMode> _itemStartModeSubject;
 
@@ -31,7 +32,7 @@ class UseCase with StarterBloc<_UseCaseOutput> {
   }
 
   void _refreshPresentation() {
-    emit(presentModel(PresentationModel.fromEntities(_todoList)));
+    emit(presentModel(PresentationModel.fromEntities(_todoList, _showCompleted)));
   }
 
   Future<void> eventCompleted(bool completed, int index) async {
@@ -70,6 +71,11 @@ class UseCase with StarterBloc<_UseCaseOutput> {
   void eventCreate() {
     _itemStartModeSubject.value = TodoItemStartModeCreate();
     emit(presentItemDetail());
+  }
+
+  void eventShowCompleted(bool completed) {
+    _showCompleted = completed;
+    _refreshPresentation();
   }
 
   @override

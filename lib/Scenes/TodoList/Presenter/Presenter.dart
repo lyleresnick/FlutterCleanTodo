@@ -20,6 +20,10 @@ class Presenter with StarterBloc<_PresenterOutput> {
     });
   }
 
+  void eventShowCompleted(bool completed) {
+    _useCase.eventShowCompleted(completed);
+  }
+
   void eventCompleted(bool completed, int index) {
     _useCase.eventCompleted(completed, index);
   }

@@ -14,6 +14,7 @@ class Scene extends StatefulWidget {
 class _SceneState extends State<Scene> {
   late final Presenter _presenter;
   final _plusKey = GlobalKey<StatefullyEnabledState>();
+  final _checkedKey = GlobalKey<StatefullyEnabledState>();
 
   @override
   void initState() {
@@ -27,9 +28,16 @@ class _SceneState extends State<Scene> {
     return Scaffold(
         appBar: AppBar(
           title: Text(localizedString("todoList")),
+          centerTitle: platform == TargetPlatform.iOS,
           backgroundColor: Colors.lightGreen,
           elevation: platform == TargetPlatform.iOS ? 0.0 : 4.0,
           actions: [
+            StatefullyEnabled(
+                key: _checkedKey,
+                builder: (context, enabled) => _CheckedButton(
+                    enabled: enabled,
+                    onPressed: (isSelected) =>
+                        _presenter.eventShowCompleted(isSelected))),
             StatefullyEnabled(
               key: _plusKey,
               builder: (context, enabled) => _AddTodoButton(
@@ -46,9 +54,11 @@ class _SceneState extends State<Scene> {
               switch (data) {
                 case showLoading():
                   StatefullyEnabled.set(key: _plusKey, enabled: false);
+                  StatefullyEnabled.set(key: _checkedKey, enabled: false);
                   return FullScreenLoadingIndicator();
                 case showModel(:final model):
                   StatefullyEnabled.set(key: _plusKey, enabled: true);
+                  StatefullyEnabled.set(key: _checkedKey, enabled: true);
                   return ListView.builder(
                       itemCount: model.rows.length,
                       itemBuilder: (context, index) =>
@@ -85,5 +95,46 @@ class _AddTodoButton extends StatelessWidget {
             disabledColor: disabledColor,
             onPressed: onPressed,
           );
+  }
+}
+
+class _CheckedButton extends StatefulWidget {
+  final void Function(bool) onPressed;
+  final bool enabled;
+
+  const _CheckedButton({
+    required this.enabled,
+    required this.onPressed,
+  });
+
+  @override
+  State<_CheckedButton> createState() => _CheckedButtonState();
+}
+
+class _CheckedButtonState extends State<_CheckedButton> {
+  bool isSelected = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final platform = Theme.of(context).platform;
+    final icon = (platform == TargetPlatform.iOS)
+        ? Icon(CupertinoIcons.checkmark_alt)
+        : Icon(Icons.check);
+    final selectedIcon = (platform == TargetPlatform.iOS)
+        ? Icon(CupertinoIcons.checkmark_rectangle_fill)
+        : Icon(Icons.check_box);
+    return IconButton(
+      icon: isSelected ? selectedIcon : icon,
+      color: Colors.white,
+      disabledColor: Colors.white60,
+      onPressed: (widget.enabled)
+          ? () {
+              setState(() {
+                isSelected = !isSelected;
+              });
+              widget.onPressed(isSelected);
+            }
+          : null,
+    );
   }
 }

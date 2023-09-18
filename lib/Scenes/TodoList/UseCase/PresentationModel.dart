@@ -7,10 +7,11 @@ class PresentationModel {
   final List<PresentationRowModel> rows;
   PresentationModel(this.rows);
 
-  PresentationModel.fromEntities(List<Todo> entities)
+  PresentationModel.fromEntities(List<Todo> entities, bool showCompleted)
       : rows = entities.indexed
             .map((indexedPair) =>
                 PresentationRowModel(indexedPair.$2, indexedPair.$1))
+            .where((model) => showCompleted || model.completed == false)
             .toList() {
     rows.sort((a, b) {
       return switch ((a.completeBy, b.completeBy)) {
