@@ -1,13 +1,13 @@
-//  Copyright © 2023 Lyle Resnick. All rights reserved.
 
 import 'package:todo_api/api.dart';
 
-class NetworkClient {
-  ApiClient _apiClient;
-  late TodoApi _todoApi;
-  TodoApi get todoApi => _todoApi;
+abstract interface class NetworkClient {
+  Future<List<TodoResponse>?> getAllTodos();
+  Future<TodoResponse?> getTodo(String id);
+  Future<TodoResponse?> createTodo(TodoParams params);
+  Future<TodoResponse?> updateTodo(String id, TodoParams params);
+  Future<void> deleteTodo(String id);
 
-  NetworkClient(): _apiClient = ApiClient() {
-    _todoApi = TodoApi(_apiClient);
-  }
 }
+
+

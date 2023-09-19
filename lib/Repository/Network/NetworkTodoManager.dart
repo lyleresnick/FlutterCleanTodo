@@ -4,18 +4,18 @@ import 'package:todo_api/api.dart';
 import '../Abstraction/TodoManager.dart';
 import '../Abstraction/TodoValues.dart';
 import '../Abstraction/Result.dart';
-import 'NetworkClient.dart';
 import '../Entities/Todo.dart';
 import '../Entities/Priority.dart';
+import 'NetworkClient.dart';
 import 'NetworkExceptionGuard.dart';
 
 class NetworkTodoManager extends TodoManager with ExceptionGuard {
-  final NetworkClient networkClient;
-  NetworkTodoManager(this.networkClient);
+  final NetworkClient apiClient;
+  NetworkTodoManager(this.apiClient);
 
   @override
   Future<Result<List<Todo>>> all() => exceptionGuard(() async {
-        final response = await networkClient.todoApi.getAllTodos();
+        final response = await apiClient.getAllTodos();
         if (response == null) throw "No Content";
         return response.map((todoResponse) => todoResponse._todo).toList();
       });
@@ -23,7 +23,7 @@ class NetworkTodoManager extends TodoManager with ExceptionGuard {
   @override
   Future<Result<Todo>> completed(String id, bool completed) =>
       exceptionGuard(() async {
-        final getResponse = await networkClient.todoApi.getTodoById(id);
+        final getResponse = await apiClient.getTodo(id);
         if (getResponse == null) throw "No Content";
         final values = getResponse._todo.todoValues;
         final newValues = TodoValues(
@@ -34,7 +34,7 @@ class NetworkTodoManager extends TodoManager with ExceptionGuard {
           completed: completed,
         );
         final updateResponse =
-            await networkClient.todoApi.updateTodo(id, newValues._todoParams);
+            await apiClient.updateTodo(id, newValues._todoParams);
         if (updateResponse == null) throw "No Content";
         return updateResponse._todo;
       });
@@ -42,22 +42,22 @@ class NetworkTodoManager extends TodoManager with ExceptionGuard {
   @override
   Future<Result<Todo>> create(TodoValues values) => exceptionGuard(() async {
         final response =
-            await networkClient.todoApi.createTodo(values._todoParams);
+            await apiClient.createTodo(values._todoParams);
         if (response == null) throw "No Content";
         return response._todo;
       });
 
   @override
   Future<Result<Todo>> delete(String id) => exceptionGuard(() async {
-        final getResponse = await networkClient.todoApi.getTodoById(id);
+        final getResponse = await apiClient.getTodo(id);
         if (getResponse == null) throw "No Content";
-        await networkClient.todoApi.deleteTodo(id);
+        await apiClient.deleteTodo(id);
         return getResponse._todo;
       });
 
   @override
   Future<Result<Todo>> fetch(String id) => exceptionGuard(() async {
-        final response = await networkClient.todoApi.getTodoById(id);
+        final response = await apiClient.getTodo(id);
         if (response == null) throw "No Content";
         return response._todo;
       });
@@ -66,7 +66,7 @@ class NetworkTodoManager extends TodoManager with ExceptionGuard {
   Future<Result<Todo>> update(String id, TodoValues values) =>
       exceptionGuard(() async {
         final response =
-            await networkClient.todoApi.updateTodo(id, values._todoParams);
+            await apiClient.updateTodo(id, values._todoParams);
         if (response == null) throw "No Content";
         return response._todo;
       });

@@ -3,9 +3,9 @@
 import '../Abstraction/EntityGateway.dart';
 import '../Abstraction/TodoManager.dart';
 
-import 'NetworkClient.dart';
+import 'RealNetworkClient.dart';
 import 'NetworkTodoManager.dart';
 
 class NetworkEntityGateway extends EntityGateway {
-    TodoManager get todoManager => NetworkTodoManager(NetworkClient());
+    TodoManager get todoManager => NetworkTodoManager(RealNetworkClient());
 }
