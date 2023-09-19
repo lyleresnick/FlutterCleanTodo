@@ -18,8 +18,8 @@ abstract class EntityGateway {
 
     static EntityGateway get entityGateway {
         switch(gatewayImplementation) {
-        case _Implementation.test:
-            return EphemeralEntityGateway();
+            case _Implementation.test:
+                return EphemeralEntityGateway();
             case _Implementation.db:
                 return SqlLiteEntityGateway();
             case _Implementation.network:

@@ -6,26 +6,25 @@ part of '../TodoItemDisplay.dart';
 class UseCase with StarterBloc<_UseCaseOutput> {
   List<_RowPresentationModel> rowList = [];
 
-  final BehaviorSubject<Todo?> _currentTodoSubject;
+  final Todo _todo;
 
-  UseCase(this._currentTodoSubject) {
-    final todo = _currentTodoSubject.value!;
+  UseCase(this._todo) {
 
-    rowList.add(stringRow(FieldName.title, todo.title));
-    if (todo.note != "") {
-      rowList.add(stringRow(FieldName.note, todo.note));
+    rowList.add(stringRow(FieldName.title, _todo.title));
+    if (_todo.note != "") {
+      rowList.add(stringRow(FieldName.note, _todo.note));
     }
-    final completeBy = todo.completeBy;
+    final completeBy = _todo.completeBy;
     if (completeBy != null) {
       rowList.add(dateRow(FieldName.completeBy, completeBy));
     }
-    switch (todo.priority) {
+    switch (_todo.priority) {
       case Priority.none:
         break;
       default:
-        rowList.add(priorityRow(FieldName.priority, todo.priority));
+        rowList.add(priorityRow(FieldName.priority, _todo.priority));
     }
-    rowList.add(boolRow(FieldName.completed, todo.completed));
+    rowList.add(boolRow(FieldName.completed, _todo.completed));
     emit(presentModel(rowList));
   }
 
