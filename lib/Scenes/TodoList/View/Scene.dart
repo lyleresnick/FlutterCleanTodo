@@ -34,10 +34,8 @@ class _SceneState extends State<Scene> {
           actions: [
             StatefullyEnabled(
                 key: _checkedKey,
-                builder: (context, enabled) => _CheckedButton(
-                    enabled: enabled,
-                    onPressed: (isSelected) =>
-                        _presenter.eventShowCompleted(isSelected))),
+                builder: (context, enabled) =>
+                    _CheckedButton(enabled: enabled, onPressed: _presenter.eventShowCompleted)),
             StatefullyEnabled(
               key: _plusKey,
               builder: (context, enabled) => _AddTodoButton(
@@ -61,8 +59,7 @@ class _SceneState extends State<Scene> {
                   StatefullyEnabled.set(key: _checkedKey, enabled: true);
                   return ListView.builder(
                       itemCount: model.rows.length,
-                      itemBuilder: (context, index) =>
-                          _Cell(row: model.rows[index]));
+                      itemBuilder: (context, index) => _Cell(row: model.rows[index]));
               }
             },
           ),

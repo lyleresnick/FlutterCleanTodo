@@ -33,8 +33,6 @@ part 'Presenter/Presenter.dart';
 part 'Presenter/PresenterOutput.dart';
 part 'Presenter/ViewModel.dart';
 part 'UseCase/UseCase.dart';
-part 'UseCase/CreateUseCase.dart';
-part 'UseCase/UpdateUseCase.dart';
 part 'UseCase/UseCaseOutput.dart';
 part 'UseCase/PresentationModel.dart';
 

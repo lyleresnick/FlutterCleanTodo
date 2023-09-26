@@ -39,22 +39,28 @@ class EditingTodo {
   }
 }
 
-abstract class UseCase with StarterBloc<_UseCaseOutput> {
+@visibleForTesting
+class UseCase with StarterBloc<_UseCaseOutput> {
   late EditingTodo _editingTodo;
 
   final PublishSubject<void> _toDoSceneRefreshSubject;
   final BehaviorSubject<Todo?> _currentTodoSubject;
   final BehaviorSubject<TodoItemStartMode> _itemStartModeSubject;
+  late final _UseCaseDelegate _useCaseDelegate;
 
-  UseCase(this._toDoSceneRefreshSubject, this._currentTodoSubject,
-      this._itemStartModeSubject) {
-    _editingTodo = initialEditingTodo;
+  UseCase(EntityGateway entityGateway, this._toDoSceneRefreshSubject,
+      this._currentTodoSubject, this._itemStartModeSubject) {
+    switch (TodoAppState.instance.itemStartModeSubject.value) {
+      case TodoItemStartModeCreate():
+        _useCaseDelegate = _CreateUseCaseDelegate(this, entityGateway);
+      case TodoItemStartModeUpdate():
+        _useCaseDelegate =
+            _UpdateUseCaseDelegate(this, entityGateway, _currentTodoSubject);
+    }
+
+    _editingTodo = _useCaseDelegate.initialEditingTodo;
     _refreshPresentation();
   }
-
-  EditingTodo get initialEditingTodo;
-  Future<Result<Todo>> save(EditingTodo editingTodo);
-  void cancel();
 
   void _refreshPresentation(
       {ErrorMessage? errorMessage,
@@ -106,7 +112,7 @@ abstract class UseCase with StarterBloc<_UseCaseOutput> {
     }
     _refreshPresentation(isWaiting: true);
     await Future.delayed(Duration(milliseconds: 500));
-    final result = await save(_editingTodo);
+    final result = await _useCaseDelegate.save(_editingTodo);
     switch (result) {
       case success(:final data):
         _currentTodoSubject.value = data;
@@ -121,11 +127,59 @@ abstract class UseCase with StarterBloc<_UseCaseOutput> {
   }
 
   void eventCancel() {
-    cancel();
+    _useCaseDelegate.cancel();
   }
 
   @override
   void dispose() {
     super.dispose();
+  }
+}
+
+abstract interface class _UseCaseDelegate {
+  final EntityGateway _entityGateway;
+  final UseCase _useCase;
+  _UseCaseDelegate(this._useCase, this._entityGateway);
+  EditingTodo get initialEditingTodo;
+  Future<Result<Todo>> save(EditingTodo editingTodo);
+  void cancel();
+}
+
+class _CreateUseCaseDelegate extends _UseCaseDelegate {
+  _CreateUseCaseDelegate(super._useCase, super._entityGateway);
+
+  @override
+  EditingTodo get initialEditingTodo => EditingTodo();
+
+  @override
+  Future<Result<Todo>> save(EditingTodo editingTodo) {
+    return _entityGateway.todoManager.create(editingTodo.toTodoValues());
+  }
+
+  @override
+  void cancel() {
+    _useCase.emit(presentCreateCancelled());
+  }
+}
+
+class _UpdateUseCaseDelegate extends _UseCaseDelegate {
+  final BehaviorSubject<Todo?> _currentTodoSubject;
+
+  _UpdateUseCaseDelegate(super._useCase,
+      super._entityGateway, this._currentTodoSubject);
+
+  @override
+  EditingTodo get initialEditingTodo =>
+      EditingTodo.fromTodo(_currentTodoSubject.value!);
+
+  @override
+  Future<Result<Todo>> save(EditingTodo editingTodo) {
+    return _entityGateway.todoManager
+        .update(editingTodo.id!, editingTodo.toTodoValues());
+  }
+
+  @override
+  void cancel() {
+    _useCase.emit(presentEditingCancelled());
   }
 }
