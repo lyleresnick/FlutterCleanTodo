@@ -15,6 +15,6 @@ class showDisplayView extends _PresenterOutput {}
 
 @visibleForTesting
 class showMessageView extends _PresenterOutput {
-  final String id;
-  showMessageView(this.id);
+  final String message;
+  showMessageView(this.message);
 }

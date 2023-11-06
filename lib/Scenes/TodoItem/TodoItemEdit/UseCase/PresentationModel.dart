@@ -6,12 +6,13 @@ part of '../TodoItemEdit.dart';
 class PresentationModel {
   final String title;
   final String note;
-  DateTime? _completeBy;
+  final DateTime? _completeBy;
   final Priority priority;
-  bool completed;
-  ErrorMessage? errorMessage;
-  bool showEditCompleteBy;
-  bool isWaiting;
+  final bool completed;
+  final String modeTitle;
+  final ErrorMessage? errorMessage;
+  final bool showEditCompleteBy;
+  final bool isWaiting;
 
   PresentationModel({
     required this.title,
@@ -19,6 +20,7 @@ class PresentationModel {
     DateTime? completeBy,
     required this.priority,
     required this.completed,
+    required this.modeTitle,
     this.errorMessage,
     this.showEditCompleteBy = false,
     this.isWaiting = false,
@@ -27,7 +29,8 @@ class PresentationModel {
   DateTime? get completeBy => _completeBy;
 
   factory PresentationModel.fromEditingTodo(EditingTodo editingTodo,
-      {ErrorMessage? errorMessage,
+      {required String modeTitle,
+        ErrorMessage? errorMessage,
       bool showEditCompleteBy = false,
       bool isWaiting = false}) {
     return PresentationModel(
@@ -36,6 +39,7 @@ class PresentationModel {
         completeBy: editingTodo.completeBy,
         priority: editingTodo.priority,
         completed: editingTodo.completed,
+        modeTitle: modeTitle,
         errorMessage: errorMessage,
         isWaiting: isWaiting,
         showEditCompleteBy: showEditCompleteBy);

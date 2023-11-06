@@ -26,8 +26,6 @@ class Presenter
     });
   }
 
-  String get titleLabel => localizedString('todo');
-
 //  TodoItemDisplayRouter
 
   @override

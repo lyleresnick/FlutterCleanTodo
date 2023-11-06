@@ -31,6 +31,7 @@ class TodoLocalizations {
             'save': 'Save',
             'edit': 'Edit',
             'set': 'Set',
+            'create': 'Create',
 
             'todo': 'To Do',
             'todoList': 'To Do List',
@@ -58,6 +59,7 @@ class TodoLocalizations {
             'save': 'Enregistrer',
             'edit': 'Modifier',
             'set': 'Ensemble',
+            'create': 'Créer',
 
             'todo': 'Faire',
             'todoList': 'Liste de choses à faire',

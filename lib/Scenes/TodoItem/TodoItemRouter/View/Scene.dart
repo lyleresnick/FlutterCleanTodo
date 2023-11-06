@@ -31,7 +31,7 @@ class _SceneState extends State<Scene> {
             showLoading() => FullScreenLoadingIndicator(),
             showDisplayView() => TodoItemDisplay.Assembly(_presenter).scene,
             showEditView() => TodoItemEdit.Assembly(_presenter).scene,
-            showMessageView(:final id) => Text(id)
+            showMessageView(:final message) => Center(child: Text(message))
           };
 
           final decoratedScene = (body is ActionDecoratedScene)
@@ -39,13 +39,11 @@ class _SceneState extends State<Scene> {
               : null;
           return Scaffold(
             appBar: AppBar(
-              title: Text(_presenter.titleLabel),
+              title: decoratedScene?.title ?? Text(localizedString('todo')),
               backgroundColor: Colors.lightGreen,
               elevation: platform == TargetPlatform.iOS ? 0.0 : 4.0,
-              actions: decoratedScene?.actions(),
-              leading: decoratedScene?.leading(),
-              automaticallyImplyLeading:
-                  decoratedScene?.automaticallyImplyLeading ?? false,
+              actions: decoratedScene?.actions,
+              leading: decoratedScene?.leading,
             ),
             body: body,
           );

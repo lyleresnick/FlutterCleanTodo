@@ -48,14 +48,13 @@ class UseCase with StarterBloc<_UseCaseOutput> {
   final BehaviorSubject<TodoItemStartMode> _itemStartModeSubject;
   late final _UseCaseDelegate _useCaseDelegate;
 
-  UseCase(EntityGateway entityGateway, this._toDoSceneRefreshSubject,
-      this._currentTodoSubject, this._itemStartModeSubject) {
+  UseCase(EntityGateway entityGateway, this._toDoSceneRefreshSubject, this._currentTodoSubject,
+      this._itemStartModeSubject) {
     switch (TodoAppState.instance.itemStartModeSubject.value) {
       case TodoItemStartModeCreate():
         _useCaseDelegate = _CreateUseCaseDelegate(this, entityGateway);
       case TodoItemStartModeUpdate():
-        _useCaseDelegate =
-            _UpdateUseCaseDelegate(this, entityGateway, _currentTodoSubject);
+        _useCaseDelegate = _UpdateUseCaseDelegate(this, entityGateway, _currentTodoSubject);
     }
 
     _editingTodo = _useCaseDelegate.initialEditingTodo;
@@ -63,10 +62,12 @@ class UseCase with StarterBloc<_UseCaseOutput> {
   }
 
   void _refreshPresentation(
-      {ErrorMessage? errorMessage,
-      bool showEditCompleteBy = false,
-      bool isWaiting = false}) {
+      {ErrorMessage? errorMessage, bool showEditCompleteBy = false, bool isWaiting = false}) {
     emit(presentModel(PresentationModel.fromEditingTodo(_editingTodo,
+        modeTitle: switch (_itemStartModeSubject.value) {
+          TodoItemStartModeCreate() => 'create',
+          TodoItemStartModeUpdate() => 'edit',
+        },
         errorMessage: errorMessage,
         showEditCompleteBy: showEditCompleteBy,
         isWaiting: isWaiting)));
@@ -165,17 +166,14 @@ class _CreateUseCaseDelegate extends _UseCaseDelegate {
 class _UpdateUseCaseDelegate extends _UseCaseDelegate {
   final BehaviorSubject<Todo?> _currentTodoSubject;
 
-  _UpdateUseCaseDelegate(super._useCase,
-      super._entityGateway, this._currentTodoSubject);
+  _UpdateUseCaseDelegate(super._useCase, super._entityGateway, this._currentTodoSubject);
 
   @override
-  EditingTodo get initialEditingTodo =>
-      EditingTodo.fromTodo(_currentTodoSubject.value!);
+  EditingTodo get initialEditingTodo => EditingTodo.fromTodo(_currentTodoSubject.value!);
 
   @override
   Future<Result<Todo>> save(EditingTodo editingTodo) {
-    return _entityGateway.todoManager
-        .update(editingTodo.id!, editingTodo.toTodoValues());
+    return _entityGateway.todoManager.update(editingTodo.id!, editingTodo.toTodoValues());
   }
 
   @override

@@ -5,8 +5,9 @@ part of '../TodoItemEdit.dart';
 @visibleForTesting
 class Scene extends StatefulWidget implements ActionDecoratedScene {
   final Presenter _presenter;
-  final _saveKey = GlobalKey<StatefullyEnabledState>();
-  final _cancelKey = GlobalKey<StatefullyEnabledState>();
+  final _saveKey = GlobalKey<StatefullySetState>();
+  final _cancelKey = GlobalKey<StatefullySetState>();
+  final _editKey = GlobalKey<StatefullySetState>();
 
   Scene(this._presenter);
 
@@ -14,9 +15,16 @@ class Scene extends StatefulWidget implements ActionDecoratedScene {
   State<Scene> createState() => _SceneState();
 
   @override
-  List<Widget> actions() {
+  Widget get title {
+    return StatefullySet<String>(
+        key: _editKey,
+        builder: (context, value) => Text(value));
+  }
+
+  @override
+  List<Widget> get actions {
     return [
-      StatefullyEnabled(
+      StatefullySet<bool>(
         key: _saveKey,
         builder: (context, enabled) => _SaveButton(
           enabled: enabled,
@@ -27,17 +35,14 @@ class Scene extends StatefulWidget implements ActionDecoratedScene {
   }
 
   @override
-  Widget leading() {
-    return StatefullyEnabled(
+  Widget get leading {
+    return StatefullySet<bool>(
         key: _cancelKey,
         builder: (context, enabled) => _CancelButton(
               enabled: enabled,
               onPressed: _presenter.eventCancel,
             ));
   }
-
-  @override
-  bool get automaticallyImplyLeading => false;
 }
 
 class _SceneState extends State<Scene> {
@@ -56,16 +61,12 @@ class _SceneState extends State<Scene> {
         builder: (context, data) {
           switch (data) {
             case showModel(:final model):
-              if (model.showEditCompleteBy)
-                _showEditCompleteByPopover(context, model.completeBy!);
+              if (model.showEditCompleteBy) _showEditCompleteByPopover(context, model.completeBy!);
+              if (model.errorMessage != null) _showDialog(context, model.errorMessage!);
 
-              if (model.errorMessage != null)
-                _showDialog(context, model.errorMessage!);
-
-              StatefullyEnabled.set(
-                  key: widget._saveKey, enabled: !model.isWaiting);
-              StatefullyEnabled.set(
-                  key: widget._cancelKey, enabled: !model.isWaiting);
+              StatefullySet.value(key: widget._saveKey, value: !model.isWaiting);
+              StatefullySet.value(key: widget._cancelKey, value: !model.isWaiting);
+              StatefullySet.value(key: widget._editKey, value: localizedString(model.modeTitle));
 
               return Waiting(
                 isWaiting: model.isWaiting,
@@ -77,19 +78,19 @@ class _SceneState extends State<Scene> {
                           title: localizedString("title"),
                           widget: Expanded(
                               child: TodoTextField(
-                                value: model.title,
-                                placeholder: localizedString("enterATitle"),
-                                onChanged: _presenter.eventEditedTitle,
-                              ))),
+                            value: model.title,
+                            placeholder: localizedString("enterATitle"),
+                            onChanged: _presenter.eventEditedTitle,
+                          ))),
                       _EditRow(
                           title: localizedString("note"),
                           widget: Expanded(
                               child: TodoTextField(
-                                value: model.note,
-                                minLines: 9,
-                                maxLines: 9,
-                                onChanged: _presenter.eventEditedNote,
-                              ))),
+                            value: model.note,
+                            minLines: 9,
+                            maxLines: 9,
+                            onChanged: _presenter.eventEditedNote,
+                          ))),
                       _EditRow(
                           title: localizedString("completeBy"),
                           widget: Row(
@@ -103,20 +104,20 @@ class _SceneState extends State<Scene> {
                                   onTap: !model.completeBySwitchIsOn
                                       ? null
                                       : _presenter.eventEnableEditCompleteBy,
-                                  child: Text(model.completeByString,
-                                      style: TextStyle(fontSize: 17))),
+                                  child:
+                                      Text(model.completeByString, style: TextStyle(fontSize: 17))),
                             ],
                           )),
                       _EditRow(
                           title: localizedString("priority"),
                           widget: Expanded(
                               child: TodoExclusive(
-                                value: model.priority,
-                                itemNames: ["none", "low", "medium", "high"]
-                                    .map((value) => localizedString(value))
-                                    .toList(),
-                                onValueChanged: _presenter.eventEditedPriority,
-                              ))),
+                            value: model.priority,
+                            itemNames: ["none", "low", "medium", "high"]
+                                .map((value) => localizedString(value))
+                                .toList(),
+                            onValueChanged: _presenter.eventEditedPriority,
+                          ))),
                       _EditRow(
                           title: localizedString("completed"),
                           widget: TodoSwitch(
@@ -134,18 +135,15 @@ class _SceneState extends State<Scene> {
   void _showEditCompleteByPopover(BuildContext context, DateTime completeBy) {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       if (Platform.isIOS)
-        CupertinoPopoverDatePicker().show(completeBy, context,
-            _presenter.eventEditedCompleteBy, localizedString("set"));
+        CupertinoPopoverDatePicker()
+            .show(completeBy, context, _presenter.eventEditedCompleteBy, localizedString("set"));
       else {
         final newCompleteBy = await showDatePicker(
             context: context,
-            firstDate: DateTime.now().isBefore(completeBy)
-                ? DateTime.now()
-                : completeBy,
+            firstDate: DateTime.now().isBefore(completeBy) ? DateTime.now() : completeBy,
             initialDate: completeBy,
             lastDate: DateTime(2030));
-        if (newCompleteBy != null)
-          _presenter.eventEditedCompleteBy(newCompleteBy);
+        if (newCompleteBy != null) _presenter.eventEditedCompleteBy(newCompleteBy);
       }
     });
   }
@@ -200,9 +198,7 @@ class _SaveButton extends StatelessWidget {
           ? CupertinoButton(
               child: Text(
                 localizedString("save"),
-                style: TextStyle(
-                    fontSize: 18,
-                    color: enabled ? Colors.white : disabledColor),
+                style: TextStyle(fontSize: 18, color: enabled ? Colors.white : disabledColor),
               ),
               onPressed: onPressed,
             )

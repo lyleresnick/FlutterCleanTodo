@@ -13,8 +13,8 @@ class Scene extends StatefulWidget {
 
 class _SceneState extends State<Scene> {
   late final Presenter _presenter;
-  final _plusKey = GlobalKey<StatefullyEnabledState>();
-  final _checkedKey = GlobalKey<StatefullyEnabledState>();
+  final _plusKey = GlobalKey<StatefullySetState>();
+  final _checkedKey = GlobalKey<StatefullySetState>();
 
   @override
   void initState() {
@@ -32,11 +32,11 @@ class _SceneState extends State<Scene> {
           backgroundColor: Colors.lightGreen,
           elevation: platform == TargetPlatform.iOS ? 0.0 : 4.0,
           actions: [
-            StatefullyEnabled(
+            StatefullySet<bool>(
                 key: _checkedKey,
                 builder: (context, enabled) =>
                     _CheckedButton(enabled: enabled, onPressed: _presenter.eventShowCompleted)),
-            StatefullyEnabled(
+            StatefullySet<bool>(
               key: _plusKey,
               builder: (context, enabled) => _AddTodoButton(
                 enabled: enabled,
@@ -51,12 +51,12 @@ class _SceneState extends State<Scene> {
             builder: (context, data) {
               switch (data) {
                 case showLoading():
-                  StatefullyEnabled.set(key: _plusKey, enabled: false);
-                  StatefullyEnabled.set(key: _checkedKey, enabled: false);
+                  StatefullySet.value(key: _plusKey, value: false);
+                  StatefullySet.value(key: _checkedKey, value: false);
                   return FullScreenLoadingIndicator();
                 case showModel(:final model):
-                  StatefullyEnabled.set(key: _plusKey, enabled: true);
-                  StatefullyEnabled.set(key: _checkedKey, enabled: true);
+                  StatefullySet.value(key: _plusKey, value: true);
+                  StatefullySet.value(key: _checkedKey, value: true);
                   return ListView.builder(
                       itemCount: model.rows.length,
                       itemBuilder: (context, index) => _Cell(row: model.rows[index]));
@@ -114,9 +114,8 @@ class _CheckedButtonState extends State<_CheckedButton> {
   @override
   Widget build(BuildContext context) {
     final platform = Theme.of(context).platform;
-    final icon = (platform == TargetPlatform.iOS)
-        ? Icon(CupertinoIcons.checkmark_alt)
-        : Icon(Icons.check);
+    final icon =
+        (platform == TargetPlatform.iOS) ? Icon(CupertinoIcons.checkmark_alt) : Icon(Icons.check);
     final selectedIcon = (platform == TargetPlatform.iOS)
         ? Icon(CupertinoIcons.checkmark_rectangle_fill)
         : Icon(Icons.check_box);

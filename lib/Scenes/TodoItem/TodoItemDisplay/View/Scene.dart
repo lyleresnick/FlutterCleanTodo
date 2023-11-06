@@ -12,20 +12,22 @@ class Scene extends StatefulWidget implements ActionDecoratedScene {
   State<Scene> createState() => _SceneState();
 
   @override
-  Widget? leading() {
+  Widget? get leading {
     return null;
   }
 
   @override
-  List<Widget> actions() {
+  Widget get title {
+    return Text(localizedString('todo'));
+  }
+
+  @override
+  List<Widget> get actions {
     return [
       _EditButton(
           label: _presenter.editLabel, onPressed: _presenter.eventModeEdit)
     ];
   }
-
-  @override
-  bool get automaticallyImplyLeading => true;
 }
 
 class _SceneState extends State<Scene> {

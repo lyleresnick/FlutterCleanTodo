@@ -11,9 +11,10 @@ class ViewModel {
   final String completeByString;
   final int priority;
   final bool completed;
-  ErrorMessage? errorMessage;
-  bool showEditCompleteBy;
-  bool isWaiting;
+  final String modeTitle;
+  final ErrorMessage? errorMessage;
+  final bool showEditCompleteBy;
+  final bool isWaiting;
 
   ViewModel.fromModel(PresentationModel model)
       : title = model.title,
@@ -24,6 +25,7 @@ class ViewModel {
         completeBySwitchIsOn = (model.completeBy != null),
         priority = model.priority.bangs,
         completed = model.completed,
+        modeTitle = model.modeTitle,
         errorMessage = model.errorMessage,
         showEditCompleteBy = model.showEditCompleteBy,
         isWaiting = model.isWaiting;
