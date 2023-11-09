@@ -42,6 +42,10 @@ class Presenter with StarterBloc<_PresenterOutput> {
     _router.routeEditView();
   }
 
+  void eventBack() {
+    _router.routeDisplayBack();
+  }
+
   RowViewModel row(int index) {
     return _viewModelList[index];
   }

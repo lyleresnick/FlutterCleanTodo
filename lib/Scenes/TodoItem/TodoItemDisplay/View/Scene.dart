@@ -12,8 +12,8 @@ class Scene extends StatefulWidget implements ActionDecoratedScene {
   State<Scene> createState() => _SceneState();
 
   @override
-  Widget? get leading {
-    return null;
+  Widget get leading {
+    return BackButton(color: Colors.white, onPressed: _presenter.eventBack);
   }
 
   @override
@@ -23,10 +23,7 @@ class Scene extends StatefulWidget implements ActionDecoratedScene {
 
   @override
   List<Widget> get actions {
-    return [
-      _EditButton(
-          label: _presenter.editLabel, onPressed: _presenter.eventModeEdit)
-    ];
+    return [_EditButton(label: _presenter.editLabel, onPressed: _presenter.eventModeEdit)];
   }
 }
 

@@ -33,6 +33,11 @@ class Presenter
     emit(showEditView());
   }
 
+  @override
+  void routeDisplayBack() {
+    router.routeItemPop();
+  }
+
 //  TodoItemEditRouter
 
   @override

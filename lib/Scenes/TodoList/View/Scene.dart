@@ -3,18 +3,41 @@
 part of '../TodoList.dart';
 
 @visibleForTesting
-class Scene extends StatefulWidget {
+class Scene extends StatefulWidget implements ActionDecoratedScene {
   final Presenter _presenter;
+  final _plusKey = GlobalKey<StatefullySetState>();
+  final _checkedKey = GlobalKey<StatefullySetState>();
+
   Scene(this._presenter);
 
   @override
   State<Scene> createState() => _SceneState();
+
+  @override
+  Widget get title =>
+      Text(localizedString("todoList"), style: TextStyle(color: Colors.white));
+
+  @override
+  List<Widget>? get actions => [
+        StatefullySet<bool>(
+            key: _checkedKey,
+            builder: (context, enabled) => _CheckedButton(
+                enabled: enabled, onPressed: _presenter.eventShowCompleted)),
+        StatefullySet<bool>(
+          key: _plusKey,
+          builder: (context, enabled) => _AddTodoButton(
+            enabled: enabled,
+            onPressed: _presenter.eventCreate,
+          ),
+        )
+      ];
+
+  @override
+  Widget? get leading => null;
 }
 
 class _SceneState extends State<Scene> {
   late final Presenter _presenter;
-  final _plusKey = GlobalKey<StatefullySetState>();
-  final _checkedKey = GlobalKey<StatefullySetState>();
 
   @override
   void initState() {
@@ -24,57 +47,34 @@ class _SceneState extends State<Scene> {
 
   @override
   Widget build(BuildContext context) {
-    final platform = Theme.of(context).platform;
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(localizedString("todoList"),
-              style: TextStyle(color: Colors.white)),
-          centerTitle: platform == TargetPlatform.iOS,
-          backgroundColor: Colors.lightGreen,
-          elevation: platform == TargetPlatform.iOS ? 0.0 : 4.0,
-          actions: [
-            StatefullySet<bool>(
-                key: _checkedKey,
-                builder: (context, enabled) => _CheckedButton(
-                    enabled: enabled,
-                    onPressed: _presenter.eventShowCompleted)),
-            StatefullySet<bool>(
-              key: _plusKey,
-              builder: (context, enabled) => _AddTodoButton(
-                enabled: enabled,
-                onPressed: _presenter.eventCreate,
-              ),
-            )
-          ],
-        ),
-        body: SafeArea(
-          child: BlocConsumer<Presenter, _PresenterOutput>(
-            bloc: _presenter,
-            listener: (output) {
-              switch (output) {
-                case showLoading():
-                  StatefullySet.value(key: _plusKey, value: false);
-                  StatefullySet.value(key: _checkedKey, value: false);
-                case showModel():
-                  StatefullySet.value(key: _plusKey, value: true);
-                  StatefullySet.value(key: _checkedKey, value: true);
-              }
-            },
-            builder: (context, output) {
-              switch (output) {
-                case showLoading():
-                  return FullScreenLoadingIndicator();
-                case showModel(:final model):
-                  return ListView.builder(
-                      itemCount: model.rows.length,
-                      itemBuilder: (context, index) => _Cell(
-                            row: model.rows[index],
-                            presenter: _presenter,
-                          ));
-              }
-            },
-          ),
-        ));
+    return SafeArea(
+      child: BlocConsumer<Presenter, _PresenterOutput>(
+        bloc: _presenter,
+        listener: (output) {
+          switch (output) {
+            case showLoading():
+              StatefullySet.value(key: widget._plusKey, value: false);
+              StatefullySet.value(key: widget._checkedKey, value: false);
+            case showModel():
+              StatefullySet.value(key: widget._plusKey, value: true);
+              StatefullySet.value(key: widget._checkedKey, value: true);
+          }
+        },
+        builder: (context, data) {
+          switch (data) {
+            case showLoading():
+              return FullScreenLoadingIndicator();
+            case showModel(:final model):
+              return ListView.builder(
+                  itemCount: model.rows.length,
+                  itemBuilder: (context, index) => _Cell(
+                        row: model.rows[index],
+                        presenter: _presenter,
+                      ));
+          }
+        },
+      ),
+    );
   }
 
   @override

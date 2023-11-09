@@ -24,7 +24,8 @@ class _SceneState extends State<Scene> {
     _pages = [
       MaterialPage(
           key: ValueKey("TodoList"),
-          child: TodoList.Assembly(_presenter).scene),
+          child: NavigatorScaffold(
+              child: TodoList.Assembly(_presenter).scene)),
     ];
 
     _presenter.stream.listen((event) {
@@ -69,11 +70,33 @@ extension on PresenterOutput {
   MaterialPage _page(Presenter presenter) {
     return switch (this) {
       PresenterOutput.showRowDetail => MaterialPage(
-          key: ValueKey("TodoItemRouter"),
-          child: TodoItemRouter.Assembly(presenter).scene),
+          key: ValueKey("TodoItemRouter"), child: NavigatorScaffold(child: TodoItemRouter.Assembly(presenter).scene)),
       _ => MaterialPage(
-          key: ValueKey("ErrorScene"),
-          child: ErrorScene(text: "Output not handled: '$this'"))
+          key: ValueKey("ErrorScene"), child: NavigatorScaffold(child: ErrorScene(text: "Output not handled: '$this'")))
     };
+  }
+}
+
+class NavigatorScaffold extends StatelessWidget {
+  final Widget child;
+
+  NavigatorScaffold({required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    final platform = Theme.of(context).platform;
+    final decoratedScene = (child is ActionDecoratedScene) ? child as ActionDecoratedScene : null;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: decoratedScene?.title,
+        backgroundColor: Colors.lightGreen,
+        elevation: platform == TargetPlatform.iOS ? 0.0 : 4.0,
+        centerTitle: platform == TargetPlatform.iOS,
+        actions: decoratedScene?.actions,
+        leading: decoratedScene?.leading,
+      ),
+      body: child,
+    );
   }
 }

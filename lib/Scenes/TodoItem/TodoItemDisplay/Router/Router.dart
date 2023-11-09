@@ -4,4 +4,5 @@ part of '../TodoItemDisplay.dart';
 
 abstract interface class Router {
     void routeEditView();
+    void routeDisplayBack();
 }
