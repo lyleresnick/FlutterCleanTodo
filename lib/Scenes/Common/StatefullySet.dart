@@ -10,7 +10,7 @@ class StatefullySet<T> extends StatefulWidget {
   @override
   State<StatefullySet<T>> createState() => StatefullySetState<T>();
 
-  static void value<T>({required GlobalKey<StatefullySetState<T>> key, required T value}) {
+  static void value<T>({required GlobalKey<StatefullySetState<T>> key, required T? value}) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       key.currentState!.value = value;
     });
@@ -31,7 +31,7 @@ class StatefullySetState<T> extends State<StatefullySet<T>> {
     return _value != null ? widget.builder(context, _value!) : Container();
   }
 
-  set value(T value) {
+  set value(T? value) {
     setState(() {
       _value = value;
     });

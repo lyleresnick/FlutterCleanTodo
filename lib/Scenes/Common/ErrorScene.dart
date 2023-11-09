@@ -8,14 +8,10 @@ class ErrorScene extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text('Error'),
-        ),
-        body: Container(
+    return Container(
             height: double.infinity,
             width: double.infinity,
             color: Colors.red,
-            child: Text(text, style: TextStyle(color: Colors.white, fontSize: 28))));
+            child: Text(text, style: TextStyle(color: Colors.white, fontSize: 28)));
   }
 }

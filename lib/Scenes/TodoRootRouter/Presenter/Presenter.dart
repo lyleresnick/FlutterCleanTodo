@@ -12,6 +12,11 @@ class Presenter with StarterBloc<PresenterOutput>
     emit(PresenterOutput.showPop);
   }
 
+  @override
+  void routeItemPop() {
+    emit(PresenterOutput.showPop);
+  }
+
 // TodoListRouter
 
   @override
