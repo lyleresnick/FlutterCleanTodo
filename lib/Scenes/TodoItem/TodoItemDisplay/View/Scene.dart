@@ -18,7 +18,7 @@ class Scene extends StatefulWidget implements ActionDecoratedScene {
 
   @override
   Widget get title {
-    return Text(localizedString('todo'));
+    return Text(localizedString('todo'), style: TextStyle(color: Colors.white));
   }
 
   @override
@@ -116,6 +116,7 @@ class _EditButton extends StatelessWidget {
           )
         : IconButton(
             icon: Icon(Icons.edit),
+            color: Colors.white,
             onPressed: onPressed,
           );
   }

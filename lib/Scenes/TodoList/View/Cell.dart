@@ -18,7 +18,7 @@ class _Cell extends StatelessWidget {
                     presenter.eventItemSelected(row.index);
                 },
               child: Container(
-                height: 56,
+                height: 58,
                 decoration: BoxDecoration(
                     color: Colors.white,
                     border: Border(bottom: BorderSide(color: Colors.grey[300]!))

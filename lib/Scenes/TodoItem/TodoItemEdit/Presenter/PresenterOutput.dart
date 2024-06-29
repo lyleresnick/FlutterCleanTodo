@@ -5,7 +5,6 @@ part of '../TodoItemEdit.dart';
 sealed class _PresenterOutput {}
 
 @visibleForTesting
-@visibleForTesting
 class showModel extends _PresenterOutput {
   final ViewModel model;
   showModel(this.model);

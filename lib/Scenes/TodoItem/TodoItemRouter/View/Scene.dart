@@ -39,7 +39,10 @@ class _SceneState extends State<Scene> {
               : null;
           return Scaffold(
             appBar: AppBar(
-              title: decoratedScene?.title ?? Text(localizedString('todo')),
+              iconTheme: IconThemeData(
+                  color: Colors.white
+              ),
+              title: decoratedScene?.title ?? Text(localizedString('todo'), style: TextStyle(color: Colors.white),),
               backgroundColor: Colors.lightGreen,
               elevation: platform == TargetPlatform.iOS ? 0.0 : 4.0,
               actions: decoratedScene?.actions,

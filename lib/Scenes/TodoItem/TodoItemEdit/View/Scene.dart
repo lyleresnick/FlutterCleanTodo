@@ -17,8 +17,7 @@ class Scene extends StatefulWidget implements ActionDecoratedScene {
   @override
   Widget get title {
     return StatefullySet<String>(
-        key: _editKey,
-        builder: (context, value) => Text(value));
+        key: _editKey, builder: (context, value) => Text(value, style: TextStyle(color: Colors.white)));
   }
 
   @override
@@ -61,12 +60,18 @@ class _SceneState extends State<Scene> {
         builder: (context, data) {
           switch (data) {
             case showModel(:final model):
-              if (model.showEditCompleteBy) _showEditCompleteByPopover(context, model.completeBy!);
-              if (model.errorMessage != null) _showDialog(context, model.errorMessage!);
+              if (model.showEditCompleteBy)
+                _showEditCompleteByPopover(context, model.completeBy!);
+              if (model.errorMessage != null)
+                _showDialog(context, model.errorMessage!);
 
-              StatefullySet.value(key: widget._saveKey, value: !model.isWaiting);
-              StatefullySet.value(key: widget._cancelKey, value: !model.isWaiting);
-              StatefullySet.value(key: widget._editKey, value: localizedString(model.modeTitle));
+              StatefullySet.value(
+                  key: widget._saveKey, value: !model.isWaiting);
+              StatefullySet.value(
+                  key: widget._cancelKey, value: !model.isWaiting);
+              StatefullySet.value(
+                  key: widget._editKey,
+                  value: localizedString(model.modeTitle));
 
               return Waiting(
                 isWaiting: model.isWaiting,
@@ -104,8 +109,8 @@ class _SceneState extends State<Scene> {
                                   onTap: !model.completeBySwitchIsOn
                                       ? null
                                       : _presenter.eventEnableEditCompleteBy,
-                                  child:
-                                      Text(model.completeByString, style: TextStyle(fontSize: 17))),
+                                  child: Text(model.completeByString,
+                                      style: TextStyle(fontSize: 17))),
                             ],
                           )),
                       _EditRow(
@@ -135,15 +140,18 @@ class _SceneState extends State<Scene> {
   void _showEditCompleteByPopover(BuildContext context, DateTime completeBy) {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       if (Platform.isIOS)
-        CupertinoPopoverDatePicker()
-            .show(completeBy, context, _presenter.eventEditedCompleteBy, localizedString("set"));
+        CupertinoPopoverDatePicker().show(completeBy, context,
+            _presenter.eventEditedCompleteBy, localizedString("set"));
       else {
         final newCompleteBy = await showDatePicker(
             context: context,
-            firstDate: DateTime.now().isBefore(completeBy) ? DateTime.now() : completeBy,
+            firstDate: DateTime.now().isBefore(completeBy)
+                ? DateTime.now()
+                : completeBy,
             initialDate: completeBy,
             lastDate: DateTime(2030));
-        if (newCompleteBy != null) _presenter.eventEditedCompleteBy(newCompleteBy);
+        if (newCompleteBy != null)
+          _presenter.eventEditedCompleteBy(newCompleteBy);
       }
     });
   }
@@ -198,12 +206,15 @@ class _SaveButton extends StatelessWidget {
           ? CupertinoButton(
               child: Text(
                 localizedString("save"),
-                style: TextStyle(fontSize: 18, color: enabled ? Colors.white : disabledColor),
+                style: TextStyle(
+                    fontSize: 18,
+                    color: enabled ? Colors.white : disabledColor),
               ),
               onPressed: onPressed,
             )
           : IconButton(
               icon: Icon(Icons.save),
+              color: Colors.white,
               disabledColor: disabledColor,
               onPressed: onPressed,
             );
@@ -220,6 +231,7 @@ class _CancelButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       icon: Icon((Platform.isIOS) ? Icons.clear : Icons.cancel),
+      color: Colors.white,
       onPressed: (enabled) ? this.onPressed : null,
       disabledColor: Colors.white60,
     );

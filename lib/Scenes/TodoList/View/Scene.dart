@@ -27,15 +27,16 @@ class _SceneState extends State<Scene> {
     final platform = Theme.of(context).platform;
     return Scaffold(
         appBar: AppBar(
-          title: Text(localizedString("todoList")),
+          title: Text(localizedString("todoList"), style: TextStyle(color: Colors.white)),
           centerTitle: platform == TargetPlatform.iOS,
           backgroundColor: Colors.lightGreen,
           elevation: platform == TargetPlatform.iOS ? 0.0 : 4.0,
           actions: [
             StatefullySet<bool>(
                 key: _checkedKey,
-                builder: (context, enabled) =>
-                    _CheckedButton(enabled: enabled, onPressed: _presenter.eventShowCompleted)),
+                builder: (context, enabled) => _CheckedButton(
+                    enabled: enabled,
+                    onPressed: _presenter.eventShowCompleted)),
             StatefullySet<bool>(
               key: _plusKey,
               builder: (context, enabled) => _AddTodoButton(
@@ -59,7 +60,8 @@ class _SceneState extends State<Scene> {
                   StatefullySet.value(key: _checkedKey, value: true);
                   return ListView.builder(
                       itemCount: model.rows.length,
-                      itemBuilder: (context, index) => _Cell(row: model.rows[index]));
+                      itemBuilder: (context, index) =>
+                          _Cell(row: model.rows[index]));
               }
             },
           ),
@@ -80,18 +82,17 @@ class _AddTodoButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final onPressed = (enabled) ? this.onPressed : null;
     final disabledColor = Colors.white60;
-    return (Theme.of(context).platform == TargetPlatform.iOS)
-        ? IconButton(
-            iconSize: 34,
-            icon: Icon(CupertinoIcons.add),
-            disabledColor: disabledColor,
-            onPressed: onPressed,
-          )
-        : IconButton(
-            icon: Icon(Icons.add),
-            disabledColor: disabledColor,
-            onPressed: onPressed,
-          );
+    double? iconSize;
+    if (Theme.of(context).platform == TargetPlatform.iOS) {
+      iconSize = 34;
+    }
+    return IconButton(
+      iconSize: iconSize,
+      icon: Icon(CupertinoIcons.add),
+      color: Colors.white,
+      disabledColor: disabledColor,
+      onPressed: onPressed,
+    );
   }
 }
 
@@ -114,8 +115,9 @@ class _CheckedButtonState extends State<_CheckedButton> {
   @override
   Widget build(BuildContext context) {
     final platform = Theme.of(context).platform;
-    final icon =
-        (platform == TargetPlatform.iOS) ? Icon(CupertinoIcons.checkmark_alt) : Icon(Icons.check);
+    final icon = (platform == TargetPlatform.iOS)
+        ? Icon(CupertinoIcons.checkmark_alt)
+        : Icon(Icons.check);
     final selectedIcon = (platform == TargetPlatform.iOS)
         ? Icon(CupertinoIcons.checkmark_rectangle_fill)
         : Icon(Icons.check_box);
