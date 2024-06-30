@@ -1,20 +1,26 @@
 //  Copyright (c) 2023 Lyle Resnick. All rights reserved.
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/cupertino.dart';
 
-import 'Bloc.dart';
-import 'BlocProvider.dart';
+import 'BaseBlocBuilder.dart';
+import 'FullScreenLoadingIndicator.dart';
+import 'StarterBloc.dart';
 
-class BlocBuilder<SomeBloc extends Bloc<Output>, Output>
+class BlocBuilder<SomeBloc extends StarterBloc<BlocOutput>, BlocOutput>
     extends StatelessWidget {
-  final SomeBloc bloc;
-  final Widget Function(BuildContext, AsyncSnapshot<Output>) builder;
+  final SomeBloc? bloc;
+  final Widget Function(BuildContext, BlocOutput) builder;
   BlocBuilder({required this.bloc, required this.builder});
-
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
+    return BaseBlocBuilder<SomeBloc, BlocOutput>(
         bloc: bloc,
-        child: StreamBuilder<Output>(stream: bloc.stream, builder: builder));
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return SizedBox();
+          }
+          final data = snapshot.data!;
+          return builder(context, data);
+        });
   }
 }

@@ -3,13 +3,12 @@ part of '../TodoList.dart';
 class _Cell extends StatelessWidget {
 
     final RowViewModel row;
+    final Presenter presenter;
 
-    _Cell({required this.row});
+    _Cell({required this.row, required this.presenter });
 
     @override
     Widget build(BuildContext context) {
-
-        final presenter = BlocProvider.of<Presenter>(context)!;
 
         return Dismissible(
             key: UniqueKey(),

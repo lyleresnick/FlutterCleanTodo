@@ -24,7 +24,7 @@ class _SceneState extends State<Scene> {
   @override
   Widget build(BuildContext context) {
     final platform = Theme.of(context).platform;
-    return BlocBuilderData<Presenter, _PresenterOutput>(
+    return BlocBuilder<Presenter, _PresenterOutput>(
         bloc: _presenter,
         builder: (context, data) {
           final body = switch (data) {
@@ -51,5 +51,11 @@ class _SceneState extends State<Scene> {
             body: body,
           );
         });
+  }
+
+  @override
+  void dispose() {
+    _presenter.dispose();
+    super.dispose();
   }
 }

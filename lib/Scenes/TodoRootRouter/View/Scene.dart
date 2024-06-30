@@ -57,6 +57,12 @@ class _SceneState extends State<Scene> {
       },
     );
   }
+
+  @override
+  void dispose() {
+    _presenter.dispose();
+    super.dispose();
+  }
 }
 
 extension on PresenterOutput {

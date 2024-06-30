@@ -27,7 +27,8 @@ class _SceneState extends State<Scene> {
     final platform = Theme.of(context).platform;
     return Scaffold(
         appBar: AppBar(
-          title: Text(localizedString("todoList"), style: TextStyle(color: Colors.white)),
+          title: Text(localizedString("todoList"),
+              style: TextStyle(color: Colors.white)),
           centerTitle: platform == TargetPlatform.iOS,
           backgroundColor: Colors.lightGreen,
           elevation: platform == TargetPlatform.iOS ? 0.0 : 4.0,
@@ -47,7 +48,7 @@ class _SceneState extends State<Scene> {
           ],
         ),
         body: SafeArea(
-          child: BlocBuilderData<Presenter, _PresenterOutput>(
+          child: BlocBuilder<Presenter, _PresenterOutput>(
             bloc: _presenter,
             builder: (context, data) {
               switch (data) {
@@ -60,12 +61,20 @@ class _SceneState extends State<Scene> {
                   StatefullySet.value(key: _checkedKey, value: true);
                   return ListView.builder(
                       itemCount: model.rows.length,
-                      itemBuilder: (context, index) =>
-                          _Cell(row: model.rows[index]));
+                      itemBuilder: (context, index) => _Cell(
+                            row: model.rows[index],
+                            presenter: _presenter,
+                          ));
               }
             },
           ),
         ));
+  }
+
+  @override
+  void dispose() {
+    _presenter.dispose();
+    super.dispose();
   }
 }
 

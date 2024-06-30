@@ -55,7 +55,7 @@ class _SceneState extends State<Scene> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilderData<Presenter, _PresenterOutput>(
+    return BlocBuilder<Presenter, _PresenterOutput>(
         bloc: _presenter,
         builder: (context, data) {
           switch (data) {
@@ -159,6 +159,12 @@ class _SceneState extends State<Scene> {
   void _showDialog(BuildContext context, ErrorMessage errorMessage) {
     TodoOkDialog.show(context, localizedString(errorMessage.titleToken),
         localizedString(errorMessage.messageToken));
+  }
+
+  @override
+  void dispose() {
+    _presenter.dispose();
+    super.dispose();
   }
 }
 
