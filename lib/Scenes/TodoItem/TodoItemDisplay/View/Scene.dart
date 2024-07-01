@@ -43,8 +43,8 @@ class _SceneState extends State<Scene> {
   Widget build(BuildContext context) {
     return BlocBuilder<Presenter, _PresenterOutput>(
         bloc: _presenter,
-        builder: (context, data) {
-          return switch (data) {
+        builder: (context, output) {
+          return switch (output) {
             showFieldList(:final model) => ListView.builder(
                 itemCount: model.length,
                 itemBuilder: (BuildContext context, int i) {

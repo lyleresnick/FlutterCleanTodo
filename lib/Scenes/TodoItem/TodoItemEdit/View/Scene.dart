@@ -7,7 +7,7 @@ class Scene extends StatefulWidget implements ActionDecoratedScene {
   final Presenter _presenter;
   final _saveKey = GlobalKey<StatefullySetState>();
   final _cancelKey = GlobalKey<StatefullySetState>();
-  final _editKey = GlobalKey<StatefullySetState>();
+  final _titleKey = GlobalKey<StatefullySetState>();
 
   Scene(this._presenter);
 
@@ -17,7 +17,9 @@ class Scene extends StatefulWidget implements ActionDecoratedScene {
   @override
   Widget get title {
     return StatefullySet<String>(
-        key: _editKey, builder: (context, value) => Text(value, style: TextStyle(color: Colors.white)));
+        key: _titleKey,
+        builder: (context, value) =>
+            Text(value, style: TextStyle(color: Colors.white)));
   }
 
   @override
@@ -55,10 +57,10 @@ class _SceneState extends State<Scene> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<Presenter, _PresenterOutput>(
+    return BlocConsumer<Presenter, _PresenterOutput>(
         bloc: _presenter,
-        builder: (context, data) {
-          switch (data) {
+        listener: (output) {
+          switch (output) {
             case showModel(:final model):
               if (model.showEditCompleteBy)
                 _showEditCompleteByPopover(context, model.completeBy!);
@@ -70,9 +72,13 @@ class _SceneState extends State<Scene> {
               StatefullySet.value(
                   key: widget._cancelKey, value: !model.isWaiting);
               StatefullySet.value(
-                  key: widget._editKey,
+                  key: widget._titleKey,
                   value: localizedString(model.modeTitle));
-
+          }
+        },
+        builder: (context, output) {
+          switch (output) {
+            case showModel(:final model):
               return Waiting(
                 isWaiting: model.isWaiting,
                 child: SingleChildScrollView(
@@ -137,8 +143,7 @@ class _SceneState extends State<Scene> {
         });
   }
 
-  void _showEditCompleteByPopover(BuildContext context, DateTime completeBy) {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+  Future<void> _showEditCompleteByPopover(BuildContext context, DateTime completeBy) async {
       if (Platform.isIOS)
         CupertinoPopoverDatePicker().show(completeBy, context,
             _presenter.eventEditedCompleteBy, localizedString("set"));
@@ -153,7 +158,6 @@ class _SceneState extends State<Scene> {
         if (newCompleteBy != null)
           _presenter.eventEditedCompleteBy(newCompleteBy);
       }
-    });
   }
 
   void _showDialog(BuildContext context, ErrorMessage errorMessage) {

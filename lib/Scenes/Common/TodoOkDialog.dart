@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 
 class TodoOkDialog {
   static void show(BuildContext context, String alertTitle, String message) {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       final platform = Theme.of(context).platform;
       if (platform == TargetPlatform.iOS)
         unawaited(showCupertinoDialog(
@@ -33,6 +32,5 @@ class TodoOkDialog {
                         onPressed: () => Navigator.of(context).pop(),
                       )
                     ])));
-    });
   }
 }

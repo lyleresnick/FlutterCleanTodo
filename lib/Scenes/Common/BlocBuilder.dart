@@ -3,17 +3,16 @@
 import 'package:flutter/cupertino.dart';
 
 import 'BaseBlocBuilder.dart';
-import 'FullScreenLoadingIndicator.dart';
-import 'StarterBloc.dart';
+import 'Bloc.dart';
 
-class BlocBuilder<SomeBloc extends StarterBloc<BlocOutput>, BlocOutput>
+class BlocBuilder<SomeBloc extends Bloc<Output>, Output>
     extends StatelessWidget {
   final SomeBloc? bloc;
-  final Widget Function(BuildContext, BlocOutput) builder;
+  final Widget Function(BuildContext, Output) builder;
   BlocBuilder({required this.bloc, required this.builder});
   @override
   Widget build(BuildContext context) {
-    return BaseBlocBuilder<SomeBloc, BlocOutput>(
+    return BaseBlocBuilder<SomeBloc, Output>(
         bloc: bloc,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {

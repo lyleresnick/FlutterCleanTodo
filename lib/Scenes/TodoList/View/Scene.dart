@@ -48,17 +48,23 @@ class _SceneState extends State<Scene> {
           ],
         ),
         body: SafeArea(
-          child: BlocBuilder<Presenter, _PresenterOutput>(
+          child: BlocConsumer<Presenter, _PresenterOutput>(
             bloc: _presenter,
-            builder: (context, data) {
-              switch (data) {
+            listener: (output) {
+              switch (output) {
                 case showLoading():
                   StatefullySet.value(key: _plusKey, value: false);
                   StatefullySet.value(key: _checkedKey, value: false);
-                  return FullScreenLoadingIndicator();
-                case showModel(:final model):
+                case showModel():
                   StatefullySet.value(key: _plusKey, value: true);
                   StatefullySet.value(key: _checkedKey, value: true);
+              }
+            },
+            builder: (context, output) {
+              switch (output) {
+                case showLoading():
+                  return FullScreenLoadingIndicator();
+                case showModel(:final model):
                   return ListView.builder(
                       itemCount: model.rows.length,
                       itemBuilder: (context, index) => _Cell(

@@ -11,9 +11,7 @@ class StatefullySet<T> extends StatefulWidget {
   State<StatefullySet<T>> createState() => StatefullySetState<T>();
 
   static void value<T>({required GlobalKey<StatefullySetState<T>> key, required T value}) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
       key.currentState!.value = value;
-    });
   }
 }
 
