@@ -8,21 +8,24 @@ class Waiting extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        SafeArea(child: child),
-        Visibility(
-          visible: isWaiting,
-          child: Container(
-            height: double.infinity,
-            width: double.infinity,
-            color: Colors.black26,
-            child: Center(
-              child: CircularProgressIndicator(color: Colors.lightGreen,),
+    return Align(
+      alignment: Alignment.topCenter,
+      child: Stack(
+        children: [
+          SafeArea(child: child),
+          Visibility(
+            visible: isWaiting,
+            child: Container(
+              height: double.infinity,
+              width: double.infinity,
+              color: Colors.black26,
+              child: Center(
+                child: CircularProgressIndicator(color: Colors.lightGreen,),
+              ),
             ),
-          ),
-        )
-      ],
+          )
+        ],
+      ),
     );
   }
 }

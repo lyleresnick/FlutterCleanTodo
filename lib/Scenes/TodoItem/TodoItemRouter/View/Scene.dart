@@ -39,16 +39,21 @@ class _SceneState extends State<Scene> {
               : null;
           return Scaffold(
             appBar: AppBar(
-              iconTheme: IconThemeData(
-                  color: Colors.white
-              ),
-              title: decoratedScene?.title ?? Text(localizedString('todo'), style: TextStyle(color: Colors.white),),
+              iconTheme: IconThemeData(color: Colors.white),
+              title: decoratedScene?.title ??
+                  Text(
+                    localizedString('todo'),
+                    style: TextStyle(color: Colors.white),
+                  ),
               backgroundColor: Colors.lightGreen,
               elevation: platform == TargetPlatform.iOS ? 0.0 : 4.0,
               actions: decoratedScene?.actions,
               leading: decoratedScene?.leading,
             ),
-            body: body,
+            body: AnimatedSwitcher(
+                duration: Duration(
+                    milliseconds: 750),
+                child: body),
           );
         });
   }
