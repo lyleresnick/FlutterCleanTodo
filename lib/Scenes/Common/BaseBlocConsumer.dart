@@ -25,6 +25,7 @@ class _BaseBlocConsumerState<SomeBloc extends Bloc<Output>, Output> extends Stat
 
   @override
   void initState() {
+    super.initState();
     originStream = (widget.bloc?.stream ?? BlocProvider.of<SomeBloc>(context)?.stream);
     originStream?.listen(_originListener);
   }

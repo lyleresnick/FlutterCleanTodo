@@ -23,7 +23,6 @@ class _SceneState extends State<Scene> {
     this._presenter = widget._presenter;
     _pages = [
       MaterialPage(
-          key: ValueKey("TodoList"),
           child: TodoList.Assembly(_presenter).scene),
     ];
 
@@ -69,10 +68,8 @@ extension on PresenterOutput {
   MaterialPage _page(Presenter presenter) {
     return switch (this) {
       PresenterOutput.showRowDetail => MaterialPage(
-          key: ValueKey("TodoItemRouter"),
           child: TodoItemRouter.Assembly(presenter).scene),
       _ => MaterialPage(
-          key: ValueKey("ErrorScene"),
           child: ErrorScene(text: "Output not handled: '$this'"))
     };
   }
