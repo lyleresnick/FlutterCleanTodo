@@ -12,11 +12,10 @@ import '../../Repository/Entities/Priority.dart';
 import '../../Repository/Entities/Todo.dart';
 import '../AppState/TodoAppState.dart';
 import '../AppState/TodoItemStartMode.dart';
-import '../Common/BlocConsumer.dart';
+import '../Common/BlocBuilder.dart';
 import '../Common/FullScreenLoadingIndicator.dart';
 import '../Common/Localize.dart';
 import '../Common/StarterBloc.dart';
-import '../Common/StatefullySet.dart';
 
 part 'Assembly/Assembly.dart';
 part 'View/Scene.dart';

@@ -13,8 +13,6 @@ class Scene extends StatefulWidget {
 
 class _SceneState extends State<Scene> {
   late final Presenter _presenter;
-  final _plusKey = GlobalKey<StatefullySetState>();
-  final _checkedKey = GlobalKey<StatefullySetState>();
 
   @override
   void initState() {
@@ -25,56 +23,41 @@ class _SceneState extends State<Scene> {
   @override
   Widget build(BuildContext context) {
     final platform = Theme.of(context).platform;
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(localizedString("todoList"),
-              style: TextStyle(color: Colors.white)),
-          centerTitle: platform == TargetPlatform.iOS,
-          backgroundColor: Colors.lightGreen,
-          elevation: platform == TargetPlatform.iOS ? 0.0 : 4.0,
-          actions: [
-            StatefullySet<bool>(
-                key: _checkedKey,
-                builder: (context, enabled) => _CheckedButton(
-                    enabled: enabled,
-                    onPressed: _presenter.eventShowCompleted)),
-            StatefullySet<bool>(
-              key: _plusKey,
-              builder: (context, enabled) => _AddTodoButton(
-                enabled: enabled,
-                onPressed: _presenter.eventCreate,
-              ),
-            )
-          ],
-        ),
-        body: SafeArea(
-          child: BlocConsumer<Presenter, _PresenterOutput>(
-            bloc: _presenter,
-            listener: (output) {
-              switch (output) {
-                case showLoading():
-                  StatefullySet.value(key: _plusKey, value: false);
-                  StatefullySet.value(key: _checkedKey, value: false);
-                case showModel():
-                  StatefullySet.value(key: _plusKey, value: true);
-                  StatefullySet.value(key: _checkedKey, value: true);
+    return BlocBuilder<Presenter, _PresenterOutput>(
+      bloc: _presenter,
+      builder: (context, output) {
+        return Scaffold(
+            appBar: AppBar(
+              title: Text(localizedString("todoList"),
+                  style: TextStyle(color: Colors.white)),
+              centerTitle: platform == TargetPlatform.iOS,
+              backgroundColor: Colors.lightGreen,
+              elevation: platform == TargetPlatform.iOS ? 0.0 : 4.0,
+              actions: [
+                 _CheckedButton(
+                        enabled: output == showLoading() ? false : true,
+                        onPressed: _presenter.eventShowCompleted),
+                 _AddTodoButton(
+                    enabled: output == showLoading() ? false : true,
+                    onPressed: _presenter.eventCreate,
+                  ),
+              ],
+            ),
+            body: SafeArea(
+              child: switch (output) {
+                showLoading() => FullScreenLoadingIndicator(),
+                showModel(:final model) => ListView.builder(
+                  itemCount: model.rows.length,
+                  itemBuilder: (context, index) => _Cell(
+                        row: model.rows[index],
+                        presenter: _presenter,
+                  )
+                )
               }
-            },
-            builder: (context, output) {
-              switch (output) {
-                case showLoading():
-                  return FullScreenLoadingIndicator();
-                case showModel(:final model):
-                  return ListView.builder(
-                      itemCount: model.rows.length,
-                      itemBuilder: (context, index) => _Cell(
-                            row: model.rows[index],
-                            presenter: _presenter,
-                          ));
-              }
-            },
-          ),
-        ));
+            ),
+        );
+      }
+    );
   }
 
   @override

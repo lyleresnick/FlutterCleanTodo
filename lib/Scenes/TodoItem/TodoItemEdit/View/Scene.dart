@@ -9,7 +9,7 @@ class Scene extends StatefulWidget implements ActionDecoratedScene {
   final _cancelKey = GlobalKey<StatefullySetState>();
   final _titleKey = GlobalKey<StatefullySetState>();
 
-  Scene(this._presenter);
+  Scene(this._presenter) : super(key: Key("Edit"));
 
   @override
   State<Scene> createState() => _SceneState();

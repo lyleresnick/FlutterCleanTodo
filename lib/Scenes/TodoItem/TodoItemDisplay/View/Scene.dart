@@ -6,7 +6,7 @@ part of '../TodoItemDisplay.dart';
 class Scene extends StatefulWidget implements ActionDecoratedScene {
   final Presenter _presenter;
 
-  Scene(this._presenter);
+  Scene(this._presenter) : super(key: Key("Display"));
 
   @override
   State<Scene> createState() => _SceneState();
