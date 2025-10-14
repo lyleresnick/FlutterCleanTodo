@@ -18,7 +18,7 @@ class Waiting extends StatelessWidget {
             child: Container(
               height: double.infinity,
               width: double.infinity,
-              color: Colors.black26,
+              color: Colors.white,
               child: Center(
                 child: CircularProgressIndicator(color: Colors.lightGreen,),
               ),

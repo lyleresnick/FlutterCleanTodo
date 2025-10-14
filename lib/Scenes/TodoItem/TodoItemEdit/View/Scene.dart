@@ -5,9 +5,10 @@ part of '../TodoItemEdit.dart';
 @visibleForTesting
 class Scene extends StatefulWidget implements ActionDecoratedScene {
   final Presenter _presenter;
-  final _saveKey = GlobalKey<StatefullySetState>();
-  final _cancelKey = GlobalKey<StatefullySetState>();
-  final _titleKey = GlobalKey<StatefullySetState>();
+  final saveEnabledNotifier = ValueNotifier(false);
+  final cancelEnabledNotifier = ValueNotifier(false);
+  final titleNotifier = ValueNotifier("");
+
 
   Scene(this._presenter) : super(key: Key("Edit"));
 
@@ -16,30 +17,30 @@ class Scene extends StatefulWidget implements ActionDecoratedScene {
 
   @override
   Widget get title {
-    return StatefullySet<String>(
-        key: _titleKey,
-        builder: (context, value) =>
+    return ValueListenableBuilder<String>(
+        valueListenable: titleNotifier,
+        builder: (context, value, _) =>
             Text(value, style: TextStyle(color: Colors.white)));
   }
 
   @override
   List<Widget> get actions {
     return [
-      StatefullySet<bool>(
-        key: _saveKey,
-        builder: (context, enabled) => _SaveButton(
+      ValueListenableBuilder<bool>(
+        valueListenable: saveEnabledNotifier,
+        builder: (context, enabled, _) => _SaveButton(
           enabled: enabled,
           onPressed: _presenter.eventSave,
-        ),
+        )
       )
     ];
   }
 
   @override
   Widget get leading {
-    return StatefullySet<bool>(
-        key: _cancelKey,
-        builder: (context, enabled) => _CancelButton(
+    return ValueListenableBuilder<bool>(
+        valueListenable: cancelEnabledNotifier,
+        builder: (context, enabled, _) => _CancelButton(
               enabled: enabled,
               onPressed: _presenter.eventCancel,
             ));
@@ -67,13 +68,9 @@ class _SceneState extends State<Scene> {
               if (model.errorMessage != null)
                 _showDialog(context, model.errorMessage!);
 
-              StatefullySet.value(
-                  key: widget._saveKey, value: !model.isWaiting);
-              StatefullySet.value(
-                  key: widget._cancelKey, value: !model.isWaiting);
-              StatefullySet.value(
-                  key: widget._titleKey,
-                  value: localizedString(model.modeTitle));
+              widget.saveEnabledNotifier.value = !model.isWaiting;
+              widget.cancelEnabledNotifier.value = !model.isWaiting;
+              widget.titleNotifier.value = localizedString(model.modeTitle);
           }
         },
         builder: (context, output) {
